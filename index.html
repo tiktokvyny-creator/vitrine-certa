@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vitrine Certa — Tupã, SP</title>
+<meta name="description" content="Encontre lojas, restaurantes, salões e serviços de Tupã-SP em um só lugar. Veja endereço, horário e fale direto no WhatsApp com cada estabelecimento.">
+<link rel="canonical" href="https://vitrinecertaa.com.br/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Vitrine Certa — Tupã, SP">
+<meta property="og:description" content="Encontre lojas, restaurantes, salões e serviços de Tupã-SP em um só lugar. Fale direto no WhatsApp com cada loja.">
+<meta property="og:url" content="https://vitrinecertaa.com.br/">
+<meta property="og:locale" content="pt_BR">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%23D85A30%22/><circle cx=%2250%22 cy=%2250%22 r=%2228%22 fill=%22%23E1F5EE%22/><circle cx=%2250%22 cy=%2250%22 r=%2216%22 fill=%22%230F6E56%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --coral:#D85A30; --coral-dark:#4A1B0C; --coral-light:#F5C4B3;
+    --teal:#0F6E56; --teal-light:#9FE1CB; --teal-pale:#E1F5EE;
+    --amber:#EF9F27; --amber-dark:#633806; --amber-pale:#FAEEDA;
+    --pink:#D4537E; --pink-dark:#4B1528; --pink-pale:#FBEAF0;
+    --purple-pale:#EEEDFE; --purple-dark:#3C3489;
+    --cream:#FFF8F0; --paper:#FFFFFF; --ink:#2C1810; --ink-soft:#6B5B4F; --line:#EDE1D4;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:'Inter',sans-serif;background:var(--cream);color:var(--ink);}
+  h1,h2,h3,.brand{font-family:'Fredoka',sans-serif;}
+  a{text-decoration:none;color:inherit;}
+
+  header{
+    display:flex;align-items:center;justify-content:space-between;padding:18px 28px;
+    background:var(--paper);border-bottom:2px solid var(--line);position:sticky;top:0;z-index:10;
+  }
+  .brand{display:flex;align-items:center;gap:10px;font-size:22px;font-weight:600;color:var(--coral-dark);}
+  .brand-mark{width:34px;height:34px;border-radius:50%;background:var(--coral);position:relative;flex-shrink:0;}
+  .brand-mark::after{content:'';position:absolute;inset:7px;border-radius:50%;background:var(--teal-pale);}
+  .brand-mark::before{content:'';position:absolute;inset:12px;border-radius:50%;background:var(--teal);}
+  .header-right{display:flex;align-items:center;gap:20px;}
+  .header-nav a{font-size:13.5px;font-weight:500;color:var(--ink-soft);margin-left:20px;}
+  .header-nav a:hover{color:var(--coral);}
+  .city-tag{font-size:13px;color:var(--ink-soft);background:var(--amber-pale);padding:5px 12px;border-radius:20px;font-weight:500;}
+
+  .hero{padding:36px 28px 20px;max-width:1100px;margin:0 auto;}
+  .hero h1{font-size:32px;margin:0 0 6px;font-weight:600;}
+  .hero p{margin:0 0 22px;color:var(--ink-soft);font-size:15px;}
+  .search-box{
+    display:flex;align-items:center;gap:8px;background:var(--paper);border:2px solid var(--line);
+    border-radius:14px;padding:12px 16px;max-width:520px;
+  }
+  .search-box input{border:none;outline:none;font-size:15px;width:100%;background:transparent;color:var(--ink);font-family:'Inter',sans-serif;}
+  .search-box svg{flex-shrink:0;color:var(--ink-soft);}
+
+  .categories{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;}
+  .pill{padding:9px 18px;border-radius:20px;font-size:14px;font-weight:500;border:2px solid transparent;cursor:pointer;font-family:'Inter',sans-serif;transition:transform .12s ease;}
+  .pill:active{transform:scale(0.96);}
+  .pill.all{background:var(--ink);color:var(--cream);}
+  .pill.all.inactive{background:var(--paper);color:var(--ink);border-color:var(--line);}
+  .pill[data-cat="Moda"]{background:var(--teal-pale);color:var(--teal);}
+  .pill[data-cat="Alimentação"]{background:var(--amber-pale);color:var(--amber-dark);}
+  .pill[data-cat="Beleza"]{background:var(--pink-pale);color:var(--pink-dark);}
+  .pill[data-cat="Serviços"]{background:var(--purple-pale);color:var(--purple-dark);}
+  .pill.selected{outline:2px solid currentColor;}
+
+  .ad-slot{max-width:1100px;margin:0 auto 26px;padding:0 28px;}
+  .ad-slot-inner{border:2px dashed var(--line);border-radius:16px;background:var(--paper);display:flex;align-items:center;justify-content:center;min-height:90px;color:var(--ink-soft);font-size:12.5px;font-weight:500;}
+
+  .cookie-banner{
+    position:fixed;bottom:16px;left:16px;right:16px;max-width:520px;margin:0 auto;
+    background:var(--ink);color:var(--cream);border-radius:16px;padding:16px 18px;
+    display:flex;align-items:center;gap:14px;flex-wrap:wrap;z-index:50;box-shadow:0 8px 24px rgba(0,0,0,.2);
+  }
+  .cookie-banner p{font-size:13px;margin:0;flex:1;min-width:200px;line-height:1.5;}
+  .cookie-banner a{color:var(--amber);text-decoration:underline;}
+  .cookie-banner button{
+    background:var(--coral);color:#fff;border:none;padding:9px 16px;border-radius:10px;
+    font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;
+  }
+
+  .featured-wrap{max-width:1100px;margin:0 auto;padding:0 28px;}
+  .featured-label{margin-bottom:12px;}
+  .featured-label span{font-size:13px;font-weight:600;color:var(--amber-dark);background:var(--amber-pale);padding:5px 12px;border-radius:12px;}
+  .carousel{position:relative;overflow:hidden;border-radius:20px;}
+  .carousel-track{display:flex;transition:transform .4s ease;}
+  .feat-slide{min-width:100%;background:var(--paper);border:2px solid var(--line);border-radius:20px;overflow:hidden;cursor:pointer;display:flex;}
+  .feat-photo{flex:0 0 42%;display:flex;align-items:center;justify-content:center;font-family:'Fredoka',sans-serif;font-size:15px;color:rgba(0,0,0,.35);}
+  .feat-info{flex:1;padding:26px 28px;display:flex;flex-direction:column;justify-content:center;}
+  .feat-badge{display:inline-flex;align-items:center;gap:6px;background:var(--amber);color:var(--amber-dark);font-size:12px;font-weight:600;padding:5px 12px;border-radius:12px;width:fit-content;margin-bottom:10px;}
+  .feat-info h3{font-size:22px;margin:0 0 6px;}
+  .feat-info .cat{font-size:13px;color:var(--ink-soft);margin:0 0 8px;}
+  .feat-info .addr{font-size:13px;color:var(--ink-soft);margin:0;display:flex;gap:6px;align-items:flex-start;}
+  .carousel-arrow{position:absolute;top:50%;transform:translateY(-50%);width:38px;height:38px;border-radius:50%;background:var(--paper);border:2px solid var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ink);z-index:2;}
+  .carousel-arrow.prev{left:14px;} .carousel-arrow.next{right:14px;}
+  .carousel-dots{display:flex;justify-content:center;gap:8px;margin:14px 0 6px;}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--line);cursor:pointer;transition:background .15s ease, width .15s ease;}
+  .dot.active{background:var(--coral);width:22px;border-radius:5px;}
+
+  .promo-ribbon{
+    position:absolute;top:10px;left:10px;background:var(--coral);color:#fff;
+    font-size:11px;font-weight:600;padding:4px 10px;border-radius:12px;display:flex;align-items:center;gap:4px;
+  }
+  .promo-banner{
+    background:linear-gradient(90deg, var(--coral), #ef7a4e);color:#fff;border-radius:14px;
+    padding:14px 18px;margin-bottom:20px;font-size:14.5px;font-weight:600;display:flex;align-items:center;gap:10px;
+  }
+  .promo-section{max-width:1100px;margin:0 auto 26px;padding:0 28px;}
+  .promo-section h2{font-size:19px;margin:0 0 14px;}
+
+  .offers-section{max-width:1100px;margin:0 auto 26px;padding:0 28px;}
+  .offers-section h2{font-size:19px;margin:0 0 4px;}
+  .offers-section .offers-sub{font-size:12.5px;color:var(--ink-soft);margin:0 0 14px;}
+  .offers-strip{display:flex;gap:14px;overflow-x:auto;padding-bottom:6px;}
+  .offer-card{
+    flex:0 0 auto;width:170px;background:var(--paper);border:2px solid var(--line);border-radius:16px;
+    overflow:hidden;text-decoration:none;color:var(--ink);display:block;
+  }
+  .offer-card img{width:100%;height:130px;object-fit:contain;background:#fff;padding:8px;box-sizing:border-box;}
+  .offer-card .o-body{padding:10px 12px 14px;}
+  .offer-card .o-title{font-size:12.5px;line-height:1.3;margin:0 0 8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;height:32px;}
+  .offer-card .o-price{font-size:15px;font-weight:600;color:var(--teal);margin:0;}
+
+  .page-grid{max-width:1500px;margin:0 auto;}
+  .side-rail{display:none;}
+  @media (min-width:1300px){
+    .page-grid{display:grid;grid-template-columns:230px minmax(0,1fr) 230px;gap:22px;padding:0 16px;align-items:start;}
+    .side-rail{display:flex;flex-direction:column;gap:14px;position:sticky;top:90px;padding-top:24px;}
+    .offers-inline{display:none;}
+  }
+  .rail-card{background:var(--paper);border:2px solid var(--line);border-radius:14px;overflow:hidden;text-decoration:none;color:var(--ink);display:block;}
+  .rail-card img{width:100%;height:120px;object-fit:contain;background:#fff;padding:10px;box-sizing:border-box;}
+  .rail-card .o-body{padding:8px 12px 12px;}
+  .rail-card .o-title{font-size:12.5px;line-height:1.3;margin:0 0 6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .rail-card .o-price{font-size:14px;font-weight:600;color:var(--teal);margin:0;}
+  .rail-label{font-size:12px;font-weight:600;color:var(--amber-dark);background:var(--amber-pale);padding:5px 10px;border-radius:10px;display:inline-block;}
+  .promo-strip{display:flex;gap:14px;overflow-x:auto;padding-bottom:6px;}
+  .promo-card{
+    flex:0 0 auto;min-width:220px;background:var(--paper);border:2px solid var(--coral-light);border-radius:16px;
+    padding:14px 16px;cursor:pointer;
+  }
+  .promo-card .p-store{font-size:13px;font-weight:600;color:var(--coral-dark);margin:0 0 4px;}
+  .promo-card .p-text{font-size:13.5px;margin:0;}
+
+  .grid{max-width:1100px;margin:26px auto;padding:0 28px;display:grid;grid-template-columns:repeat(auto-fit, minmax(230px, 1fr));gap:20px;}
+  .card{background:var(--paper);border:2px solid var(--line);border-radius:18px;overflow:hidden;cursor:pointer;transition:border-color .15s ease, transform .15s ease;display:flex;flex-direction:column;}
+  .card:hover{border-color:var(--coral);transform:translateY(-2px);}
+  .card-photo{height:120px;display:flex;align-items:center;justify-content:center;font-family:'Fredoka',sans-serif;font-size:15px;font-weight:500;color:rgba(0,0,0,.35);position:relative;}
+  .badge-destaque{position:absolute;top:10px;right:10px;background:var(--amber);color:var(--amber-dark);font-size:11px;font-weight:600;padding:4px 10px;border-radius:12px;font-family:'Inter',sans-serif;}
+  .card-body{padding:14px 16px 16px;}
+  .card-body h3{margin:0 0 4px;font-size:17px;font-weight:600;}
+  .card-body .cat{font-size:12px;color:var(--ink-soft);margin:0 0 8px;}
+  .card-body .addr{font-size:13px;color:var(--ink-soft);margin:0;display:flex;gap:6px;align-items:flex-start;}
+
+  .plans-section{background:var(--paper);border-top:2px solid var(--line);margin-top:20px;padding:50px 28px;}
+  .plans-inner{max-width:1100px;margin:0 auto;}
+  .plans-head{max-width:520px;margin-bottom:28px;}
+  .plans-head h2{font-size:26px;margin:0 0 8px;}
+  .plans-head p{margin:0;color:var(--ink-soft);font-size:15px;line-height:1.6;}
+  .plans-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:18px;}
+  .plan-card{border:2px solid var(--line);border-radius:18px;padding:24px 22px;background:var(--cream);display:flex;flex-direction:column;position:relative;}
+  .plan-card.highlight{border-color:var(--coral);background:#FFF3EC;}
+  .plan-tag{position:absolute;top:-12px;right:20px;background:var(--coral);color:#fff;font-size:11px;font-weight:600;padding:4px 12px;border-radius:10px;}
+  .plan-name{font-size:15px;font-weight:600;color:var(--ink-soft);margin:0 0 6px;}
+  .plan-price{font-size:26px;font-weight:600;margin:0 0 4px;font-family:'Fredoka',sans-serif;}
+  .plan-price span{font-size:13px;font-weight:400;color:var(--ink-soft);font-family:'Inter',sans-serif;}
+  .plan-list{list-style:none;padding:0;margin:16px 0 22px;flex:1;}
+  .plan-list li{font-size:13.5px;padding:7px 0 7px 22px;position:relative;line-height:1.4;}
+  .plan-list li::before{content:'✓';position:absolute;left:0;top:7px;color:var(--teal);font-weight:600;}
+  .plan-cta{border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;background:var(--ink);color:var(--cream);}
+  .plan-card.highlight .plan-cta{background:var(--coral);color:#fff;}
+
+  .store-page{max-width:760px;margin:0 auto;padding:0 28px 60px;}
+  .back-btn{display:inline-flex;align-items:center;gap:6px;margin:22px 0 18px;font-size:14px;font-weight:500;color:var(--ink-soft);cursor:pointer;background:none;border:none;font-family:'Inter',sans-serif;padding:0;}
+  .store-hero{height:200px;border-radius:20px;display:flex;align-items:center;justify-content:center;font-family:'Fredoka',sans-serif;color:rgba(0,0,0,.35);font-size:16px;margin-bottom:20px;}
+  .store-cat-pill{display:inline-block;font-size:12px;font-weight:600;padding:5px 12px;border-radius:14px;margin-bottom:10px;}
+  .store-page h1{font-size:28px;margin:0 0 6px;}
+  .store-desc{color:var(--ink-soft);font-size:15px;line-height:1.6;margin:14px 0 24px;}
+  .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:26px;}
+  .info-card{background:var(--paper);border:2px solid var(--line);border-radius:14px;padding:14px 16px;}
+  .info-card .label{font-size:12px;color:var(--ink-soft);margin:0 0 4px;font-weight:500;}
+  .info-card .value{font-size:14px;font-weight:500;margin:0;}
+  .wpp-btn{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--teal);color:#fff;font-size:16px;font-weight:600;padding:16px;border-radius:16px;width:100%;border:none;cursor:pointer;font-family:'Inter',sans-serif;}
+  .wpp-btn:hover{background:#0c5945;}
+
+  footer{text-align:center;padding:24px;color:var(--ink-soft);font-size:12.5px;}
+
+  @media (max-width:640px){
+    .feat-slide{flex-direction:column;}
+    .feat-photo{height:140px;}
+    .info-grid{grid-template-columns:1fr;}
+    .hero h1{font-size:26px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="vitrine-certa.html" class="brand"><div class="brand-mark"></div>Vitrine Certa</a>
+  <div class="header-right">
+    <nav class="header-nav">
+      <a href="sobre.html">Sobre</a>
+      <a href="faq.html">Dúvidas</a>
+    </nav>
+    <div class="city-tag">Tupã, SP</div>
+  </div>
+</header>
+
+<div id="app"></div>
+
+<div class="cookie-banner" id="cookieBanner" style="display:none;">
+  <p>Usamos cookies para melhorar sua experiência e exibir anúncios relevantes. Ao continuar navegando, você concorda com nossa <a href="politica-privacidade.html">Política de Privacidade</a>.</p>
+  <button id="acceptCookies">Entendi</button>
+</div>
+
+<footer>
+  Vitrine Certa · Tupã-SP ·
+  <a href="politica-privacidade.html" style="color:var(--ink-soft);text-decoration:underline;">Privacidade</a> ·
+  <a href="termos-de-uso.html" style="color:var(--ink-soft);text-decoration:underline;">Termos de Uso</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://ppoelkclmuqojgjrzpkw.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwb2Vsa2NsbXVxb2pnanJ6cGt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkxNTk5OTEsImV4cCI6MjEwNDczNTk5MX0.t8b2FiDioq4YoIYV-8kAEo285IH2lSzjJEIFAzeis3k";
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const CATEGORY_COLORS = { "Moda":"#F5C4B3", "Alimentação":"#FAC775", "Beleza":"#F4C0D1", "Serviços":"#CECBF6" };
+const CATS = ["Moda","Alimentação","Beleza","Serviços"];
+const MAX_FEATURED = 6;
+
+let STORES = [];
+let OFFERS = [];
+let activeCat = "Todos";
+
+async function loadOffers(){
+  const { data, error } = await sb.from('affiliate_products').select('title, price, image_url, affiliate_url').eq('active', true).order('sort_order');
+  if(error){ console.error('Erro ao carregar produtos afiliados:', error); OFFERS = []; return; }
+  OFFERS = (data || []).map(o => ({
+    title: o.title,
+    price: o.price,
+    thumbnail: o.image_url,
+    url: o.affiliate_url
+  }));
+}
+let searchTerm = "";
+let carouselTimer = null;
+
+function formatHours(start, end){
+  if(!start || !end) return 'Horário não informado';
+  return `${start.slice(0,5)} às ${end.slice(0,5)}`;
+}
+
+async function loadStores(){
+  const { data, error } = await sb
+    .from('stores')
+    .select('id, name, address, whatsapp_phone, hours_start, hours_end, description, plan_id, promo_text, promo_expires_at, categories(name)')
+    .eq('status', 'active');
+  if(error){ console.error('Erro ao carregar lojas:', error); STORES = []; return; }
+  const today = new Date().toISOString().slice(0,10);
+  STORES = (data || []).map(s => {
+    const catName = s.categories ? s.categories.name : '';
+    const promoActive = !!s.promo_text && (!s.promo_expires_at || s.promo_expires_at >= today);
+    return {
+      id: s.id, name: s.name, category: catName, address: s.address, phone: s.whatsapp_phone,
+      hours: formatHours(s.hours_start, s.hours_end), description: s.description || '',
+      destaque: s.plan_id === 'perto_mais' || s.plan_id === 'perto_top',
+      color: CATEGORY_COLORS[catName] || '#EDE1D4',
+      promo: promoActive ? s.promo_text : null
+    };
+  });
+}
+
+function iconSearch(){ return `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`; }
+function iconPin(){ return `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:2px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>`; }
+function iconWpp(){ return `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 6.3A8.86 8.86 0 0 0 12.05 4a8.94 8.94 0 0 0-7.75 13.4L3 21l3.7-1.24a8.9 8.9 0 0 0 5.35 1.8h.01a8.94 8.94 0 0 0 8.94-8.9 8.85 8.85 0 0 0-3.4-6.36zM12.05 20a7.4 7.4 0 0 1-3.8-1.04l-.27-.16-2.84.94.93-2.75-.18-.28a7.43 7.43 0 0 1 6.16-11.4 7.34 7.34 0 0 1 5.2 2.16 7.35 7.35 0 0 1 2.17 5.22A7.43 7.43 0 0 1 12.05 20z"/></svg>`; }
+
+function pickFeatured(all){
+  if(all.length <= MAX_FEATURED) return all;
+  const dayIndex = Math.floor(Date.now() / (1000*60*60*24));
+  const start = (dayIndex * MAX_FEATURED) % all.length;
+  return all.slice(start).concat(all.slice(0, start)).slice(0, MAX_FEATURED);
+}
+
+function railCardHtml(o){
+  return `
+    <a class="rail-card" href="${o.url}" target="_blank" rel="noopener sponsored">
+      ${o.thumbnail ? `<img src="${o.thumbnail}" alt="${o.title}">` : `<div style="width:100%;height:120px;background:var(--cream);display:flex;align-items:center;justify-content:center;color:var(--ink-soft);font-size:11px;">Sem foto</div>`}
+      <div class="o-body">
+        <p class="o-title">${o.title}</p>
+        ${o.price != null ? `<p class="o-price">R$ ${Number(o.price).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2})}</p>` : ''}
+      </div>
+    </a>
+  `;
+}
+
+const app = document.getElementById('app');
+
+function renderHome(){
+  if(carouselTimer){ clearInterval(carouselTimer); carouselTimer = null; }
+  const allFeatured = STORES.filter(s => s.destaque);
+  const featured = pickFeatured(allFeatured);
+  const withPromo = STORES.filter(s => s.promo);
+  const offersLeft = OFFERS.filter((_, i) => i % 2 === 0);
+  const offersRight = OFFERS.filter((_, i) => i % 2 === 1);
+  const filtered = STORES.filter(s => {
+    const matchCat = activeCat === "Todos" || s.category === activeCat;
+    const matchSearch = s.name.toLowerCase().includes(searchTerm.toLowerCase()) || s.category.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchCat && matchSearch;
+  });
+
+  app.innerHTML = `
+    <div class="page-grid">
+    <aside class="side-rail">
+      ${offersLeft.length ? `<span class="rail-label">🛒 Ofertas</span>` : ''}
+      ${offersLeft.map(railCardHtml).join('')}
+    </aside>
+    <div>
+    <div class="hero">
+      <h1>O que você procura em Tupã?</h1>
+      <p>Encontre lojas e serviços da cidade em um só lugar</p>
+      <div class="search-box">
+        ${iconSearch()}
+        <input id="searchInput" type="text" placeholder="Buscar loja ou categoria..." value="${searchTerm}">
+      </div>
+      <div class="categories" id="cats">
+        <button class="pill all ${activeCat==='Todos' ? '' : 'inactive'}" data-cat="Todos">Todos</button>
+        ${CATS.map(c => `<button class="pill ${activeCat===c ? 'selected' : ''}" data-cat="${c}">${c}</button>`).join('')}
+      </div>
+    </div>
+
+    ${withPromo.length ? `
+    <div class="promo-section">
+      <h2>🔥 Promoções da semana</h2>
+      <div class="promo-strip">
+        ${withPromo.map(s => `
+          <div class="promo-card" data-id="${s.id}">
+            <p class="p-store">${s.name}</p>
+            <p class="p-text">${s.promo}</p>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+    ` : ''}
+
+    ${OFFERS.length ? `
+    <div class="offers-section offers-inline">
+      <h2>🛒 Ofertas selecionadas</h2>
+      <p class="offers-sub">Links de afiliado — o Vitrine Certa pode ganhar uma comissão nas compras feitas por aqui</p>
+      <div class="offers-strip">
+        ${OFFERS.map(o => `
+          <a class="offer-card" href="${o.url}" target="_blank" rel="noopener sponsored">
+            ${o.thumbnail ? `<img src="${o.thumbnail}" alt="${o.title}">` : `<div style="width:100%;height:130px;background:var(--cream);display:flex;align-items:center;justify-content:center;color:var(--ink-soft);font-size:11px;">Sem foto</div>`}
+            <div class="o-body">
+              <p class="o-title">${o.title}</p>
+              ${o.price != null ? `<p class="o-price">R$ ${Number(o.price).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2})}</p>` : ''}
+            </div>
+          </a>
+        `).join('')}
+      </div>
+    </div>
+    ` : ''}
+
+    ${featured.length ? `
+    <div class="featured-wrap">
+      <div class="featured-label"><span>Lojas em destaque</span></div>
+      <div class="carousel">
+        <div class="carousel-track" id="carouselTrack">
+          ${featured.map(s => featSlideHtml(s)).join('')}
+        </div>
+        ${featured.length > 1 ? `<button class="carousel-arrow prev" id="prevBtn">&larr;</button><button class="carousel-arrow next" id="nextBtn">&rarr;</button>` : ''}
+      </div>
+      ${featured.length > 1 ? `<div class="carousel-dots" id="carouselDots">${featured.map((_,i)=>`<div class="dot ${i===0?'active':''}" data-i="${i}"></div>`).join('')}</div>` : ''}
+    </div>
+    ` : ''}
+
+    <div class="ad-slot">
+      <div class="ad-slot-inner"><!-- AD_SLOT_HOME_TOP --> Espaço de anúncio</div>
+    </div>
+
+    <div class="grid">
+      ${filtered.map(cardHtml).join('') || `<p style="color:var(--ink-soft);grid-column:1/-1;">Nenhuma loja encontrada.</p>`}
+    </div>
+
+    <div class="ad-slot">
+      <div class="ad-slot-inner"><!-- AD_SLOT_HOME_BOTTOM --> Espaço de anúncio</div>
+    </div>
+
+    <div class="plans-section" id="planos">
+      <div class="plans-inner">
+        <div class="plans-head">
+          <h2>Quer divulgar sua loja?</h2>
+          <p>Fale com a gente pelo WhatsApp e coloque seu negócio na vitrine do Vitrine Certa — cadastro básico grátis, ou destaque pago pra aparecer ainda mais.</p>
+        </div>
+        <div class="plans-grid">
+          <div class="plan-card">
+            <p class="plan-name">Básico</p>
+            <p class="plan-price">R$ 0<span>/sempre</span></p>
+            <ul class="plan-list">
+              <li>Página da loja com foto, endereço e horário</li>
+              <li>Botão de WhatsApp direto para o cliente</li>
+              <li>Aparece na busca e no filtro por categoria</li>
+            </ul>
+            <button class="plan-cta" data-plan="Básico">Quero me cadastrar</button>
+          </div>
+          <div class="plan-card highlight">
+            <span class="plan-tag">7 dias grátis</span>
+            <p class="plan-name">Perto+</p>
+            <p class="plan-price">R$ 29<span>/mês</span></p>
+            <ul class="plan-list">
+              <li>Tudo do plano Básico</li>
+              <li>Aparece no carrossel de destaques da home</li>
+              <li>Selo de loja verificada</li>
+              <li>Galeria com até 10 fotos</li>
+              <li>Espaço de promoção/cupom em destaque</li>
+              <li>Pague 10 meses, leve 12 no plano anual</li>
+            </ul>
+            <button class="plan-cta" data-plan="Perto+">Quero testar 7 dias grátis</button>
+          </div>
+          <div class="plan-card">
+            <p class="plan-name">Perto Top</p>
+            <p class="plan-price">R$ 59<span>/mês</span></p>
+            <ul class="plan-list">
+              <li>Tudo do Perto+</li>
+              <li>Topo fixo dentro da sua categoria</li>
+              <li>Pague 10 meses, leve 12 no plano anual</li>
+            </ul>
+            <button class="plan-cta" data-plan="Perto Top">Quero o Perto Top</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+    <aside class="side-rail">
+      ${offersRight.length ? `<span class="rail-label">🛒 Ofertas</span>` : ''}
+      ${offersRight.map(railCardHtml).join('')}
+    </aside>
+    </div>
+  `;
+
+  if(featured.length) setupCarousel(featured);
+
+  document.getElementById('searchInput').addEventListener('input', e=>{
+    const pos = e.target.selectionStart;
+    searchTerm = e.target.value; renderHome();
+    const inp = document.getElementById('searchInput');
+    inp.focus(); inp.selectionStart = inp.selectionEnd = pos;
+  });
+  document.querySelectorAll('#cats .pill').forEach(btn=>{
+    btn.addEventListener('click', ()=>{ activeCat = btn.dataset.cat; renderHome(); });
+  });
+  document.querySelectorAll('.card').forEach(c=>{
+    c.addEventListener('click', ()=> renderStore(c.dataset.id));
+  });
+  document.querySelectorAll('.promo-card').forEach(c=>{
+    c.addEventListener('click', ()=> renderStore(c.dataset.id));
+  });
+  document.querySelectorAll('.plan-cta').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const msg = encodeURIComponent(`Olá! Tenho interesse no plano ${btn.dataset.plan} do Vitrine Certa para cadastrar minha loja.`);
+      window.open(`https://wa.me/5514998471171?text=${msg}`, '_blank');
+    });
+  });
+}
+
+function cardHtml(s){
+  return `
+    <div class="card" data-id="${s.id}">
+      <div class="card-photo" style="background:${s.color}20">
+        ${s.promo ? `<span class="promo-ribbon">🔥 Promo</span>` : ''}
+        ${s.destaque ? `<span class="badge-destaque">destaque</span>` : ''}
+        Foto da loja
+      </div>
+      <div class="card-body">
+        <h3>${s.name}</h3>
+        <p class="cat">${s.category}</p>
+        <p class="addr">${iconPin()}${s.address}</p>
+      </div>
+    </div>
+  `;
+}
+
+function featSlideHtml(s){
+  return `
+    <div class="feat-slide" data-id="${s.id}">
+      <div class="feat-photo" style="background:${s.color}30">Foto da loja</div>
+      <div class="feat-info">
+        <span class="feat-badge">★ destaque</span>
+        <h3>${s.name}</h3>
+        <p class="cat">${s.category}</p>
+        <p class="addr">${iconPin()}${s.address}</p>
+      </div>
+    </div>
+  `;
+}
+
+function setupCarousel(featured){
+  const track = document.getElementById('carouselTrack');
+  const dots = document.querySelectorAll('#carouselDots .dot');
+  let idx = 0;
+  function goTo(i){
+    idx = (i + featured.length) % featured.length;
+    track.style.transform = `translateX(-${idx * 100}%)`;
+    dots.forEach((d,j)=> d.classList.toggle('active', j===idx));
+  }
+  function next(){ goTo(idx + 1); }
+  function prev(){ goTo(idx - 1); }
+  document.querySelectorAll('.feat-slide').forEach(el=>{
+    el.addEventListener('click', ()=> renderStore(el.dataset.id));
+  });
+  dots.forEach(d=> d.addEventListener('click', ()=> { goTo(parseInt(d.dataset.i)); resetTimer(); }));
+  const nextBtn = document.getElementById('nextBtn');
+  const prevBtn = document.getElementById('prevBtn');
+  if(nextBtn) nextBtn.addEventListener('click', e=>{ e.stopPropagation(); next(); resetTimer(); });
+  if(prevBtn) prevBtn.addEventListener('click', e=>{ e.stopPropagation(); prev(); resetTimer(); });
+  function resetTimer(){
+    if(carouselTimer) clearInterval(carouselTimer);
+    if(featured.length > 1) carouselTimer = setInterval(next, 4000);
+  }
+  resetTimer();
+}
+
+function renderStore(id){
+  if(carouselTimer){ clearInterval(carouselTimer); carouselTimer = null; }
+  const s = STORES.find(x=>x.id===id);
+  sb.rpc('increment_store_view', { p_store_id: id }).then(({error})=>{ if(error) console.error(error); });
+
+  const catColors = { "Moda":["#E1F5EE","#0F6E56"], "Alimentação":["#FAEEDA","#633806"], "Beleza":["#FBEAF0","#4B1528"], "Serviços":["#EEEDFE","#3C3489"] };
+  const [bg, fg] = catColors[s.category] || ["#EDE1D4", "#2C1810"];
+
+  app.innerHTML = `
+    <div class="store-page">
+      <button class="back-btn" id="backBtn">&larr; Voltar para a vitrine</button>
+      <div class="store-hero" style="background:${s.color}30">Foto da loja</div>
+      <span class="store-cat-pill" style="background:${bg};color:${fg}">${s.category}</span>
+      <h1>${s.name}</h1>
+      ${s.promo ? `<div class="promo-banner">🔥 ${s.promo}</div>` : ''}
+      <p class="store-desc">${s.description}</p>
+
+      <div class="ad-slot" style="padding:0;margin-bottom:22px;">
+        <div class="ad-slot-inner"><!-- AD_SLOT_STORE_PAGE --> Espaço de anúncio</div>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-card"><p class="label">Endereço</p><p class="value">${s.address}</p></div>
+        <div class="info-card"><p class="label">Horário</p><p class="value">${s.hours}</p></div>
+      </div>
+
+      <button class="wpp-btn" id="wppBtn">${iconWpp()} Chamar no WhatsApp</button>
+    </div>
+  `;
+
+  document.getElementById('backBtn').addEventListener('click', renderHome);
+  document.getElementById('wppBtn').addEventListener('click', ()=>{
+    sb.rpc('increment_store_whatsapp_click', { p_store_id: id }).then(({error})=>{ if(error) console.error(error); });
+    const msg = encodeURIComponent(`Olá! Vi a ${s.name} no Vitrine Certa e gostaria de saber mais.`);
+    window.open(`https://wa.me/${s.phone}?text=${msg}`, '_blank');
+  });
+  window.scrollTo(0,0);
+}
+
+(async function init(){
+  app.innerHTML = `<p style="padding:60px 28px;text-align:center;color:var(--ink-soft);">Carregando lojas...</p>`;
+  await Promise.all([loadStores(), loadOffers()]);
+  renderHome();
+})();
+
+if(!localStorage.getItem('cookieConsent')){
+  document.getElementById('cookieBanner').style.display = 'flex';
+}
+document.getElementById('acceptCookies').addEventListener('click', ()=>{
+  localStorage.setItem('cookieConsent', 'true');
+  document.getElementById('cookieBanner').style.display = 'none';
+});
+</script>
+</body>
+</html>

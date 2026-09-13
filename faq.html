@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dúvidas frequentes - Vitrine Certa</title>
+<meta name="description" content="Tire suas dúvidas sobre o Vitrine Certa, tanto pra quem visita o site quanto pra lojistas.">
+<link rel="canonical" href="https://vitrinecertaa.com.br/faq.html">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%23D85A30%22/><circle cx=%2250%22 cy=%2250%22 r=%2228%22 fill=%22%23E1F5EE%22/><circle cx=%2250%22 cy=%2250%22 r=%2216%22 fill=%22%230F6E56%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --coral:#D85A30; --coral-dark:#4A1B0C; --coral-light:#F5C4B3;
+    --teal:#0F6E56; --teal-light:#9FE1CB; --teal-pale:#E1F5EE;
+    --amber:#EF9F27; --amber-dark:#633806; --amber-pale:#FAEEDA;
+    --pink:#D4537E; --pink-dark:#4B1528; --pink-pale:#FBEAF0;
+    --cream:#FFF8F0; --paper:#FFFFFF; --ink:#2C1810; --ink-soft:#6B5B4F; --line:#EDE1D4;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:'Inter',sans-serif;background:var(--cream);color:var(--ink);}
+  h1,h2,.brand{font-family:'Fredoka',sans-serif;}
+  a{text-decoration:none;color:inherit;}
+  button{font-family:'Inter',sans-serif;}
+
+  header{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:18px 28px;background:var(--paper);border-bottom:2px solid var(--line);
+    position:sticky;top:0;z-index:10;
+  }
+  .brand{display:flex;align-items:center;gap:10px;font-size:22px;font-weight:600;color:var(--coral-dark);}
+  .brand-mark{width:34px;height:34px;border-radius:50%;background:var(--coral);position:relative;flex-shrink:0;}
+  .brand-mark::after{content:'';position:absolute;inset:7px;border-radius:50%;background:var(--teal-pale);}
+  .brand-mark::before{content:'';position:absolute;inset:12px;border-radius:50%;background:var(--teal);}
+  nav a{font-size:14px;font-weight:500;color:var(--ink-soft);margin-left:22px;}
+  nav a:hover{color:var(--coral);}
+  nav a.active{color:var(--coral-dark);font-weight:600;}
+
+  .hero{max-width:760px;margin:0 auto;padding:44px 28px 8px;text-align:center;}
+  .hero h1{font-size:30px;margin:0 0 10px;}
+  .hero p{color:var(--ink-soft);font-size:15px;margin:0;}
+
+  .tabs{display:flex;justify-content:center;gap:10px;margin:24px 0 6px;}
+  .tab-btn{
+    padding:9px 20px;border-radius:20px;font-size:13.5px;font-weight:600;border:2px solid var(--line);
+    background:var(--paper);color:var(--ink-soft);cursor:pointer;
+  }
+  .tab-btn.active{background:var(--ink);color:var(--cream);border-color:var(--ink);}
+
+  .faq-wrap{max-width:700px;margin:0 auto;padding:24px 28px 60px;}
+  .faq-group{display:none;}
+  .faq-group.active{display:block;}
+  .faq-item{background:var(--paper);border:2px solid var(--line);border-radius:14px;margin-bottom:12px;overflow:hidden;}
+  .faq-q{
+    display:flex;align-items:center;justify-content:space-between;padding:16px 18px;cursor:pointer;
+    font-size:14.5px;font-weight:600;
+  }
+  .faq-q .chev{transition:transform .2s ease;color:var(--ink-soft);flex-shrink:0;margin-left:12px;}
+  .faq-item.open .faq-q .chev{transform:rotate(180deg);}
+  .faq-a{max-height:0;overflow:hidden;transition:max-height .25s ease;}
+  .faq-a-inner{padding:0 18px 16px;color:var(--ink-soft);font-size:13.5px;line-height:1.6;}
+
+  footer{text-align:center;padding:24px;color:var(--ink-soft);font-size:12.5px;}
+
+  @media (max-width:560px){
+    nav a{margin-left:14px;font-size:13px;}
+    .hero h1{font-size:24px;}
+    .tab-btn{padding:8px 14px;font-size:13px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="vitrine-certa.html" class="brand">
+    <div class="brand-mark"></div>
+    Vitrine Certa
+  </a>
+  <nav>
+    <a href="sobre.html">Sobre</a>
+    <a href="faq.html" class="active">Dúvidas</a>
+  </nav>
+</header>
+
+<div class="hero">
+  <h1>Dúvidas frequentes</h1>
+  <p>Tudo que você precisa saber pra usar ou divulgar sua loja no Vitrine Certa</p>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" data-group="visitante">Pra quem visita</button>
+  <button class="tab-btn" data-group="lojista">Pra lojistas</button>
+</div>
+
+<div class="faq-wrap">
+  <div class="faq-group active" id="group-visitante">
+    <div class="faq-item">
+      <div class="faq-q">O que é o Vitrine Certa? <span class="chev">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">É uma vitrine digital com as lojas e serviços de Tupã-SP, organizados por categoria, com endereço, horário e um botão de WhatsApp pra falar direto com cada loja.</div></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">É grátis pra usar? <span class="chev">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Sim, totalmente grátis pra quem visita o site. Você navega, busca e entra em contato com as lojas sem pagar nada.</div></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Como entro em contato com uma loja? <span class="chev">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Clique na loja que te interessou e depois no botão verde "Chamar no WhatsApp" — ele já abre a conversa com uma mensagem pronta pra você só completar.</div></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">O Vitrine Certa vende ou entrega produtos? <span class="chev">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Não. O Vitrine Certa só conecta você à loja. Preço, forma de pagamento e entrega são combinados direto com cada loja pelo WhatsApp.</div></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Só tem lojas de Tupã? <span class="chev">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Por enquanto sim, o foco é Tupã-SP. A ideia é expandir pra outras cidades no futuro.</div></div>
+    </div>
+  </div>
+
+  <div class="faq-group" id="group-lojista">
+    <div class="faq-item">
+      <div class="faq-q">Como cadastro minha loja? <span class="chev">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">O cadastro é feito pela nossa equipe. Entre em contato pelo WhatsApp na seção "Quer divulgar sua loja?" na página inicial, nos passe os dados da sua loja e a gente cuida do resto.</div></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Quanto custa pra minha loja aparecer? <span class="chev">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">O cadastro básico é gratuito. Se quiser aparecer em destaque na home ou no topo da sua categoria, temos os planos Perto+ (R$ 29/mês) e Perto Top (R$ 59/mês), com 7 dias grátis pra testar.</div></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Como faço pra atualizar os dados da minha loja? <span class="chev">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">É só chamar a gente no WhatsApp com a alteração desejada (foto, horário, endereço, descrição) — nossa equipe atualiza pra você.</div></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Posso mudar de plano depois? <span class="chev">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Sim, a qualquer momento — é só chamar a gente no WhatsApp pedindo a troca de plano.</div></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Minha loja pode ser removida da plataforma? <span class="chev">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Sim, em caso de cadastro incorreto, inatividade ou violação das regras da plataforma. Qualquer dúvida sobre isso, fale com a nossa equipe.</div></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  Vitrine Certa · Tupã-SP ·
+  <a href="politica-privacidade.html" style="color:var(--ink-soft);text-decoration:underline;">Privacidade</a> ·
+  <a href="termos-de-uso.html" style="color:var(--ink-soft);text-decoration:underline;">Termos de Uso</a>
+</footer>
+
+<script>
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.faq-group').forEach(g=>g.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('group-'+btn.dataset.group).classList.add('active');
+  });
+});
+
+document.querySelectorAll('.faq-item').forEach(item=>{
+  const q = item.querySelector('.faq-q');
+  const a = item.querySelector('.faq-a');
+  q.addEventListener('click', ()=>{
+    const isOpen = item.classList.contains('open');
+    // fecha os outros itens do mesmo grupo
+    item.parentElement.querySelectorAll('.faq-item.open').forEach(other=>{
+      if(other !== item){
+        other.classList.remove('open');
+        other.querySelector('.faq-a').style.maxHeight = null;
+      }
+    });
+    if(isOpen){
+      item.classList.remove('open');
+      a.style.maxHeight = null;
+    } else {
+      item.classList.add('open');
+      a.style.maxHeight = a.scrollHeight + 'px';
+    }
+  });
+});
+</script>
+</body>
+</html>

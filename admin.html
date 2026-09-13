@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vitrine Certa - Painel de Admin</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%23D85A30%22/><circle cx=%2250%22 cy=%2250%22 r=%2228%22 fill=%22%23E1F5EE%22/><circle cx=%2250%22 cy=%2250%22 r=%2216%22 fill=%22%230F6E56%22/></svg>">
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --coral:#D85A30; --coral-dark:#4A1B0C; --coral-light:#F5C4B3;
+    --teal:#0F6E56; --teal-light:#9FE1CB; --teal-pale:#E1F5EE;
+    --amber:#EF9F27; --amber-dark:#633806; --amber-pale:#FAEEDA;
+    --red:#C0392B; --red-pale:#FBEAE8;
+    --cream:#FFF8F0; --paper:#FFFFFF; --ink:#2C1810; --ink-soft:#6B5B4F; --line:#EDE1D4;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:'Inter',sans-serif;background:var(--cream);color:var(--ink);}
+  h1,h2,.brand{font-family:'Fredoka',sans-serif;}
+  input,select,button{font-family:'Inter',sans-serif;}
+
+  .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+  .login-box{background:var(--paper);border:2px solid var(--line);border-radius:20px;padding:36px 32px;width:100%;max-width:380px;}
+  .login-brand{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:22px;}
+  .brand-mark{width:34px;height:34px;border-radius:50%;background:var(--coral);position:relative;flex-shrink:0;}
+  .brand-mark::after{content:'';position:absolute;inset:7px;border-radius:50%;background:var(--teal-pale);}
+  .brand-mark::before{content:'';position:absolute;inset:12px;border-radius:50%;background:var(--teal);}
+  .login-brand span{font-size:20px;font-weight:600;color:var(--coral-dark);}
+  .login-box h2{font-size:19px;text-align:center;margin:0 0 4px;}
+  .login-box .sub{text-align:center;color:var(--ink-soft);font-size:13.5px;margin:0 0 24px;}
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:13px;font-weight:500;color:var(--ink-soft);margin-bottom:6px;}
+  .field input, .field select{width:100%;padding:11px 14px;border:2px solid var(--line);border-radius:11px;font-size:14px;color:var(--ink);outline:none;background:var(--cream);}
+  .field input:focus, .field select:focus{border-color:var(--coral);}
+  .field.error input{border-color:var(--red);}
+  .field-error{color:var(--red);font-size:12px;margin-top:5px;display:none;}
+  .field.error .field-error{display:block;}
+  .btn-primary{width:100%;padding:13px;border:none;border-radius:12px;background:var(--coral);color:#fff;font-size:15px;font-weight:600;cursor:pointer;}
+  .btn-primary:hover{background:#c34e28;}
+  .login-hint{font-size:12px;color:var(--ink-soft);text-align:center;margin-top:16px;}
+
+  #adminApp{display:none;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 26px;background:var(--paper);border-bottom:2px solid var(--line);position:sticky;top:0;z-index:5;}
+  .topbar .brand{display:flex;align-items:center;gap:9px;font-size:19px;font-weight:600;color:var(--coral-dark);}
+  .topbar .who{display:flex;align-items:center;gap:14px;font-size:13.5px;color:var(--ink-soft);}
+  .logout-link{color:var(--ink-soft);font-size:13px;cursor:pointer;text-decoration:underline;background:none;border:none;}
+
+  .wrap{max-width:1100px;margin:0 auto;padding:30px 28px 60px;}
+  .head-row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;margin-bottom:24px;}
+  .head-row h1{font-size:24px;margin:0;}
+  .btn-add{background:var(--coral);color:#fff;border:none;padding:11px 20px;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;}
+
+  .cards-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:28px;}
+  .stat-card{background:var(--paper);border:2px solid var(--line);border-radius:16px;padding:16px 18px;}
+  .period-selector{display:flex;gap:8px;margin-bottom:16px;}
+  .period-pill{padding:8px 16px;border-radius:20px;font-size:13.5px;font-weight:500;cursor:pointer;border:2px solid var(--line);background:var(--paper);color:var(--ink-soft);}
+  .period-pill.active{background:var(--ink);color:var(--cream);border-color:var(--ink);}
+  .stat-card .n{font-size:24px;font-weight:600;font-family:'Fredoka',sans-serif;margin:0 0 2px;}
+  .stat-card .l{font-size:12.5px;color:var(--ink-soft);margin:0;}
+
+  .filter-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;}
+  .filter-row input{flex:1;min-width:200px;padding:10px 14px;border:2px solid var(--line);border-radius:11px;font-size:13.5px;background:var(--paper);outline:none;}
+  .filter-row select{padding:10px 14px;border:2px solid var(--line);border-radius:11px;font-size:13.5px;background:var(--paper);outline:none;}
+
+  table{width:100%;border-collapse:collapse;background:var(--paper);border:2px solid var(--line);border-radius:16px;overflow:hidden;}
+  thead th{text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.03em;color:var(--ink-soft);padding:12px 16px;background:var(--cream);border-bottom:2px solid var(--line);}
+  tbody td{padding:13px 16px;font-size:13.5px;border-bottom:1px solid var(--line);vertical-align:middle;}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr.banned{opacity:.5;}
+  .store-name{font-weight:600;}
+  .plan-tag{display:inline-block;font-size:11.5px;font-weight:600;padding:4px 10px;border-radius:10px;}
+  .plan-tag.Básico{background:var(--line);color:var(--ink-soft);}
+  .plan-tag.Perto\+{background:var(--teal-pale);color:var(--teal);}
+  .plan-tag.Perto\ Top{background:var(--amber-pale);color:var(--amber-dark);}
+  .row-actions{display:flex;gap:8px;}
+  .icon-btn{width:32px;height:32px;border-radius:9px;border:2px solid var(--line);background:var(--paper);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ink-soft);}
+  .icon-btn:hover{border-color:var(--coral);color:var(--coral);}
+  .icon-btn.danger:hover{border-color:var(--red);color:var(--red);}
+  .status-badge{font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:9px;}
+  .status-badge.active{background:var(--teal-pale);color:var(--teal);}
+  .status-badge.banned{background:var(--red-pale);color:var(--red);}
+
+  .modal-bg{display:none;position:fixed;inset:0;background:rgba(44,24,16,.35);align-items:center;justify-content:center;z-index:20;padding:20px;}
+  .modal-bg.open{display:flex;}
+  .modal{background:var(--paper);border-radius:18px;padding:28px;max-width:520px;width:100%;max-height:88vh;overflow-y:auto;}
+  .modal h2{font-size:19px;margin:0 0 18px;}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .field.full{grid-column:1/-1;}
+  .modal-actions{display:flex;gap:10px;margin-top:18px;}
+  .btn-secondary{flex:1;background:var(--line);color:var(--ink);border:none;padding:12px;border-radius:11px;font-size:14px;font-weight:600;cursor:pointer;}
+  .modal-actions .btn-primary{flex:1;}
+
+  .confirm-modal .modal{max-width:380px;text-align:center;}
+  .confirm-modal .warn-icon{width:48px;height:48px;border-radius:50%;background:var(--red-pale);color:var(--red);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;}
+  .confirm-modal p{font-size:13.5px;color:var(--ink-soft);line-height:1.5;}
+  .btn-danger{flex:1;background:var(--red);color:#fff;border:none;padding:12px;border-radius:11px;font-size:14px;font-weight:600;cursor:pointer;}
+
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--ink);color:var(--cream);padding:14px 20px;border-radius:12px;font-size:13.5px;display:flex;align-items:center;gap:10px;box-shadow:0 8px 24px rgba(0,0,0,.18);z-index:30;transform:translateY(120%);transition:transform .25s ease;}
+  .toast.show{transform:translateY(0);}
+  .toast .tick{color:var(--teal-light);}
+
+  @media (max-width:720px){
+    .form-row{grid-template-columns:1fr;}
+    table{font-size:12.5px;}
+    thead th, tbody td{padding:10px 10px;}
+  }
+</style>
+</head>
+<body>
+
+<div id="loginScreen" class="login-wrap">
+  <div class="login-box">
+    <div class="login-brand"><div class="brand-mark"></div><span>Vitrine Certa</span></div>
+    <h2>Painel de administração</h2>
+    <p class="sub">Acesso restrito ao responsável pela plataforma</p>
+    <div class="field"><label>E-mail</label><input type="email" id="loginEmail" placeholder="seu@email.com"></div>
+    <div class="field"><label>Senha</label><input type="password" id="loginPass" placeholder="••••••••"></div>
+    <p id="loginError" style="display:none;color:var(--red);font-size:13px;margin:-4px 0 10px;"></p>
+    <button class="btn-primary" id="loginBtn">Entrar</button>
+    <p class="login-hint">Acesso restrito à conta cadastrada como administrador.</p>
+  </div>
+</div>
+
+<div id="adminApp">
+  <div class="topbar">
+    <div class="brand"><div class="brand-mark"></div>Vitrine Certa · Admin</div>
+    <div class="who"></div>
+  </div>
+
+  <div class="wrap">
+    <div class="head-row">
+      <h1>Lojas cadastradas</h1>
+      <button class="btn-add" id="openAddBtn">+ Cadastrar loja</button>
+    </div>
+
+    <div class="cards-row" id="statsRow"></div>
+
+    <div class="filter-row">
+      <input type="text" id="searchInput" placeholder="Buscar por nome da loja...">
+      <select id="planFilter">
+        <option value="Todos">Todos os planos</option>
+        <option value="Básico">Básico</option>
+        <option value="Perto+">Perto+</option>
+        <option value="Perto Top">Perto Top</option>
+      </select>
+      <select id="statusFilter">
+        <option value="Todos">Todos os status</option>
+        <option value="active">Ativas</option>
+        <option value="banned">Banidas</option>
+      </select>
+    </div>
+
+    <table>
+      <thead><tr><th>Loja</th><th>Categoria</th><th>Plano</th><th>Status</th><th>Ações</th></tr></thead>
+      <tbody id="storesBody"></tbody>
+    </table>
+
+    <div class="head-row" style="margin-top:44px;">
+      <h1>Estatísticas do site</h1>
+    </div>
+    <div class="period-selector" id="statsPeriodSelector">
+      <div class="period-pill active" data-period="7">7 dias</div>
+      <div class="period-pill" data-period="30">30 dias</div>
+      <div class="period-pill" data-period="total">Total</div>
+    </div>
+    <div class="cards-row" id="siteStatsCards"></div>
+    <table>
+      <thead><tr><th>Loja</th><th>Visualizações</th><th>Cliques no WhatsApp</th><th>Conversão</th></tr></thead>
+      <tbody id="siteStatsBody"></tbody>
+    </table>
+
+    <div class="head-row" style="margin-top:44px;">
+      <h1>Ofertas (produtos afiliados)</h1>
+    </div>
+    <div class="modal" style="max-width:100%;padding:20px 24px;margin-bottom:20px;">
+      <div class="form-row">
+        <div class="field full" id="fw-aff-title"><label>Título do produto</label><input id="aff-title" placeholder="Ex: Fone de ouvido bluetooth sem fio"><div class="field-error">Informe o título do produto.</div></div>
+        <div class="field"><label>Preço (R$)</label><input id="aff-price" type="text" inputmode="decimal" placeholder="Ex: 89,90 ou 6.290,00"></div>
+        <div class="field"><label>Link da foto (opcional)</label><input id="aff-image" placeholder="https://..."></div>
+        <div class="field full" id="fw-aff-url"><label>Link de afiliado</label><input id="aff-url" placeholder="Cole aqui o seu link de afiliado (Mercado Livre, Amazon, Shopee...)"><div class="field-error">Informe o link de afiliado.</div></div>
+      </div>
+      <button class="btn-primary" id="addAffBtn" style="max-width:220px;margin-top:10px;">+ Adicionar oferta</button>
+      <p id="affError" style="display:none;color:var(--red);font-size:13px;margin-top:8px;"></p>
+    </div>
+    <table>
+      <thead><tr><th>Produto</th><th>Preço</th><th>Status</th><th>Ações</th></tr></thead>
+      <tbody id="affBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="modal-bg" id="addModalBg">
+  <div class="modal">
+    <h2 id="modalTitle">Cadastrar nova loja</h2>
+    <div class="form-row">
+      <div class="field full" id="fw-name"><label>Nome da loja</label><input id="m-name"><div class="field-error">Informe o nome da loja.</div></div>
+      <div class="field"><label>Categoria</label><select id="m-cat"></select></div>
+      <div class="field"><label>Plano</label><select id="m-plan"></select></div>
+      <div class="field full" id="fw-addr"><label>Endereço</label><input id="m-addr"><div class="field-error">Informe o endereço da loja.</div></div>
+      <div class="field full">
+        <label>Horário de funcionamento</label>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <input type="time" id="m-hours-start" style="flex:1;">
+          <span style="color:var(--ink-soft);font-size:13px;">até</span>
+          <input type="time" id="m-hours-end" style="flex:1;">
+        </div>
+      </div>
+      <div class="field" id="fw-phone"><label>WhatsApp</label><input id="m-phone" placeholder="(14) 99999-0000"><div class="field-error">Use o formato (DD) 9XXXX-XXXX.</div></div>
+      <div class="field full" id="fw-email"><label>E-mail de contato (opcional)</label><input id="m-email" placeholder="loja@email.com"><div class="field-error">Informe um e-mail válido.</div></div>
+      <div class="field full"><label>Descrição</label><input id="m-desc" placeholder="Uma frase sobre a loja"></div>
+      <div class="field full" id="promo-wrap" style="display:none;">
+        <label>🔥 Promoção ativa <span style="font-weight:400;color:var(--ink-soft);">(benefício dos planos pagos)</span></label>
+        <input id="m-promo" placeholder="Ex: Brigadeiros com 20% OFF hoje">
+        <div style="display:flex;align-items:center;gap:10px;margin-top:8px;">
+          <span style="font-size:13px;color:var(--ink-soft);">Válida até (opcional)</span>
+          <input type="date" id="m-promo-expires" style="flex:1;">
+        </div>
+      </div>
+      <div class="field full" id="fw-dup" style="display:none;"><div class="field-error" style="display:block;">Já existe uma loja cadastrada com este nome e endereço.</div></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" id="cancelModalBtn">Cancelar</button>
+      <button class="btn-primary" id="saveModalBtn">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg confirm-modal" id="confirmModalBg">
+  <div class="modal">
+    <div class="warn-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg></div>
+    <h2 id="confirmTitle">Banir esta loja?</h2>
+    <p id="confirmText"></p>
+    <div class="modal-actions">
+      <button class="btn-secondary" id="cancelConfirmBtn">Cancelar</button>
+      <button class="btn-danger" id="confirmActionBtn">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span class="tick">✓</span><span id="toastText"></span></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://ppoelkclmuqojgjrzpkw.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwb2Vsa2NsbXVxb2pnanJ6cGt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkxNTk5OTEsImV4cCI6MjEwNDczNTk5MX0.t8b2FiDioq4YoIYV-8kAEo285IH2lSzjJEIFAzeis3k";
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let STORES = [];
+let CATEGORIES = [];
+let PLANS_DB = [];
+let editingId = null;
+let pendingAction = null;
+let search = "";
+let planFilterVal = "Todos";
+let statusFilterVal = "Todos";
+
+function catNameById(id){ const c = CATEGORIES.find(c=>c.id===id); return c ? c.name : ''; }
+function planLabelById(id){ const p = PLANS_DB.find(p=>p.id===id); return p ? p.display_name : id; }
+function isPromoActive(s){
+  if(!s.promo_text) return false;
+  if(!s.promo_expires_at) return true;
+  return s.promo_expires_at >= new Date().toISOString().slice(0,10);
+}
+
+async function enterAdminApp(email){
+  document.querySelector('.who').innerHTML = `${email} <button class="logout-link" id="logoutBtn">Sair</button>`;
+  document.getElementById('logoutBtn').addEventListener('click', doLogout);
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('adminApp').style.display = 'block';
+
+  await loadReferenceData();
+  await loadStores();
+  await loadAffiliates();
+  renderAffTable();
+  renderAll();
+  await loadSiteStats();
+}
+
+document.getElementById('loginBtn').addEventListener('click', async ()=>{
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPass').value;
+  const errEl = document.getElementById('loginError');
+  errEl.style.display = 'none';
+
+  const { data: authData, error: authError } = await sb.auth.signInWithPassword({ email, password });
+  if(authError){ errEl.textContent = 'E-mail ou senha incorretos.'; errEl.style.display = 'block'; return; }
+
+  const { data: adminRow } = await sb.from('admins').select('user_id').eq('user_id', authData.user.id).maybeSingle();
+  if(!adminRow){
+    errEl.textContent = 'Este login não tem acesso de administrador.';
+    errEl.style.display = 'block';
+    await sb.auth.signOut();
+    return;
+  }
+
+  await enterAdminApp(email);
+});
+
+(async function checkExistingSession(){
+  const { data: sessionData } = await sb.auth.getSession();
+  const session = sessionData && sessionData.session;
+  if(!session) return;
+
+  const { data: adminRow } = await sb.from('admins').select('user_id').eq('user_id', session.user.id).maybeSingle();
+  if(!adminRow){ await sb.auth.signOut(); return; }
+
+  await enterAdminApp(session.user.email);
+})();
+
+async function doLogout(){
+  await sb.auth.signOut();
+  document.getElementById('adminApp').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+}
+
+async function loadReferenceData(){
+  const [{ data: cats }, { data: plans }] = await Promise.all([
+    sb.from('categories').select('id, name'),
+    sb.from('plans').select('id, display_name')
+  ]);
+  CATEGORIES = cats || [];
+  PLANS_DB = plans || [];
+  document.getElementById('m-cat').innerHTML = CATEGORIES.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+  document.getElementById('m-plan').innerHTML = PLANS_DB.map(p=>`<option value="${p.id}">${p.display_name}</option>`).join('');
+}
+
+async function loadStores(){
+  const { data, error } = await sb.from('stores').select('id, name, category_id, plan_id, status, address, hours_start, hours_end, whatsapp_phone, contact_email, description, promo_text, promo_expires_at');
+  if(error){ console.error(error); STORES = []; return; }
+  STORES = data || [];
+}
+
+function renderAll(){ renderStats(); renderTable(); }
+
+let statsPeriod = "7";
+
+document.querySelectorAll('#statsPeriodSelector .period-pill').forEach(pill=>{
+  pill.addEventListener('click', ()=>{
+    statsPeriod = pill.dataset.period;
+    document.querySelectorAll('#statsPeriodSelector .period-pill').forEach(p=>p.classList.remove('active'));
+    pill.classList.add('active');
+    loadSiteStats();
+  });
+});
+
+async function loadSiteStats(){
+  const today = new Date();
+  let query = sb.from('store_stats_daily').select('store_id, views, whatsapp_clicks, date');
+  if(statsPeriod !== 'total'){
+    const daysBack = statsPeriod === '7' ? 7 : 30;
+    const from = new Date(today); from.setDate(from.getDate() - daysBack + 1);
+    query = query.gte('date', from.toISOString().slice(0,10));
+  }
+  const { data, error } = await query;
+  if(error){ console.error('Erro ao carregar estatísticas:', error); return; }
+
+  const byStore = {};
+  let totalViews = 0, totalClicks = 0;
+  (data || []).forEach(row => {
+    if(!byStore[row.store_id]) byStore[row.store_id] = { views:0, clicks:0 };
+    byStore[row.store_id].views += row.views;
+    byStore[row.store_id].clicks += row.whatsapp_clicks;
+    totalViews += row.views;
+    totalClicks += row.whatsapp_clicks;
+  });
+
+  document.getElementById('siteStatsCards').innerHTML = `
+    <div class="stat-card"><p class="n">${totalViews}</p><p class="l">Visualizações totais</p></div>
+    <div class="stat-card"><p class="n">${totalClicks}</p><p class="l">Cliques no WhatsApp</p></div>
+    <div class="stat-card"><p class="n">${totalViews ? Math.round(totalClicks/totalViews*100) : 0}%</p><p class="l">Taxa de conversão</p></div>
+  `;
+
+  const rows = STORES.map(s => {
+    const st = byStore[s.id] || { views:0, clicks:0 };
+    return { name: s.name, views: st.views, clicks: st.clicks };
+  }).sort((a,b)=> b.views - a.views);
+
+  document.getElementById('siteStatsBody').innerHTML = rows.map(r => `
+    <tr>
+      <td class="store-name">${r.name}</td>
+      <td>${r.views}</td>
+      <td>${r.clicks}</td>
+      <td>${r.views ? Math.round(r.clicks/r.views*100) : 0}%</td>
+    </tr>
+  `).join('') || `<tr><td colspan="4" style="text-align:center;color:var(--ink-soft);padding:20px;">Sem dados ainda.</td></tr>`;
+}
+
+let AFFILIATES = [];
+
+async function loadAffiliates(){
+  const { data, error } = await sb.from('affiliate_products').select('id, title, price, image_url, affiliate_url, active, sort_order').order('sort_order');
+  if(error){ console.error(error); AFFILIATES = []; return; }
+  AFFILIATES = data || [];
+}
+
+function renderAffTable(){
+  document.getElementById('affBody').innerHTML = AFFILIATES.map(a => `
+    <tr class="${!a.active ? 'banned' : ''}">
+      <td class="store-name">${a.title || '(sem título)'}</td>
+      <td>${a.price != null ? 'R$ ' + Number(a.price).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}) : '—'}</td>
+      <td><span class="status-badge ${a.active ? 'active':'banned'}">${a.active ? 'Ativa':'Pausada'}</span></td>
+      <td>
+        <div class="row-actions">
+          <button class="icon-btn" title="${a.active ? 'Pausar':'Ativar'}" data-aff-action="toggle" data-id="${a.id}">
+            ${a.active ? `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.9" y1="4.9" x2="19.1" y2="19.1"/></svg>` : `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>`}
+          </button>
+          <button class="icon-btn danger" title="Remover" data-aff-action="remove" data-id="${a.id}">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+          </button>
+        </div>
+      </td>
+    </tr>
+  `).join('') || `<tr><td colspan="4" style="text-align:center;color:var(--ink-soft);padding:20px;">Nenhuma oferta cadastrada.</td></tr>`;
+
+  document.querySelectorAll('[data-aff-action]').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const id = btn.dataset.id;
+      const action = btn.dataset.affAction;
+      if(action === 'remove'){
+        if(!confirm('Remover esta oferta?')) return;
+        await sb.from('affiliate_products').delete().eq('id', id);
+      } else {
+        const a = AFFILIATES.find(x=>x.id===id);
+        await sb.from('affiliate_products').update({ active: !a.active }).eq('id', id);
+      }
+      await loadAffiliates();
+      renderAffTable();
+    });
+  });
+}
+
+function parseBRLPrice(str){
+  if(!str) return null;
+  const cleaned = str.trim().replace(/\./g, '').replace(',', '.');
+  const num = parseFloat(cleaned);
+  return isNaN(num) ? null : num;
+}
+
+function clearAffErrors(){
+  ['fw-aff-title','fw-aff-url'].forEach(id=> document.getElementById(id).classList.remove('error'));
+  document.getElementById('affError').style.display = 'none';
+}
+
+document.getElementById('addAffBtn').addEventListener('click', async ()=>{
+  clearAffErrors();
+  const errEl = document.getElementById('affError');
+  const title = document.getElementById('aff-title').value.trim();
+  const priceVal = document.getElementById('aff-price').value;
+  const image = document.getElementById('aff-image').value.trim();
+  const url = document.getElementById('aff-url').value.trim();
+
+  let valid = true;
+  if(!title){ document.getElementById('fw-aff-title').classList.add('error'); valid = false; }
+  if(!url){ document.getElementById('fw-aff-url').classList.add('error'); valid = false; }
+  if(priceVal.trim() && parseBRLPrice(priceVal) === null){
+    errEl.textContent = 'Preço inválido. Use o formato 89,90 ou 6.290,00.';
+    errEl.style.display = 'block';
+    return;
+  }
+  if(!valid){
+    errEl.textContent = 'Preencha pelo menos o título e o link de afiliado.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  const { error } = await sb.from('affiliate_products').insert({
+    title,
+    price: parseBRLPrice(priceVal),
+    image_url: image || null,
+    affiliate_url: url,
+    active: true,
+    sort_order: AFFILIATES.length
+  });
+  if(error){
+    errEl.textContent = 'Erro ao salvar: ' + error.message;
+    errEl.style.display = 'block';
+    return;
+  }
+  ['aff-title','aff-price','aff-image','aff-url'].forEach(id=> document.getElementById(id).value = '');
+  await loadAffiliates();
+  renderAffTable();
+  showToast('Oferta adicionada');
+});
+
+function renderStats(){
+  const total = STORES.length;
+  const active = STORES.filter(s=>s.status==='active').length;
+  const paid = STORES.filter(s=>s.plan_id!=='basico' && s.status==='active').length;
+  const banned = STORES.filter(s=>s.status==='banned').length;
+  document.getElementById('statsRow').innerHTML = `
+    <div class="stat-card"><p class="n">${total}</p><p class="l">Lojas cadastradas</p></div>
+    <div class="stat-card"><p class="n">${active}</p><p class="l">Ativas</p></div>
+    <div class="stat-card"><p class="n">${paid}</p><p class="l">Em planos pagos</p></div>
+    <div class="stat-card"><p class="n">${banned}</p><p class="l">Banidas</p></div>
+  `;
+}
+
+function renderTable(){
+  const rows = STORES.filter(s=>{
+    const matchSearch = s.name.toLowerCase().includes(search.toLowerCase());
+    const matchPlan = planFilterVal === "Todos" || planLabelById(s.plan_id) === planFilterVal;
+    const matchStatus = statusFilterVal === "Todos" || s.status === statusFilterVal;
+    return matchSearch && matchPlan && matchStatus;
+  });
+
+  document.getElementById('storesBody').innerHTML = rows.map(s => `
+    <tr class="${s.status==='banned' ? 'banned':''}">
+      <td class="store-name">${s.name}</td>
+      <td>${catNameById(s.category_id)}</td>
+      <td><span class="plan-tag ${planLabelById(s.plan_id)}">${planLabelById(s.plan_id)}</span> ${isPromoActive(s) ? '🔥' : ''}</td>
+      <td><span class="status-badge ${s.status}">${s.status==='active' ? 'Ativa' : 'Banida'}</span></td>
+      <td>
+        <div class="row-actions">
+          <button class="icon-btn" title="Editar" data-action="edit" data-id="${s.id}">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </button>
+          <button class="icon-btn" title="${s.status==='active' ? 'Banir' : 'Reativar'}" data-action="${s.status==='active' ? 'ban':'unban'}" data-id="${s.id}">
+            ${s.status==='active' ? `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.9" y1="4.9" x2="19.1" y2="19.1"/></svg>` : `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>`}
+          </button>
+          <button class="icon-btn danger" title="Remover" data-action="remove" data-id="${s.id}">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+          </button>
+        </div>
+      </td>
+    </tr>
+  `).join('') || `<tr><td colspan="5" style="text-align:center;color:var(--ink-soft);padding:24px;">Nenhuma loja encontrada.</td></tr>`;
+
+  document.querySelectorAll('[data-action]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const id = btn.dataset.id;
+      const action = btn.dataset.action;
+      if(action === 'edit') openModal(id);
+      else openConfirm(id, action);
+    });
+  });
+}
+
+document.getElementById('searchInput').addEventListener('input', e=>{ search = e.target.value; renderTable(); });
+document.getElementById('planFilter').addEventListener('change', e=>{ planFilterVal = e.target.value; renderTable(); });
+document.getElementById('statusFilter').addEventListener('change', e=>{ statusFilterVal = e.target.value; renderTable(); });
+
+function showToast(text){
+  const t = document.getElementById('toast');
+  document.getElementById('toastText').textContent = text;
+  t.classList.add('show');
+  setTimeout(()=> t.classList.remove('show'), 3500);
+}
+
+function clearErrors(){
+  ['fw-name','fw-addr','fw-phone','fw-email'].forEach(id=> document.getElementById(id).classList.remove('error'));
+  document.getElementById('fw-dup').style.display = 'none';
+}
+
+function openModal(id){
+  editingId = id;
+  clearErrors();
+  const bg = document.getElementById('addModalBg');
+  if(id){
+    const s = STORES.find(x=>x.id===id);
+    document.getElementById('modalTitle').textContent = 'Editar loja';
+    document.getElementById('m-name').value = s.name;
+    document.getElementById('m-cat').value = s.category_id;
+    document.getElementById('m-plan').value = s.plan_id;
+    document.getElementById('m-addr').value = s.address;
+    document.getElementById('m-hours-start').value = s.hours_start ? s.hours_start.slice(0,5) : '';
+    document.getElementById('m-hours-end').value = s.hours_end ? s.hours_end.slice(0,5) : '';
+    document.getElementById('m-phone').value = s.whatsapp_phone;
+    document.getElementById('m-email').value = s.contact_email || '';
+    document.getElementById('m-desc').value = s.description || '';
+    document.getElementById('m-promo').value = s.promo_text || '';
+    document.getElementById('m-promo-expires').value = s.promo_expires_at || '';
+  } else {
+    document.getElementById('modalTitle').textContent = 'Cadastrar nova loja';
+    ['m-name','m-addr','m-phone','m-email','m-desc','m-promo','m-promo-expires'].forEach(fid=> document.getElementById(fid).value = '');
+    document.getElementById('m-hours-start').value = '';
+    document.getElementById('m-hours-end').value = '';
+    if(CATEGORIES[0]) document.getElementById('m-cat').value = CATEGORIES[0].id;
+    document.getElementById('m-plan').value = 'basico';
+  }
+  bg.classList.add('open');
+  updatePromoVisibility();
+}
+document.getElementById('m-plan').addEventListener('change', updatePromoVisibility);
+function updatePromoVisibility(){
+  const isPaid = document.getElementById('m-plan').value !== 'basico';
+  document.getElementById('promo-wrap').style.display = isPaid ? 'block' : 'none';
+}
+
+document.getElementById('openAddBtn').addEventListener('click', ()=> openModal(null));
+document.getElementById('cancelModalBtn').addEventListener('click', ()=> document.getElementById('addModalBg').classList.remove('open'));
+
+function validateStoreForm(){
+  clearErrors();
+  let valid = true;
+  const name = document.getElementById('m-name').value.trim();
+  const addr = document.getElementById('m-addr').value.trim();
+  const phone = document.getElementById('m-phone').value.trim();
+  const email = document.getElementById('m-email').value.trim();
+
+  if(!name){ document.getElementById('fw-name').classList.add('error'); valid = false; }
+  if(!addr){ document.getElementById('fw-addr').classList.add('error'); valid = false; }
+
+  const phoneOk = /^\(\d{2}\)\s?9?\d{4}-?\d{4}$/.test(phone);
+  if(!phoneOk){ document.getElementById('fw-phone').classList.add('error'); valid = false; }
+
+  const emailOk = email === '' || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  if(!emailOk){ document.getElementById('fw-email').classList.add('error'); valid = false; }
+
+  if(name && addr){
+    const dup = STORES.some(s => s.id !== editingId && s.name.toLowerCase()===name.toLowerCase() && s.address.toLowerCase()===addr.toLowerCase());
+    if(dup){ document.getElementById('fw-dup').style.display = 'block'; valid = false; }
+  }
+  return valid;
+}
+
+document.getElementById('saveModalBtn').addEventListener('click', async ()=>{
+  if(!validateStoreForm()) return;
+  const hStart = document.getElementById('m-hours-start').value;
+  const hEnd = document.getElementById('m-hours-end').value;
+  const payload = {
+    name: document.getElementById('m-name').value,
+    category_id: document.getElementById('m-cat').value,
+    plan_id: document.getElementById('m-plan').value,
+    address: document.getElementById('m-addr').value,
+    hours_start: hStart || null,
+    hours_end: hEnd || null,
+    whatsapp_phone: document.getElementById('m-phone').value,
+    contact_email: document.getElementById('m-email').value || null,
+    description: document.getElementById('m-desc').value || null,
+    promo_text: document.getElementById('m-plan').value !== 'basico' ? (document.getElementById('m-promo').value || null) : null,
+    promo_expires_at: document.getElementById('m-plan').value !== 'basico' ? (document.getElementById('m-promo-expires').value || null) : null
+  };
+
+  let error;
+  if(editingId){
+    ({ error } = await sb.from('stores').update(payload).eq('id', editingId));
+  } else {
+    ({ error } = await sb.from('stores').insert({ ...payload, status: 'active' }));
+  }
+
+  if(error){
+    showToast('Erro ao salvar: ' + error.message);
+  } else {
+    document.getElementById('addModalBg').classList.remove('open');
+    showToast(editingId ? 'Loja atualizada' : 'Loja cadastrada com sucesso!');
+    await loadStores();
+    renderAll();
+  }
+});
+
+function openConfirm(id, action){
+  pendingAction = { id, action };
+  const titleEl = document.getElementById('confirmTitle');
+  const textEl = document.getElementById('confirmText');
+  const btn = document.getElementById('confirmActionBtn');
+  if(action === 'ban'){
+    titleEl.textContent = 'Banir esta loja?';
+    textEl.textContent = 'A loja deixa de aparecer na vitrine pública imediatamente. Você pode reverter isso depois.';
+    btn.textContent = 'Banir loja';
+  } else if(action === 'unban'){
+    titleEl.textContent = 'Reativar esta loja?';
+    textEl.textContent = 'A loja volta a aparecer normalmente na vitrine pública.';
+    btn.textContent = 'Reativar';
+  } else {
+    titleEl.textContent = 'Remover esta loja?';
+    textEl.textContent = 'Essa ação apaga o cadastro da loja permanentemente. Não pode ser desfeita.';
+    btn.textContent = 'Remover definitivamente';
+  }
+  document.getElementById('confirmModalBg').classList.add('open');
+}
+document.getElementById('cancelConfirmBtn').addEventListener('click', ()=>{
+  document.getElementById('confirmModalBg').classList.remove('open');
+  pendingAction = null;
+});
+document.getElementById('confirmActionBtn').addEventListener('click', async ()=>{
+  if(!pendingAction) return;
+  const { id, action } = pendingAction;
+  let error;
+  if(action === 'remove'){
+    ({ error } = await sb.from('stores').delete().eq('id', id));
+  } else {
+    ({ error } = await sb.from('stores').update({ status: action === 'ban' ? 'banned' : 'active' }).eq('id', id));
+  }
+  if(error) showToast('Erro: ' + error.message);
+  document.getElementById('confirmModalBg').classList.remove('open');
+  pendingAction = null;
+  await loadStores();
+  renderAll();
+});
+</script>
+</body>
+</html>
