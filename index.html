@@ -129,6 +129,28 @@
   .offers-footer{background:var(--paper);border-top:2px solid var(--line);max-width:100%;padding:36px 28px;margin-top:20px;}
   .offers-footer .offers-strip{max-width:1200px;margin:0 auto;}
   .offers-footer h2, .offers-footer .offers-sub{max-width:1200px;margin-left:auto;margin-right:auto;}
+
+  .layout-wrap{display:flex;flex-direction:column;max-width:1300px;margin:0 auto;gap:24px;padding:0 16px;}
+  .main-col{flex:1;min-width:0;}
+  .lojista-sticky-wrap{width:100%;}
+  @media (min-width:1100px){
+    .layout-wrap{flex-direction:row;align-items:flex-start;}
+    .lojista-sticky-wrap{width:270px;flex-shrink:0;position:sticky;top:20px;}
+  }
+  .lojista-card{
+    background:linear-gradient(160deg, var(--teal-pale) 0%, var(--paper) 65%);
+    border:2px solid var(--teal-light);border-radius:22px;padding:28px 22px;text-align:center;
+  }
+  .lojista-card .lc-icon{font-size:42px;margin-bottom:14px;line-height:1;}
+  .lojista-card h3{font-size:18px;margin:0 0 10px;line-height:1.3;}
+  .lojista-card p{font-size:13.5px;color:var(--ink-soft);margin:0 0 20px;line-height:1.5;}
+  .lojista-cta-btn{
+    display:flex;align-items:center;justify-content:center;gap:8px;width:100%;
+    background:var(--coral);color:#fff;border:none;padding:15px 14px;border-radius:13px;
+    font-size:14px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;
+    box-shadow:0 8px 20px rgba(216,90,48,.35);transition:transform .12s ease;
+  }
+  .lojista-cta-btn:hover{transform:translateY(-2px);}
   .promo-strip{display:flex;gap:14px;overflow-x:auto;padding-bottom:6px;}
   .promo-card{
     flex:0 0 auto;min-width:220px;background:var(--paper);border:2px solid var(--coral-light);border-radius:16px;
@@ -292,6 +314,8 @@ function renderHome(){
   });
 
   app.innerHTML = `
+    <div class="layout-wrap">
+    <div class="main-col">
     <div class="hero">
       <div class="hero-inner">
         <h1>O que você procura em Tupã?</h1>
@@ -408,6 +432,17 @@ function renderHome(){
       </div>
     </div>
     ` : ''}
+    </div>
+
+    <div class="lojista-sticky-wrap">
+      <div class="lojista-card">
+        <div class="lc-icon">🏪📍</div>
+        <h3>Quanto vale um novo cliente em Tupã?</h3>
+        <p>Anuncie sua loja na Vitrine Certa a partir de R$ 0,00/mês.</p>
+        <button class="lojista-cta-btn" id="lojistaCtaBtn">${iconWpp()} Falar com um Consultor no WhatsApp</button>
+      </div>
+    </div>
+    </div>
   `;
 
   if(featured.length) setupCarousel(featured);
@@ -429,6 +464,12 @@ function renderHome(){
   });
   const clearBtn = document.getElementById('clearFiltersBtn');
   if(clearBtn) clearBtn.addEventListener('click', ()=>{ searchTerm = ''; activeCat = 'Todos'; renderHome(); });
+
+  const lojistaCtaBtn = document.getElementById('lojistaCtaBtn');
+  if(lojistaCtaBtn) lojistaCtaBtn.addEventListener('click', ()=>{
+    const msg = encodeURIComponent('Olá! Quero saber mais sobre como anunciar minha loja no Vitrine Certa.');
+    window.open(`https://wa.me/5514998471171?text=${msg}`, '_blank');
+  });
 
   document.querySelectorAll('.plan-cta').forEach(btn=>{
     btn.addEventListener('click', ()=>{
