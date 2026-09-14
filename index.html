@@ -195,9 +195,16 @@
 
   .store-page{max-width:760px;margin:0 auto;padding:0 28px 60px;}
   .back-btn{display:inline-flex;align-items:center;gap:6px;margin:22px 0 18px;font-size:14px;font-weight:500;color:var(--ink-soft);cursor:pointer;background:none;border:none;font-family:'Inter',sans-serif;padding:0;}
-  .store-hero{height:200px;border-radius:20px;display:flex;align-items:center;justify-content:center;font-family:'Fredoka',sans-serif;color:rgba(0,0,0,.35);font-size:16px;margin-bottom:20px;overflow:hidden;}
+  .store-hero{height:200px;border-radius:20px;display:flex;align-items:center;justify-content:center;font-family:'Fredoka',sans-serif;color:rgba(0,0,0,.35);font-size:16px;margin-bottom:20px;overflow:hidden;position:relative;touch-action:pan-y;}
+  .gallery-arrow{
+    position:absolute;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:50%;
+    background:rgba(255,255,255,.9);border:none;display:flex;align-items:center;justify-content:center;
+    cursor:pointer;color:var(--ink);z-index:2;box-shadow:0 2px 8px rgba(0,0,0,.15);
+  }
+  .gallery-arrow.prev{left:10px;} .gallery-arrow.next{right:10px;}
   .store-gallery{display:flex;gap:8px;margin:-12px 0 20px;overflow-x:auto;}
-  .store-gallery img{width:70px;height:70px;object-fit:cover;border-radius:10px;flex-shrink:0;border:2px solid var(--line);}
+  .store-gallery img{width:70px;height:70px;object-fit:cover;border-radius:10px;flex-shrink:0;border:2px solid var(--line);cursor:pointer;transition:border-color .12s ease;}
+  .store-gallery img.active{border-color:var(--coral);}
 
   .name-row{display:flex;align-items:center;gap:8px;}
   .store-logo{width:28px;height:28px;border-radius:50%;object-fit:cover;border:2px solid var(--paper);box-shadow:0 0 0 1px var(--line);flex-shrink:0;}
@@ -610,14 +617,19 @@ function renderStore(id){
 
   const catColors = { "Moda":["#E1F5EE","#0F6E56"], "Alimentação":["#FAEEDA","#633806"], "Beleza":["#FBEAF0","#4B1528"], "Serviços":["#EEEDFE","#3C3489"] };
   const [bg, fg] = catColors[s.category] || ["#EDE1D4", "#2C1810"];
+  let galleryIndex = 0;
 
   app.innerHTML = `
     <div class="store-page">
       <button class="back-btn" id="backBtn">&larr; Voltar para a vitrine</button>
-      <div class="store-hero" style="background:${s.color}30;position:relative;">
-        ${s.photos[0] ? `<img src="${s.photos[0]}" alt="${s.name}" style="width:100%;height:100%;object-fit:contain;position:absolute;inset:0;">` : 'Foto da loja'}
+      <div class="store-hero" style="background:${s.color}30;" id="storeHero">
+        ${s.photos.length ? `<img src="${s.photos[0]}" alt="${s.name}" id="heroImg" style="width:100%;height:100%;object-fit:contain;position:absolute;inset:0;">` : 'Foto da loja'}
+        ${s.photos.length > 1 ? `
+          <button class="gallery-arrow prev" id="galleryPrev">${'<'}</button>
+          <button class="gallery-arrow next" id="galleryNext">${'>'}</button>
+        ` : ''}
       </div>
-      ${s.photos.length > 1 ? `<div class="store-gallery">${s.photos.slice(1).map(p => `<img src="${p}" alt="${s.name}">`).join('')}</div>` : ''}
+      ${s.photos.length > 1 ? `<div class="store-gallery" id="storeGallery">${s.photos.map((p,i) => `<img src="${p}" alt="${s.name}" data-i="${i}" class="${i===0?'active':''}">`).join('')}</div>` : ''}
       <span class="store-cat-pill" style="background:${bg};color:${fg}">${s.category}</span>
       <div class="name-row">
         ${s.logo ? `<img src="${s.logo}" class="store-logo big" alt="">` : ''}
@@ -640,6 +652,29 @@ function renderStore(id){
   `;
 
   document.getElementById('backBtn').addEventListener('click', renderHome);
+
+  if(s.photos.length > 1){
+    const heroImg = document.getElementById('heroImg');
+    const thumbs = document.querySelectorAll('#storeGallery img');
+
+    function showPhoto(i){
+      galleryIndex = (i + s.photos.length) % s.photos.length;
+      heroImg.src = s.photos[galleryIndex];
+      thumbs.forEach((t,idx)=> t.classList.toggle('active', idx===galleryIndex));
+    }
+
+    document.getElementById('galleryPrev').addEventListener('click', ()=> showPhoto(galleryIndex - 1));
+    document.getElementById('galleryNext').addEventListener('click', ()=> showPhoto(galleryIndex + 1));
+    thumbs.forEach(t=> t.addEventListener('click', ()=> showPhoto(parseInt(t.dataset.i))));
+
+    const hero = document.getElementById('storeHero');
+    let touchStartX = 0;
+    hero.addEventListener('touchstart', (e)=>{ touchStartX = e.touches[0].clientX; }, { passive: true });
+    hero.addEventListener('touchend', (e)=>{
+      const diff = e.changedTouches[0].clientX - touchStartX;
+      if(Math.abs(diff) > 40){ diff > 0 ? showPhoto(galleryIndex - 1) : showPhoto(galleryIndex + 1); }
+    }, { passive: true });
+  }
   document.getElementById('wppBtn').addEventListener('click', ()=>{
     sb.rpc('increment_store_whatsapp_click', { p_store_id: id }).then(({error})=>{ if(error) console.error(error); });
     const msg = encodeURIComponent(`Olá! Vi a ${s.name} no Vitrine Certa e gostaria de saber mais.`);
