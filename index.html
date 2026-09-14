@@ -126,19 +126,9 @@
   .offer-card .o-title{font-size:12.5px;line-height:1.3;margin:0 0 8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;height:32px;}
   .offer-card .o-price{font-size:15px;font-weight:600;color:var(--teal);margin:0;}
 
-  .page-grid{max-width:1500px;margin:0 auto;}
-  .side-rail{display:none;}
-  @media (min-width:1300px){
-    .page-grid{display:grid;grid-template-columns:230px minmax(0,1fr) 230px;gap:22px;padding:0 16px;align-items:start;}
-    .side-rail{display:flex;flex-direction:column;gap:14px;position:sticky;top:90px;padding-top:24px;}
-    .offers-inline{display:none;}
-  }
-  .rail-card{background:var(--paper);border:2px solid var(--line);border-radius:14px;overflow:hidden;text-decoration:none;color:var(--ink);display:block;}
-  .rail-card img{width:100%;aspect-ratio:1/1;height:auto;object-fit:contain;background:#F3F4F6;padding:14px;box-sizing:border-box;display:block;}
-  .rail-card .o-body{padding:8px 12px 12px;}
-  .rail-card .o-title{font-size:12.5px;line-height:1.3;margin:0 0 6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-  .rail-card .o-price{font-size:14px;font-weight:600;color:var(--teal);margin:0;}
-  .rail-label{font-size:12px;font-weight:600;color:var(--amber-dark);background:var(--amber-pale);padding:5px 10px;border-radius:10px;display:inline-block;}
+  .offers-footer{background:var(--paper);border-top:2px solid var(--line);max-width:100%;padding:36px 28px;margin-top:20px;}
+  .offers-footer .offers-strip{max-width:1200px;margin:0 auto;}
+  .offers-footer h2, .offers-footer .offers-sub{max-width:1200px;margin-left:auto;margin-right:auto;}
   .promo-strip{display:flex;gap:14px;overflow-x:auto;padding-bottom:6px;}
   .promo-card{
     flex:0 0 auto;min-width:220px;background:var(--paper);border:2px solid var(--coral-light);border-radius:16px;
@@ -288,18 +278,6 @@ function pickFeatured(all){
   return all.slice(start).concat(all.slice(0, start)).slice(0, MAX_FEATURED);
 }
 
-function railCardHtml(o){
-  return `
-    <a class="rail-card" href="${o.url}" target="_blank" rel="noopener sponsored">
-      ${o.thumbnail ? `<img src="${o.thumbnail}" alt="${o.title}">` : `<div style="width:100%;aspect-ratio:1/1;background:#F3F4F6;display:flex;align-items:center;justify-content:center;color:var(--ink-soft);font-size:11px;">Sem foto</div>`}
-      <div class="o-body">
-        <p class="o-title">${o.title}</p>
-        ${o.price != null ? `<p class="o-price">R$ ${Number(o.price).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2})}</p>` : ''}
-      </div>
-    </a>
-  `;
-}
-
 const app = document.getElementById('app');
 
 function renderHome(){
@@ -307,8 +285,6 @@ function renderHome(){
   const allFeatured = STORES.filter(s => s.destaque);
   const featured = pickFeatured(allFeatured);
   const withPromo = STORES.filter(s => s.promo);
-  const offersLeft = OFFERS.filter((_, i) => i % 2 === 0);
-  const offersRight = OFFERS.filter((_, i) => i % 2 === 1);
   const filtered = STORES.filter(s => {
     const matchCat = activeCat === "Todos" || s.category === activeCat;
     const matchSearch = s.name.toLowerCase().includes(searchTerm.toLowerCase()) || s.category.toLowerCase().includes(searchTerm.toLowerCase());
@@ -316,12 +292,6 @@ function renderHome(){
   });
 
   app.innerHTML = `
-    <div class="page-grid">
-    <aside class="side-rail">
-      ${offersLeft.length ? `<span class="rail-label">🛒 Ofertas</span>` : ''}
-      ${offersLeft.map(railCardHtml).join('')}
-    </aside>
-    <div>
     <div class="hero">
       <div class="hero-inner">
         <h1>O que você procura em Tupã?</h1>
@@ -346,24 +316,6 @@ function renderHome(){
             <p class="p-store">${s.name}</p>
             <p class="p-text">${s.promo}</p>
           </div>
-        `).join('')}
-      </div>
-    </div>
-    ` : ''}
-
-    ${OFFERS.length ? `
-    <div class="offers-section offers-inline">
-      <h2>🛒 Ofertas selecionadas</h2>
-      <p class="offers-sub">Links de afiliado — o Vitrine Certa pode ganhar uma comissão nas compras feitas por aqui</p>
-      <div class="offers-strip">
-        ${OFFERS.map(o => `
-          <a class="offer-card" href="${o.url}" target="_blank" rel="noopener sponsored">
-            ${o.thumbnail ? `<img src="${o.thumbnail}" alt="${o.title}">` : `<div style="width:100%;aspect-ratio:1/1;background:#F3F4F6;display:flex;align-items:center;justify-content:center;color:var(--ink-soft);font-size:11px;">Sem foto</div>`}
-            <div class="o-body">
-              <p class="o-title">${o.title}</p>
-              ${o.price != null ? `<p class="o-price">R$ ${Number(o.price).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2})}</p>` : ''}
-            </div>
-          </a>
         `).join('')}
       </div>
     </div>
@@ -438,12 +390,24 @@ function renderHome(){
         </div>
       </div>
     </div>
+
+    ${OFFERS.length ? `
+    <div class="offers-section offers-footer">
+      <h2>🛒 Ofertas selecionadas</h2>
+      <p class="offers-sub">Links de afiliado — o Vitrine Certa pode ganhar uma comissão nas compras feitas por aqui</p>
+      <div class="offers-strip">
+        ${OFFERS.map(o => `
+          <a class="offer-card" href="${o.url}" target="_blank" rel="noopener sponsored">
+            ${o.thumbnail ? `<img src="${o.thumbnail}" alt="${o.title}">` : `<div style="width:100%;aspect-ratio:1/1;background:#F3F4F6;display:flex;align-items:center;justify-content:center;color:var(--ink-soft);font-size:11px;">Sem foto</div>`}
+            <div class="o-body">
+              <p class="o-title">${o.title}</p>
+              ${o.price != null ? `<p class="o-price">R$ ${Number(o.price).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2})}</p>` : ''}
+            </div>
+          </a>
+        `).join('')}
+      </div>
     </div>
-    <aside class="side-rail">
-      ${offersRight.length ? `<span class="rail-label">🛒 Ofertas</span>` : ''}
-      ${offersRight.map(railCardHtml).join('')}
-    </aside>
-    </div>
+    ` : ''}
   `;
 
   if(featured.length) setupCarousel(featured);
