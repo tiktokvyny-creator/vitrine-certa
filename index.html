@@ -195,7 +195,9 @@
 
   .store-page{max-width:760px;margin:0 auto;padding:0 28px 60px;}
   .back-btn{display:inline-flex;align-items:center;gap:6px;margin:22px 0 18px;font-size:14px;font-weight:500;color:var(--ink-soft);cursor:pointer;background:none;border:none;font-family:'Inter',sans-serif;padding:0;}
-  .store-hero{height:200px;border-radius:20px;display:flex;align-items:center;justify-content:center;font-family:'Fredoka',sans-serif;color:rgba(0,0,0,.35);font-size:16px;margin-bottom:20px;}
+  .store-hero{height:200px;border-radius:20px;display:flex;align-items:center;justify-content:center;font-family:'Fredoka',sans-serif;color:rgba(0,0,0,.35);font-size:16px;margin-bottom:20px;background-size:cover;background-position:center;}
+  .store-gallery{display:flex;gap:8px;margin:-12px 0 20px;overflow-x:auto;}
+  .store-gallery img{width:70px;height:70px;object-fit:cover;border-radius:10px;flex-shrink:0;border:2px solid var(--line);}
   .store-cat-pill{display:inline-block;font-size:12px;font-weight:600;padding:5px 12px;border-radius:14px;margin-bottom:10px;}
   .store-page h1{font-size:28px;margin:0 0 6px;}
   .store-desc{color:var(--ink-soft);font-size:15px;line-height:1.6;margin:14px 0 24px;}
@@ -282,7 +284,7 @@ function formatHours(start, end){
 async function loadStores(){
   const { data, error } = await sb
     .from('stores')
-    .select('id, name, address, whatsapp_phone, hours_start, hours_end, description, plan_id, promo_text, promo_expires_at, categories(name)')
+    .select('id, name, address, whatsapp_phone, hours_start, hours_end, description, plan_id, promo_text, promo_expires_at, photo_urls, categories(name)')
     .eq('status', 'active')
     .eq('city', selectedCity)
     .eq('state', selectedState);
@@ -296,7 +298,8 @@ async function loadStores(){
       hours: formatHours(s.hours_start, s.hours_end), description: s.description || '',
       destaque: s.plan_id === 'perto_mais' || s.plan_id === 'perto_top',
       color: CATEGORY_COLORS[catName] || '#EDE1D4',
-      promo: promoActive ? s.promo_text : null
+      promo: promoActive ? s.promo_text : null,
+      photos: s.photo_urls || []
     };
   });
 }
@@ -532,10 +535,10 @@ function gridContentHtml(list){
 function cardHtml(s){
   return `
     <div class="card" data-id="${s.id}">
-      <div class="card-photo" style="background:${s.color}20">
+      <div class="card-photo" style="background:${s.color}20;${s.photos[0] ? `background-image:url('${s.photos[0]}');background-size:cover;background-position:center;` : ''}">
         ${s.promo ? `<span class="promo-ribbon">🔥 Promo</span>` : ''}
         ${s.destaque ? `<span class="badge-destaque">destaque</span>` : ''}
-        Foto da loja
+        ${s.photos[0] ? '' : 'Foto da loja'}
       </div>
       <div class="card-body">
         <h3>${s.name}</h3>
@@ -549,7 +552,7 @@ function cardHtml(s){
 function featSlideHtml(s){
   return `
     <div class="feat-slide" data-id="${s.id}">
-      <div class="feat-photo" style="background:${s.color}30">Foto da loja</div>
+      <div class="feat-photo" style="background:${s.color}30;${s.photos[0] ? `background-image:url('${s.photos[0]}');background-size:cover;background-position:center;` : ''}">${s.photos[0] ? '' : 'Foto da loja'}</div>
       <div class="feat-info">
         <span class="feat-badge">★ destaque</span>
         <h3>${s.name}</h3>
@@ -597,7 +600,8 @@ function renderStore(id){
   app.innerHTML = `
     <div class="store-page">
       <button class="back-btn" id="backBtn">&larr; Voltar para a vitrine</button>
-      <div class="store-hero" style="background:${s.color}30">Foto da loja</div>
+      <div class="store-hero" style="background:${s.color}30${s.photos[0] ? `;background-image:url('${s.photos[0]}')` : ''}">${s.photos[0] ? '' : 'Foto da loja'}</div>
+      ${s.photos.length > 1 ? `<div class="store-gallery">${s.photos.slice(1).map(p => `<img src="${p}" alt="${s.name}">`).join('')}</div>` : ''}
       <span class="store-cat-pill" style="background:${bg};color:${fg}">${s.category}</span>
       <h1>${s.name}</h1>
       ${s.promo ? `<div class="promo-banner">🔥 ${s.promo}</div>` : ''}

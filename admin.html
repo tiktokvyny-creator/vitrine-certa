@@ -220,6 +220,11 @@
           <input type="date" id="m-promo-expires" style="flex:1;">
         </div>
       </div>
+      <div class="field full">
+        <label>Fotos da loja <span style="font-weight:400;color:var(--ink-soft);">(até 10, a primeira vira a foto de capa)</span></label>
+        <input type="file" id="m-photos" accept="image/*" multiple>
+        <div id="photo-preview" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;"></div>
+      </div>
       <div class="field full" id="fw-dup" style="display:none;"><div class="field-error" style="display:block;">Já existe uma loja cadastrada com este nome e endereço.</div></div>
     </div>
     <div class="modal-actions">
@@ -329,7 +334,7 @@ async function loadReferenceData(){
 }
 
 async function loadStores(){
-  const { data, error } = await sb.from('stores').select('id, name, category_id, plan_id, status, address, city, state, hours_start, hours_end, whatsapp_phone, contact_email, description, promo_text, promo_expires_at');
+  const { data, error } = await sb.from('stores').select('id, name, category_id, plan_id, status, address, city, state, hours_start, hours_end, whatsapp_phone, contact_email, description, promo_text, promo_expires_at, photo_urls');
   if(error){ console.error(error); STORES = []; return; }
   STORES = data || [];
 }
@@ -390,6 +395,58 @@ async function loadSiteStats(){
 }
 
 let AFFILIATES = [];
+let existingPhotoUrls = [];
+let newPhotoFiles = [];
+
+function renderPhotoPreview(){
+  const box = document.getElementById('photo-preview');
+  const existingHtml = existingPhotoUrls.map((url, i) => `
+    <div style="position:relative;">
+      <img src="${url}" style="width:64px;height:64px;object-fit:cover;border-radius:8px;border:2px solid var(--line);">
+      <button type="button" data-remove-existing="${i}" style="position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;background:var(--red);color:#fff;border:none;cursor:pointer;font-size:11px;line-height:1;">✕</button>
+    </div>
+  `).join('');
+  const newHtml = newPhotoFiles.map((file, i) => `
+    <div style="position:relative;">
+      <img src="${URL.createObjectURL(file)}" style="width:64px;height:64px;object-fit:cover;border-radius:8px;border:2px solid var(--coral);">
+      <button type="button" data-remove-new="${i}" style="position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;background:var(--red);color:#fff;border:none;cursor:pointer;font-size:11px;line-height:1;">✕</button>
+    </div>
+  `).join('');
+  box.innerHTML = existingHtml + newHtml;
+
+  box.querySelectorAll('[data-remove-existing]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      existingPhotoUrls.splice(parseInt(btn.dataset.removeExisting), 1);
+      renderPhotoPreview();
+    });
+  });
+  box.querySelectorAll('[data-remove-new]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      newPhotoFiles.splice(parseInt(btn.dataset.removeNew), 1);
+      renderPhotoPreview();
+    });
+  });
+}
+
+document.getElementById('m-photos').addEventListener('change', (e)=>{
+  const totalSlots = 10 - existingPhotoUrls.length - newPhotoFiles.length;
+  const filesToAdd = Array.from(e.target.files).slice(0, Math.max(totalSlots, 0));
+  newPhotoFiles = newPhotoFiles.concat(filesToAdd);
+  e.target.value = '';
+  renderPhotoPreview();
+});
+
+async function uploadNewPhotos(storeId){
+  const uploadedUrls = [];
+  for(const file of newPhotoFiles){
+    const path = `${storeId}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.]/g,'_')}`;
+    const { error } = await sb.storage.from('store-photos').upload(path, file);
+    if(error){ console.error('Erro ao enviar foto:', error); continue; }
+    const { data } = sb.storage.from('store-photos').getPublicUrl(path);
+    uploadedUrls.push(data.publicUrl);
+  }
+  return uploadedUrls;
+}
 
 async function loadAffiliates(){
   const { data, error } = await sb.from('affiliate_products').select('id, title, price, image_url, affiliate_url, active, sort_order').order('sort_order');
@@ -576,6 +633,8 @@ function openModal(id){
     document.getElementById('m-desc').value = s.description || '';
     document.getElementById('m-promo').value = s.promo_text || '';
     document.getElementById('m-promo-expires').value = s.promo_expires_at || '';
+    existingPhotoUrls = (s.photo_urls || []).slice();
+    newPhotoFiles = [];
   } else {
     document.getElementById('modalTitle').textContent = 'Cadastrar nova loja';
     ['m-name','m-addr','m-phone','m-email','m-desc','m-promo','m-promo-expires'].forEach(fid=> document.getElementById(fid).value = '');
@@ -585,7 +644,10 @@ function openModal(id){
     document.getElementById('m-hours-end').value = '';
     if(CATEGORIES[0]) document.getElementById('m-cat').value = CATEGORIES[0].id;
     document.getElementById('m-plan').value = 'basico';
+    existingPhotoUrls = [];
+    newPhotoFiles = [];
   }
+  renderPhotoPreview();
   bg.classList.add('open');
   updatePromoVisibility();
 }
@@ -624,6 +686,7 @@ function validateStoreForm(){
 
 document.getElementById('saveModalBtn').addEventListener('click', async ()=>{
   if(!validateStoreForm()) return;
+  const saveBtn = document.getElementById('saveModalBtn');
   const hStart = document.getElementById('m-hours-start').value;
   const hEnd = document.getElementById('m-hours-end').value;
   const payload = {
@@ -642,12 +705,29 @@ document.getElementById('saveModalBtn').addEventListener('click', async ()=>{
     promo_expires_at: document.getElementById('m-plan').value !== 'basico' ? (document.getElementById('m-promo-expires').value || null) : null
   };
 
-  let error;
+  saveBtn.disabled = true;
+  saveBtn.textContent = 'Salvando...';
+
+  let error, storeId = editingId;
+
   if(editingId){
+    const uploaded = await uploadNewPhotos(editingId);
+    payload.photo_urls = existingPhotoUrls.concat(uploaded).slice(0, 10);
     ({ error } = await sb.from('stores').update(payload).eq('id', editingId));
   } else {
-    ({ error } = await sb.from('stores').insert({ ...payload, status: 'active' }));
+    const { data: inserted, error: insertError } = await sb.from('stores').insert({ ...payload, status: 'active' }).select().single();
+    error = insertError;
+    if(!error && inserted){
+      storeId = inserted.id;
+      const uploaded = await uploadNewPhotos(storeId);
+      if(uploaded.length){
+        await sb.from('stores').update({ photo_urls: uploaded.slice(0, 10) }).eq('id', storeId);
+      }
+    }
   }
+
+  saveBtn.disabled = false;
+  saveBtn.textContent = 'Salvar';
 
   if(error){
     showToast('Erro ao salvar: ' + error.message);
