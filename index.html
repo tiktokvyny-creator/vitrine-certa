@@ -42,10 +42,10 @@
   .header-nav a{font-size:13.5px;font-weight:500;color:var(--ink-soft);margin-left:20px;}
   .header-nav a:hover{color:var(--coral);}
   .city-tag{font-size:13px;color:var(--ink-soft);background:var(--amber-pale);padding:5px 12px;border-radius:20px;font-weight:500;}
-  .location-select{display:flex;gap:6px;}
+  .location-select{display:flex;gap:6px;justify-content:center;margin-bottom:14px;}
   .location-select select{
-    font-size:13px;color:var(--ink);background:var(--amber-pale);border:none;
-    padding:6px 10px;border-radius:20px;font-weight:500;font-family:'Inter',sans-serif;cursor:pointer;
+    font-size:13px;color:var(--coral-dark);background:rgba(255,255,255,.7);border:none;
+    padding:6px 10px;border-radius:20px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;
   }
 
   .hero{padding:0;max-width:1200px;margin:0 auto;}
@@ -235,10 +235,6 @@
       <a href="sobre.html">Sobre</a>
       <a href="faq.html">Dúvidas</a>
     </nav>
-    <div class="location-select">
-      <select id="stateSelect" aria-label="Estado"></select>
-      <select id="citySelect" aria-label="Cidade"></select>
-    </div>
   </div>
 </header>
 
@@ -350,6 +346,7 @@ function renderHome(){
       <div class="hero-inner">
         <h1>A vitrine da sua loja ao alcance de todos</h1>
         <p>Encontre lojas e serviços, tudo com um clique</p>
+        ${locationSelectHtml()}
         <div class="search-box">
           ${iconSearch()}
           <input id="searchInput" type="text" placeholder="Buscar loja ou categoria..." value="${searchTerm}">
@@ -484,6 +481,8 @@ function renderHome(){
   document.querySelectorAll('.promo-card').forEach(c=>{
     c.addEventListener('click', ()=> renderStore(c.dataset.id));
   });
+  bindLocationSelectEvents();
+
   const clearBtn = document.getElementById('clearFiltersBtn');
   if(clearBtn) clearBtn.addEventListener('click', ()=>{ searchTerm = ''; activeCat = 'Todos'; renderHome(); });
 
@@ -665,41 +664,49 @@ function renderStore(id){
   window.scrollTo(0,0);
 }
 
-async function loadStatesIntoSelect(){
-  const stateSelect = document.getElementById('stateSelect');
+let STATE_LIST = [];
+let CITY_LIST = [];
+
+async function loadStatesList(){
   try{
     const resp = await fetch('https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nome');
-    const states = await resp.json();
-    stateSelect.innerHTML = states.map(s => `<option value="${s.sigla}" ${s.sigla===selectedState?'selected':''}>${s.sigla}</option>`).join('');
+    STATE_LIST = await resp.json();
   } catch(e){
     console.error('Erro ao carregar estados:', e);
-    stateSelect.innerHTML = `<option value="SP" selected>SP</option>`;
+    STATE_LIST = [{ sigla: 'SP' }];
   }
 }
 
-async function loadCitiesIntoSelect(uf){
-  const citySelect = document.getElementById('citySelect');
-  citySelect.innerHTML = `<option>Carregando...</option>`;
+async function loadCitiesList(uf){
   try{
     const resp = await fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios?orderBy=nome`);
-    const cities = await resp.json();
-    citySelect.innerHTML = cities.map(c => `<option value="${c.nome}" ${c.nome===selectedCity?'selected':''}>${c.nome}</option>`).join('');
-    if(!cities.some(c => c.nome === selectedCity) && cities.length){
-      selectedCity = cities[0].nome;
+    CITY_LIST = await resp.json();
+    if(!CITY_LIST.some(c => c.nome === selectedCity) && CITY_LIST.length){
+      selectedCity = CITY_LIST[0].nome;
     }
   } catch(e){
     console.error('Erro ao carregar cidades:', e);
-    citySelect.innerHTML = `<option value="${selectedCity}" selected>${selectedCity}</option>`;
+    CITY_LIST = [{ nome: selectedCity }];
   }
 }
 
-async function initLocationSelectors(){
-  await loadStatesIntoSelect();
-  await loadCitiesIntoSelect(selectedState);
+function locationSelectHtml(){
+  return `
+    <div class="location-select">
+      <select id="stateSelect" aria-label="Estado">
+        ${STATE_LIST.map(s => `<option value="${s.sigla}" ${s.sigla===selectedState?'selected':''}>${s.sigla}</option>`).join('')}
+      </select>
+      <select id="citySelect" aria-label="Cidade">
+        ${CITY_LIST.map(c => `<option value="${c.nome}" ${c.nome===selectedCity?'selected':''}>${c.nome}</option>`).join('')}
+      </select>
+    </div>
+  `;
+}
 
+function bindLocationSelectEvents(){
   document.getElementById('stateSelect').addEventListener('change', async (e)=>{
     selectedState = e.target.value;
-    await loadCitiesIntoSelect(selectedState);
+    await loadCitiesList(selectedState);
     await Promise.all([loadStores(), loadOffers()]);
     renderHome();
   });
@@ -713,7 +720,8 @@ async function initLocationSelectors(){
 
 (async function init(){
   app.innerHTML = `<p style="padding:60px 28px;text-align:center;color:var(--ink-soft);">Carregando lojas...</p>`;
-  initLocationSelectors();
+  await loadStatesList();
+  await loadCitiesList(selectedState);
   await Promise.all([loadStores(), loadOffers()]);
   renderHome();
 })();
