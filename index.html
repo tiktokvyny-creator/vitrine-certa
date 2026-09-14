@@ -74,9 +74,6 @@
   .pill[data-cat="Serviços"]{background:var(--purple-pale);color:var(--purple-dark);}
   .pill.selected{outline:2px solid currentColor;}
 
-  .ad-slot{max-width:1200px;margin:0 auto 26px;padding:0 28px;}
-  .ad-slot-inner{border:2px dashed var(--line);border-radius:16px;background:var(--paper);display:flex;align-items:center;justify-content:center;min-height:90px;color:var(--ink-soft);font-size:12.5px;font-weight:500;}
-
   .cookie-banner{
     position:fixed;bottom:16px;left:16px;right:16px;max-width:520px;margin:0 auto;
     background:var(--ink);color:var(--cream);border-radius:16px;padding:16px 18px;
@@ -391,16 +388,8 @@ function renderHome(){
     </div>
     ` : ''}
 
-    <div class="ad-slot">
-      <div class="ad-slot-inner"><!-- AD_SLOT_HOME_TOP --> Espaço de anúncio</div>
-    </div>
-
     <div class="grid">
       ${gridContentHtml(filtered)}
-    </div>
-
-    <div class="ad-slot">
-      <div class="ad-slot-inner"><!-- AD_SLOT_HOME_BOTTOM --> Espaço de anúncio</div>
     </div>
 
     <div class="plans-section" id="planos">
@@ -538,16 +527,7 @@ function emptyStateHtml(){
 
 function gridContentHtml(list){
   if(!list.length) return emptyStateHtml();
-  const adBanner = `
-    <div class="ad-slot" style="grid-column:1/-1;margin:0;">
-      <div class="ad-slot-inner"><!-- AD_SLOT_FEED --> Espaço de anúncio</div>
-    </div>
-  `;
-  const cards = list.map(cardHtml);
-  if(cards.length > 3){
-    cards.splice(3, 0, adBanner);
-  }
-  return cards.join('');
+  return list.map(cardHtml).join('');
 }
 
 function cardHtml(s){
@@ -643,10 +623,6 @@ function renderStore(id){
       </div>
       ${s.promo ? `<div class="promo-banner">🔥 ${s.promo}</div>` : ''}
       <p class="store-desc">${s.description}</p>
-
-      <div class="ad-slot" style="padding:0;margin-bottom:22px;">
-        <div class="ad-slot-inner"><!-- AD_SLOT_STORE_PAGE --> Espaço de anúncio</div>
-      </div>
 
       <div class="info-grid">
         <div class="info-card"><p class="label">Endereço</p><p class="value">${s.address}</p></div>
