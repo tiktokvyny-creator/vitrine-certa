@@ -221,6 +221,11 @@
         </div>
       </div>
       <div class="field full">
+        <label>Logo / foto de perfil <span style="font-weight:400;color:var(--ink-soft);">(ícone pequeno ao lado do nome)</span></label>
+        <input type="file" id="m-logo" accept="image/*">
+        <div id="logo-preview" style="margin-top:10px;"></div>
+      </div>
+      <div class="field full">
         <label>Fotos da loja <span style="font-weight:400;color:var(--ink-soft);">(até 10, a primeira vira a foto de capa)</span></label>
         <input type="file" id="m-photos" accept="image/*" multiple>
         <div id="photo-preview" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;"></div>
@@ -334,7 +339,7 @@ async function loadReferenceData(){
 }
 
 async function loadStores(){
-  const { data, error } = await sb.from('stores').select('id, name, category_id, plan_id, status, address, city, state, hours_start, hours_end, whatsapp_phone, contact_email, description, promo_text, promo_expires_at, photo_urls');
+  const { data, error } = await sb.from('stores').select('id, name, category_id, plan_id, status, address, city, state, hours_start, hours_end, whatsapp_phone, contact_email, description, promo_text, promo_expires_at, photo_urls, logo_url');
   if(error){ console.error(error); STORES = []; return; }
   STORES = data || [];
 }
@@ -397,6 +402,8 @@ async function loadSiteStats(){
 let AFFILIATES = [];
 let existingPhotoUrls = [];
 let newPhotoFiles = [];
+let existingLogoUrl = null;
+let newLogoFile = null;
 
 function renderPhotoPreview(){
   const box = document.getElementById('photo-preview');
@@ -446,6 +453,41 @@ async function uploadNewPhotos(storeId){
     uploadedUrls.push(data.publicUrl);
   }
   return uploadedUrls;
+}
+
+function renderLogoPreview(){
+  const box = document.getElementById('logo-preview');
+  const url = newLogoFile ? URL.createObjectURL(newLogoFile) : existingLogoUrl;
+  if(!url){ box.innerHTML = ''; return; }
+  box.innerHTML = `
+    <div style="position:relative;width:56px;">
+      <img src="${url}" style="width:56px;height:56px;object-fit:cover;border-radius:50%;border:2px solid var(--line);">
+      <button type="button" id="removeLogoBtn" style="position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;background:var(--red);color:#fff;border:none;cursor:pointer;font-size:11px;line-height:1;">✕</button>
+    </div>
+  `;
+  document.getElementById('removeLogoBtn').addEventListener('click', ()=>{
+    newLogoFile = null;
+    existingLogoUrl = null;
+    renderLogoPreview();
+  });
+}
+
+document.getElementById('m-logo').addEventListener('change', (e)=>{
+  if(e.target.files[0]){
+    newLogoFile = e.target.files[0];
+    existingLogoUrl = null;
+  }
+  e.target.value = '';
+  renderLogoPreview();
+});
+
+async function uploadLogo(storeId){
+  if(!newLogoFile) return existingLogoUrl;
+  const path = `${storeId}/logo-${Date.now()}-${newLogoFile.name.replace(/[^a-zA-Z0-9.]/g,'_')}`;
+  const { error } = await sb.storage.from('store-photos').upload(path, newLogoFile);
+  if(error){ console.error('Erro ao enviar logo:', error); return existingLogoUrl; }
+  const { data } = sb.storage.from('store-photos').getPublicUrl(path);
+  return data.publicUrl;
 }
 
 async function loadAffiliates(){
@@ -635,6 +677,8 @@ function openModal(id){
     document.getElementById('m-promo-expires').value = s.promo_expires_at || '';
     existingPhotoUrls = (s.photo_urls || []).slice();
     newPhotoFiles = [];
+    existingLogoUrl = s.logo_url || null;
+    newLogoFile = null;
   } else {
     document.getElementById('modalTitle').textContent = 'Cadastrar nova loja';
     ['m-name','m-addr','m-phone','m-email','m-desc','m-promo','m-promo-expires'].forEach(fid=> document.getElementById(fid).value = '');
@@ -646,8 +690,11 @@ function openModal(id){
     document.getElementById('m-plan').value = 'basico';
     existingPhotoUrls = [];
     newPhotoFiles = [];
+    existingLogoUrl = null;
+    newLogoFile = null;
   }
   renderPhotoPreview();
+  renderLogoPreview();
   bg.classList.add('open');
   updatePromoVisibility();
 }
@@ -713,6 +760,7 @@ document.getElementById('saveModalBtn').addEventListener('click', async ()=>{
   if(editingId){
     const uploaded = await uploadNewPhotos(editingId);
     payload.photo_urls = existingPhotoUrls.concat(uploaded).slice(0, 10);
+    payload.logo_url = await uploadLogo(editingId);
     ({ error } = await sb.from('stores').update(payload).eq('id', editingId));
   } else {
     const { data: inserted, error: insertError } = await sb.from('stores').insert({ ...payload, status: 'active' }).select().single();
@@ -720,8 +768,12 @@ document.getElementById('saveModalBtn').addEventListener('click', async ()=>{
     if(!error && inserted){
       storeId = inserted.id;
       const uploaded = await uploadNewPhotos(storeId);
-      if(uploaded.length){
-        await sb.from('stores').update({ photo_urls: uploaded.slice(0, 10) }).eq('id', storeId);
+      const logoUrl = await uploadLogo(storeId);
+      const followUp = {};
+      if(uploaded.length) followUp.photo_urls = uploaded.slice(0, 10);
+      if(logoUrl) followUp.logo_url = logoUrl;
+      if(Object.keys(followUp).length){
+        await sb.from('stores').update(followUp).eq('id', storeId);
       }
     }
   }
