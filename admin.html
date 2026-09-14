@@ -226,6 +226,7 @@
       </div>
       <div class="field" id="fw-phone"><label>WhatsApp</label><input id="m-phone" placeholder="(14) 99999-0000"><div class="field-error">Use o formato (DD) 9XXXX-XXXX.</div></div>
       <div class="field full" id="fw-email"><label>E-mail de contato (opcional)</label><input id="m-email" placeholder="loja@email.com"><div class="field-error">Informe um e-mail válido.</div></div>
+      <div class="field full"><label>Instagram da loja (opcional)</label><input id="m-instagram" placeholder="https://www.instagram.com/sualoja"></div>
       <div class="field full"><label>Descrição</label><input id="m-desc" placeholder="Uma frase sobre a loja"></div>
       <div class="field full" id="promo-wrap" style="display:none;">
         <label>🔥 Promoção ativa <span style="font-weight:400;color:var(--ink-soft);">(benefício dos planos pagos)</span></label>
@@ -360,7 +361,7 @@ async function loadReferenceData(){
 }
 
 async function loadStores(){
-  const { data, error } = await sb.from('stores').select('id, name, category_id, plan_id, status, address, city, state, hours_start, hours_end, whatsapp_phone, contact_email, description, promo_text, promo_expires_at, photo_urls, logo_url, trial_ends_at');
+  const { data, error } = await sb.from('stores').select('id, name, category_id, plan_id, status, address, city, state, hours_start, hours_end, whatsapp_phone, contact_email, description, promo_text, promo_expires_at, photo_urls, logo_url, trial_ends_at, instagram_url');
   if(error){ console.error(error); STORES = []; return; }
   STORES = data || [];
 }
@@ -740,6 +741,7 @@ function openModal(id){
     document.getElementById('m-hours-end').value = s.hours_end ? s.hours_end.slice(0,5) : '';
     document.getElementById('m-phone').value = s.whatsapp_phone;
     document.getElementById('m-email').value = s.contact_email || '';
+    document.getElementById('m-instagram').value = s.instagram_url || '';
     document.getElementById('m-desc').value = s.description || '';
     document.getElementById('m-promo').value = s.promo_text || '';
     document.getElementById('m-promo-expires').value = s.promo_expires_at || '';
@@ -752,7 +754,7 @@ function openModal(id){
     originalTrialChecked = !!existingTrialEndsAt;
   } else {
     document.getElementById('modalTitle').textContent = 'Cadastrar nova loja';
-    ['m-name','m-addr','m-phone','m-email','m-desc','m-promo','m-promo-expires'].forEach(fid=> document.getElementById(fid).value = '');
+    ['m-name','m-addr','m-phone','m-email','m-instagram','m-desc','m-promo','m-promo-expires'].forEach(fid=> document.getElementById(fid).value = '');
     document.getElementById('m-city').value = 'Tupã';
     document.getElementById('m-state').value = 'SP';
     document.getElementById('m-hours-start').value = '';
@@ -855,6 +857,7 @@ document.getElementById('saveModalBtn').addEventListener('click', async ()=>{
     hours_end: hEnd || null,
     whatsapp_phone: document.getElementById('m-phone').value,
     contact_email: document.getElementById('m-email').value || null,
+    instagram_url: document.getElementById('m-instagram').value || null,
     description: document.getElementById('m-desc').value || null,
     promo_text: document.getElementById('m-plan').value !== 'basico' ? (document.getElementById('m-promo').value || null) : null,
     promo_expires_at: document.getElementById('m-plan').value !== 'basico' ? (document.getElementById('m-promo-expires').value || null) : null,

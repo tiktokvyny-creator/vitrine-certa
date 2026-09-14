@@ -4,12 +4,12 @@
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2768171974814317" crossorigin="anonymous"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vitrine Certa — comércio local perto de você</title>
-<meta name="description" content="Encontre lojas, restaurantes, salões e serviços da sua cidade em um só lugar. Veja endereço, horário e fale direto no WhatsApp com cada estabelecimento.">
+<title>Vitrine Certa | Encontre lojas e negócios perto de você</title>
+<meta name="description" content="Encontre lojas, serviços e negócios em um só lugar. Descubra empresas da sua região e entre em contato diretamente pelo WhatsApp.">
 <link rel="canonical" href="https://vitrinecertaa.com.br/">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Vitrine Certa — comércio local perto de você">
-<meta property="og:description" content="Encontre lojas, restaurantes, salões e serviços da sua cidade em um só lugar. Fale direto no WhatsApp com cada loja.">
+<meta property="og:title" content="Vitrine Certa | Encontre lojas e negócios perto de você">
+<meta property="og:description" content="Encontre lojas, serviços e negócios em um só lugar. Descubra empresas da sua região e entre em contato diretamente pelo WhatsApp.">
 <meta property="og:url" content="https://vitrinecertaa.com.br/">
 <meta property="og:locale" content="pt_BR">
 <meta name="twitter:card" content="summary">
@@ -41,6 +41,24 @@
   .header-right{display:flex;align-items:center;gap:20px;}
   .header-nav a{font-size:13.5px;font-weight:500;color:var(--ink-soft);margin-left:20px;}
   .header-nav a:hover{color:var(--coral);}
+  .header-nav a[aria-label="Instagram"]{color:var(--ink-soft);}
+  .header-nav a[aria-label="Instagram"]:hover{color:var(--coral);}
+  .header-cta{
+    background:var(--coral);color:#fff;border:none;padding:11px 20px;border-radius:12px;
+    font-size:13.5px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;
+  }
+  .header-cta:hover{opacity:.9;}
+  .header-burger{display:none;background:none;border:none;color:var(--ink);cursor:pointer;padding:4px;}
+  @media (max-width:860px){
+    .header-nav{
+      display:none;position:absolute;top:100%;left:0;right:0;background:var(--paper);
+      border-bottom:2px solid var(--line);flex-direction:column;padding:14px 24px;gap:12px;
+    }
+    .header-nav.open{display:flex;}
+    .header-nav a{margin-left:0;}
+    .header-cta{display:none;}
+    .header-burger{display:block;}
+  }
   .city-tag{font-size:13px;color:var(--ink-soft);background:var(--amber-pale);padding:5px 12px;border-radius:20px;font-weight:500;}
   .location-select{display:flex;gap:6px;justify-content:center;margin-bottom:14px;}
   .location-select select{
@@ -55,6 +73,25 @@
   }
   .hero-inner h1{font-size:36px;margin:0 0 10px;font-weight:600;}
   .hero-inner p{margin:0 0 26px;color:var(--coral-dark);font-size:16px;opacity:.85;}
+  .hero-ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:30px;}
+  .hero-cta-primary{
+    background:var(--ink);color:#fff;border:none;padding:15px 26px;border-radius:14px;
+    font-size:14.5px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;
+    box-shadow:0 8px 20px rgba(44,24,16,.25);
+  }
+  .hero-cta-secondary{
+    background:var(--paper);color:var(--ink);border:2px solid var(--ink);padding:13px 24px;border-radius:14px;
+    font-size:14.5px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;
+  }
+  .hero-visual{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:8px;}
+  .hero-mini-card{
+    background:var(--paper);border:2px solid var(--line);border-radius:16px;padding:14px 16px;
+    width:150px;text-align:left;box-shadow:0 6px 16px rgba(74,27,12,.08);
+  }
+  .hero-mini-card .mini-dot{width:34px;height:34px;border-radius:50%;margin-bottom:10px;}
+  .hero-mini-card .mini-line{height:8px;border-radius:4px;background:var(--line);margin-bottom:6px;}
+  .hero-mini-card .mini-line.short{width:60%;}
+  @media (max-width:640px){ .hero-visual{display:none;} }
   .search-box{
     display:flex;align-items:center;gap:10px;background:var(--paper);border:none;
     border-radius:18px;padding:18px 22px;max-width:600px;margin:0 auto;
@@ -166,6 +203,48 @@
   .promo-card .p-store{font-size:13px;font-weight:600;color:var(--coral-dark);margin:0 0 4px;}
   .promo-card .p-text{font-size:13.5px;margin:0;}
 
+  .how-it-works{max-width:1200px;margin:0 auto 30px;padding:0 28px;}
+  .how-it-works h2{text-align:center;font-size:24px;margin:0 0 26px;}
+  .how-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:18px;}
+  .how-card{background:var(--paper);border:2px solid var(--line);border-radius:18px;padding:26px 22px;text-align:center;}
+  .how-card .how-num{font-family:'Fredoka',sans-serif;font-size:13px;font-weight:600;color:var(--coral);margin:0 0 8px;}
+  .how-card .how-icon{font-size:32px;margin-bottom:10px;}
+  .how-card h3{font-size:16px;margin:0 0 8px;}
+  .how-card p{font-size:13.5px;color:var(--ink-soft);margin:0;line-height:1.5;}
+
+  .categories-section{max-width:1200px;margin:0 auto 30px;padding:0 28px;}
+  .categories-section h2{text-align:center;font-size:24px;margin:0 0 20px;}
+  .cat-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));gap:12px;}
+  .cat-card{
+    border:2px solid var(--line);border-radius:14px;padding:16px 10px;text-align:center;cursor:pointer;
+    background:var(--paper);transition:transform .12s ease, border-color .12s ease;
+  }
+  .cat-card:hover{transform:translateY(-2px);border-color:var(--coral);}
+  .cat-card .cat-icon{font-size:24px;margin-bottom:6px;}
+  .cat-card span{font-size:13px;font-weight:600;}
+
+  .home-faq{max-width:760px;margin:0 auto 30px;padding:0 28px;}
+  .home-faq h2{text-align:center;font-size:24px;margin:0 0 20px;}
+  .home-faq-item{background:var(--paper);border:2px solid var(--line);border-radius:14px;margin-bottom:10px;overflow:hidden;}
+  .home-faq-q{display:flex;justify-content:space-between;align-items:center;padding:15px 18px;cursor:pointer;font-size:14px;font-weight:600;}
+  .home-faq-item.open .home-faq-a{max-height:200px;padding-bottom:15px;}
+  .home-faq-a{max-height:0;overflow:hidden;transition:max-height .2s ease;padding:0 18px;font-size:13.5px;color:var(--ink-soft);line-height:1.6;}
+  .home-faq-chev{transition:transform .15s ease;}
+  .home-faq-item.open .home-faq-chev{transform:rotate(180deg);}
+  .home-faq-more{text-align:center;margin-top:16px;}
+  .home-faq-more a{color:var(--coral);font-weight:600;font-size:13.5px;text-decoration:underline;}
+
+  .final-cta{
+    max-width:1200px;margin:0 auto 30px;padding:44px 28px;text-align:center;
+    background:linear-gradient(135deg, var(--coral) 0%, #ef7a4e 100%);border-radius:24px;color:#fff;
+  }
+  .final-cta h2{font-size:26px;margin:0 0 10px;color:#fff;}
+  .final-cta p{font-size:15px;margin:0 0 22px;opacity:.92;}
+  .final-cta button{
+    background:#fff;color:var(--coral-dark);border:none;padding:15px 28px;border-radius:14px;
+    font-size:14.5px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;
+  }
+
   .grid{max-width:1200px;margin:26px auto;padding:0 28px;display:grid;grid-template-columns:repeat(auto-fit, minmax(230px, 1fr));gap:20px;}
   .card{background:var(--paper);border:2px solid var(--line);border-radius:18px;overflow:hidden;cursor:pointer;transition:border-color .15s ease, transform .15s ease;display:flex;flex-direction:column;}
   .card:hover{border-color:var(--coral);transform:translateY(-2px);}
@@ -175,6 +254,12 @@
   .card-body h3{margin:0 0 4px;font-size:17px;font-weight:600;}
   .card-body .cat{font-size:12px;color:var(--ink-soft);margin:0 0 8px;}
   .card-body .addr{font-size:13px;color:var(--ink-soft);margin:0;display:flex;gap:6px;align-items:flex-start;}
+
+  .lojista-benefits{display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:16px;margin-bottom:36px;}
+  .lojista-benefit{padding:0;}
+  .lojista-benefit .lb-icon{font-size:24px;margin-bottom:8px;}
+  .lojista-benefit h4{font-size:14.5px;margin:0 0 4px;}
+  .lojista-benefit p{font-size:13px;color:var(--ink-soft);margin:0;line-height:1.5;}
 
   .plans-section{background:var(--paper);border-top:2px solid var(--line);margin-top:20px;padding:50px 28px;}
   .plans-inner{max-width:1200px;margin:0 auto;}
@@ -248,6 +333,12 @@
   .info-card .value{font-size:14px;font-weight:500;margin:0;}
   .wpp-btn{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--teal);color:#fff;font-size:16px;font-weight:600;padding:16px;border-radius:16px;width:100%;border:none;cursor:pointer;font-family:'Inter',sans-serif;}
   .wpp-btn:hover{background:#0c5945;}
+  .secondary-actions{display:flex;gap:10px;margin-top:10px;}
+  .secondary-btn{
+    flex:1;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--paper);
+    color:var(--ink);font-size:13.5px;font-weight:600;padding:13px;border-radius:14px;border:2px solid var(--line);
+  }
+  .secondary-btn:hover{border-color:var(--coral);}
 
   footer{text-align:center;padding:24px;color:var(--ink-soft);font-size:12.5px;}
 
@@ -264,13 +355,20 @@
 <header>
   <a href="index.html" class="brand"><div class="brand-mark"></div>Vitrine Certa</a>
   <div class="header-right">
-    <nav class="header-nav">
-      <a href="sobre.html">Sobre</a>
+    <nav class="header-nav" id="headerNav">
+      <a href="index.html">Início</a>
+      <a href="#gridSection">Encontrar lojas</a>
+      <a href="#lojistas">Para lojistas</a>
+      <a href="#comofunciona">Como funciona</a>
       <a href="faq.html">Dúvidas</a>
       <a href="https://www.instagram.com/vitrinecertaaofc/" target="_blank" rel="noopener" aria-label="Instagram" style="display:inline-flex;vertical-align:middle;">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2"/><circle cx="16.2" cy="7.8" r="0.6" fill="currentColor" stroke="none"/></svg>
       </a>
     </nav>
+    <button class="header-cta" id="headerCtaBtn">Cadastrar minha loja</button>
+    <button class="header-burger" id="headerBurger" aria-label="Menu">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
   </div>
 </header>
 
@@ -282,7 +380,11 @@
 </div>
 
 <footer>
-  Vitrine Certa ·
+  Vitrine Certa · Encontre lojas e negócios, e conecte-se direto pelo WhatsApp.<br>
+  <a href="index.html#gridSection" style="color:var(--ink-soft);text-decoration:underline;">Encontrar lojas</a> ·
+  <a href="index.html#lojistas" style="color:var(--ink-soft);text-decoration:underline;">Para lojistas</a> ·
+  <a href="sobre.html" style="color:var(--ink-soft);text-decoration:underline;">Sobre</a> ·
+  <a href="faq.html" style="color:var(--ink-soft);text-decoration:underline;">Dúvidas</a> ·
   <a href="politica-privacidade.html" style="color:var(--ink-soft);text-decoration:underline;">Privacidade</a> ·
   <a href="termos-de-uso.html" style="color:var(--ink-soft);text-decoration:underline;">Termos de Uso</a> ·
   <a href="https://www.instagram.com/vitrinecertaaofc/" target="_blank" rel="noopener" style="color:var(--ink-soft);text-decoration:underline;">Instagram</a>
@@ -296,6 +398,16 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const CATEGORY_COLORS = { "Moda":"#F5C4B3", "Alimentação":"#FAC775", "Beleza":"#F4C0D1", "Serviços":"#CECBF6", "Tecnologia":"#B3CCFF", "Saúde":"#F5B3B3", "Pet Shop":"#C7E8A3", "Mercado":"#F5D2A3", "Educação":"#A3E8EA" };
 const CATS = ["Moda","Alimentação","Beleza","Serviços","Tecnologia","Saúde","Pet Shop","Mercado","Educação"];
+const CAT_ICONS = { "Moda":"👗", "Alimentação":"🍽️", "Beleza":"💅", "Serviços":"🛠️", "Tecnologia":"💻", "Saúde":"🩺", "Pet Shop":"🐾", "Mercado":"🛒", "Educação":"🎓" };
+const HOME_FAQ = [
+  { q: "É gratuito cadastrar minha loja?", a: "Sim, o cadastro inicial da loja é gratuito." },
+  { q: "Quem pode cadastrar uma loja?", a: "Lojas, profissionais e negócios que atendam ao público." },
+  { q: "Preciso ter um site?", a: "Não." },
+  { q: "Preciso ter Instagram?", a: "Não." },
+  { q: "Como o cliente entra em contato?", a: "Através dos canais disponibilizados no perfil da loja, como o WhatsApp." },
+  { q: "Posso alterar minhas informações?", a: "Sim." },
+  { q: "Posso remover minha loja?", a: "Sim." }
+];
 const MAX_FEATURED = 6;
 
 let STORES = [];
@@ -325,7 +437,7 @@ function formatHours(start, end){
 async function loadStores(){
   const { data, error } = await sb
     .from('stores')
-    .select('id, name, address, whatsapp_phone, hours_start, hours_end, description, plan_id, promo_text, promo_expires_at, photo_urls, logo_url, categories(name)')
+    .select('id, name, address, whatsapp_phone, hours_start, hours_end, description, plan_id, promo_text, promo_expires_at, photo_urls, logo_url, instagram_url, categories(name)')
     .eq('status', 'active')
     .eq('city', selectedCity)
     .eq('state', selectedState);
@@ -342,7 +454,8 @@ async function loadStores(){
       color: CATEGORY_COLORS[catName] || '#EDE1D4',
       promo: promoActive ? s.promo_text : null,
       photos: s.photo_urls || [],
-      logo: s.logo_url || null
+      logo: s.logo_url || null,
+      instagram: s.instagram_url || null
     };
   });
 }
@@ -387,8 +500,17 @@ function renderHome(){
     <div class="main-col">
     <div class="hero">
       <div class="hero-inner">
-        <h1>A vitrine da sua loja ao alcance de todos</h1>
-        <p>Encontre lojas e serviços, tudo com um clique</p>
+        <h1>Sua loja merece ser encontrada.</h1>
+        <p>A Vitrine Certa conecta lojas e clientes em um só lugar.</p>
+        <div class="hero-visual">
+          <div class="hero-mini-card"><div class="mini-dot" style="background:var(--teal-pale);"></div><div class="mini-line"></div><div class="mini-line short"></div></div>
+          <div class="hero-mini-card"><div class="mini-dot" style="background:var(--pink-pale);"></div><div class="mini-line"></div><div class="mini-line short"></div></div>
+          <div class="hero-mini-card"><div class="mini-dot" style="background:var(--amber-pale);"></div><div class="mini-line"></div><div class="mini-line short"></div></div>
+        </div>
+        <div class="hero-ctas">
+          <button class="hero-cta-primary" id="heroCtaLojista">Cadastrar minha loja grátis</button>
+          <button class="hero-cta-secondary" id="heroCtaBuscar">Encontrar uma loja</button>
+        </div>
         ${locationSelectHtml()}
         <div class="search-box">
           ${iconSearch()}
@@ -397,6 +519,30 @@ function renderHome(){
         <div class="categories" id="cats">
           <button class="pill all ${activeCat==='Todos' ? '' : 'inactive'}" data-cat="Todos">Todos</button>
           ${CATS.map(c => `<button class="pill ${activeCat===c ? 'selected' : ''}" data-cat="${c}">${c}</button>`).join('')}
+        </div>
+      </div>
+    </div>
+
+    <div class="how-it-works" id="comofunciona">
+      <h2>Como funciona</h2>
+      <div class="how-grid">
+        <div class="how-card">
+          <p class="how-num">01</p>
+          <div class="how-icon">🔍</div>
+          <h3>Encontre</h3>
+          <p>Encontre lojas e negócios perto de você.</p>
+        </div>
+        <div class="how-card">
+          <p class="how-num">02</p>
+          <div class="how-icon">📋</div>
+          <h3>Conheça</h3>
+          <p>Veja informações, categoria, endereço e horário de funcionamento.</p>
+        </div>
+        <div class="how-card">
+          <p class="how-num">03</p>
+          <div class="how-icon">💬</div>
+          <h3>Conecte-se</h3>
+          <p>Entre em contato diretamente com a loja pelo WhatsApp.</p>
         </div>
       </div>
     </div>
@@ -428,8 +574,15 @@ function renderHome(){
     </div>
     ` : ''}
 
-    <div class="grid">
+    <div class="grid" id="gridSection">
       ${gridContentHtml(filtered)}
+    </div>
+
+    <div class="categories-section" id="categoriasSection">
+      <h2>Encontre por categoria</h2>
+      <div class="cat-grid">
+        ${CATS.map(c => `<div class="cat-card" data-cat="${c}"><div class="cat-icon">${CAT_ICONS[c] || '🏬'}</div><span>${c}</span></div>`).join('')}
+      </div>
     </div>
     </div>
 
@@ -445,9 +598,16 @@ function renderHome(){
 
     <div class="plans-section" id="planos">
       <div class="plans-inner">
+      <div id="lojistas"></div>
         <div class="plans-head">
-          <h2>Quer divulgar sua loja?</h2>
-          <p>Fale com a gente pelo WhatsApp e coloque seu negócio na vitrine do Vitrine Certa — cadastro básico grátis, ou destaque pago pra aparecer ainda mais.</p>
+          <h2>Coloque sua loja na Vitrine Certa</h2>
+          <p>Apresente sua loja para pessoas que estão procurando onde comprar.</p>
+        </div>
+        <div class="lojista-benefits">
+          <div class="lojista-benefit"><div class="lb-icon">🔎</div><h4>Seja encontrado</h4><p>Sua loja passa a fazer parte de uma vitrine digital acessível a novos clientes.</p></div>
+          <div class="lojista-benefit"><div class="lb-icon">🏪</div><h4>Mostre sua loja</h4><p>Apresente seu negócio, categoria, endereço, horário e informações importantes.</p></div>
+          <div class="lojista-benefit"><div class="lb-icon">💬</div><h4>Receba contatos</h4><p>Facilite o contato dos clientes pelo WhatsApp.</p></div>
+          <div class="lojista-benefit"><div class="lb-icon">🎁</div><h4>Comece gratuitamente</h4><p>Cadastre sua loja sem precisar investir em anúncios.</p></div>
         </div>
         <div class="plans-grid">
           <div class="plan-card">
@@ -520,6 +680,23 @@ function renderHome(){
       </div>
     </div>
     ` : ''}
+
+    <div class="home-faq">
+      <h2>Perguntas frequentes</h2>
+      ${HOME_FAQ.map((f,i) => `
+        <div class="home-faq-item">
+          <div class="home-faq-q" data-i="${i}">${f.q}<span class="home-faq-chev">▾</span></div>
+          <div class="home-faq-a">${f.a}</div>
+        </div>
+      `).join('')}
+      <p class="home-faq-more"><a href="faq.html">Ver todas as perguntas →</a></p>
+    </div>
+
+    <div class="final-cta">
+      <h2>Sua loja pode estar aqui.</h2>
+      <p>Cadastre sua loja gratuitamente e faça parte da Vitrine Certa.</p>
+      <button id="finalCtaBtn">Cadastrar minha loja</button>
+    </div>
   `;
 
   if(featured.length) setupCarousel(featured);
@@ -582,6 +759,37 @@ function renderHome(){
     }
   });
 
+  const heroCtaLojista = document.getElementById('heroCtaLojista');
+  if(heroCtaLojista) heroCtaLojista.addEventListener('click', ()=>{
+    const msg = encodeURIComponent('Olá! Quero cadastrar minha loja gratuitamente no Vitrine Certa.');
+    window.open(`https://wa.me/5514998471171?text=${msg}`, '_blank');
+  });
+  const heroCtaBuscar = document.getElementById('heroCtaBuscar');
+  if(heroCtaBuscar) heroCtaBuscar.addEventListener('click', ()=>{
+    document.getElementById('searchInput').focus();
+    document.getElementById('gridSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  document.querySelectorAll('.cat-card').forEach(card=>{
+    card.addEventListener('click', ()=>{
+      activeCat = card.dataset.cat;
+      renderHome();
+      setTimeout(()=> document.getElementById('gridSection').scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+    });
+  });
+
+  document.querySelectorAll('.home-faq-q').forEach(q=>{
+    q.addEventListener('click', ()=>{
+      q.parentElement.classList.toggle('open');
+    });
+  });
+
+  const finalCtaBtn = document.getElementById('finalCtaBtn');
+  if(finalCtaBtn) finalCtaBtn.addEventListener('click', ()=>{
+    const msg = encodeURIComponent('Olá! Quero cadastrar minha loja gratuitamente no Vitrine Certa.');
+    window.open(`https://wa.me/5514998471171?text=${msg}`, '_blank');
+  });
+
   const lojistaCtaBtn = document.getElementById('lojistaCtaBtn');
   if(lojistaCtaBtn) lojistaCtaBtn.addEventListener('click', ()=>{
     const msg = encodeURIComponent('Olá! Quero saber mais sobre como anunciar minha loja no Vitrine Certa.');
@@ -642,6 +850,7 @@ function cardHtml(s){
         </div>
         <p class="cat">${s.category}</p>
         <p class="addr">${iconPin()}${s.address}</p>
+        <p style="font-size:12.5px;font-weight:600;color:var(--coral);margin:10px 0 0;">Ver loja →</p>
       </div>
     </div>
   `;
@@ -662,6 +871,7 @@ function featSlideHtml(s){
         </div>
         <p class="cat">${s.category}</p>
         <p class="addr">${iconPin()}${s.address}</p>
+        <p style="font-size:12.5px;font-weight:600;color:var(--coral);margin:10px 0 0;">Ver loja →</p>
       </div>
     </div>
   `;
@@ -728,6 +938,10 @@ function renderStore(id){
       </div>
 
       <button class="wpp-btn" id="wppBtn">${iconWpp()} Chamar no WhatsApp</button>
+      <div class="secondary-actions">
+        ${s.instagram ? `<a class="secondary-btn" href="${s.instagram}" target="_blank" rel="noopener">📷 Instagram</a>` : ''}
+        <a class="secondary-btn" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.address)}" target="_blank" rel="noopener">📍 Como chegar</a>
+      </div>
     </div>
   `;
 
@@ -824,6 +1038,17 @@ function bindLocationSelectEvents(){
   await Promise.all([loadStores(), loadOffers()]);
   renderHome();
 })();
+
+document.getElementById('headerBurger').addEventListener('click', ()=>{
+  document.getElementById('headerNav').classList.toggle('open');
+});
+document.querySelectorAll('#headerNav a').forEach(a=>{
+  a.addEventListener('click', ()=> document.getElementById('headerNav').classList.remove('open'));
+});
+document.getElementById('headerCtaBtn').addEventListener('click', ()=>{
+  const msg = encodeURIComponent('Olá! Quero cadastrar minha loja gratuitamente no Vitrine Certa.');
+  window.open(`https://wa.me/5514998471171?text=${msg}`, '_blank');
+});
 
 if(!localStorage.getItem('cookieConsent')){
   document.getElementById('cookieBanner').style.display = 'flex';
