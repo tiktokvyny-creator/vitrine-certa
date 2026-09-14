@@ -153,7 +153,7 @@
     </div>
 
     <table>
-      <thead><tr><th>Loja</th><th>Categoria</th><th>Plano</th><th>Status</th><th>Ações</th></tr></thead>
+      <thead><tr><th>Loja</th><th>Cidade</th><th>Categoria</th><th>Plano</th><th>Status</th><th>Ações</th></tr></thead>
       <tbody id="storesBody"></tbody>
     </table>
 
@@ -199,6 +199,8 @@
       <div class="field"><label>Categoria</label><select id="m-cat"></select></div>
       <div class="field"><label>Plano</label><select id="m-plan"></select></div>
       <div class="field full" id="fw-addr"><label>Endereço</label><input id="m-addr"><div class="field-error">Informe o endereço da loja.</div></div>
+      <div class="field"><label>Cidade</label><input id="m-city" placeholder="Tupã"></div>
+      <div class="field"><label>Estado (UF)</label><input id="m-state" placeholder="SP" maxlength="2" style="text-transform:uppercase;"></div>
       <div class="field full">
         <label>Horário de funcionamento</label>
         <div style="display:flex;align-items:center;gap:10px;">
@@ -327,7 +329,7 @@ async function loadReferenceData(){
 }
 
 async function loadStores(){
-  const { data, error } = await sb.from('stores').select('id, name, category_id, plan_id, status, address, hours_start, hours_end, whatsapp_phone, contact_email, description, promo_text, promo_expires_at');
+  const { data, error } = await sb.from('stores').select('id, name, category_id, plan_id, status, address, city, state, hours_start, hours_end, whatsapp_phone, contact_email, description, promo_text, promo_expires_at');
   if(error){ console.error(error); STORES = []; return; }
   STORES = data || [];
 }
@@ -508,6 +510,7 @@ function renderTable(){
   document.getElementById('storesBody').innerHTML = rows.map(s => `
     <tr class="${s.status==='banned' ? 'banned':''}">
       <td class="store-name">${s.name}</td>
+      <td>${s.city || ''}${s.state ? '/'+s.state : ''}</td>
       <td>${catNameById(s.category_id)}</td>
       <td><span class="plan-tag ${planLabelById(s.plan_id)}">${planLabelById(s.plan_id)}</span> ${isPromoActive(s) ? '🔥' : ''}</td>
       <td><span class="status-badge ${s.status}">${s.status==='active' ? 'Ativa' : 'Banida'}</span></td>
@@ -525,7 +528,7 @@ function renderTable(){
         </div>
       </td>
     </tr>
-  `).join('') || `<tr><td colspan="5" style="text-align:center;color:var(--ink-soft);padding:24px;">Nenhuma loja encontrada.</td></tr>`;
+  `).join('') || `<tr><td colspan="6" style="text-align:center;color:var(--ink-soft);padding:24px;">Nenhuma loja encontrada.</td></tr>`;
 
   document.querySelectorAll('[data-action]').forEach(btn=>{
     btn.addEventListener('click', ()=>{
@@ -564,6 +567,8 @@ function openModal(id){
     document.getElementById('m-cat').value = s.category_id;
     document.getElementById('m-plan').value = s.plan_id;
     document.getElementById('m-addr').value = s.address;
+    document.getElementById('m-city').value = s.city || '';
+    document.getElementById('m-state').value = s.state || '';
     document.getElementById('m-hours-start').value = s.hours_start ? s.hours_start.slice(0,5) : '';
     document.getElementById('m-hours-end').value = s.hours_end ? s.hours_end.slice(0,5) : '';
     document.getElementById('m-phone').value = s.whatsapp_phone;
@@ -574,6 +579,8 @@ function openModal(id){
   } else {
     document.getElementById('modalTitle').textContent = 'Cadastrar nova loja';
     ['m-name','m-addr','m-phone','m-email','m-desc','m-promo','m-promo-expires'].forEach(fid=> document.getElementById(fid).value = '');
+    document.getElementById('m-city').value = 'Tupã';
+    document.getElementById('m-state').value = 'SP';
     document.getElementById('m-hours-start').value = '';
     document.getElementById('m-hours-end').value = '';
     if(CATEGORIES[0]) document.getElementById('m-cat').value = CATEGORIES[0].id;
@@ -624,6 +631,8 @@ document.getElementById('saveModalBtn').addEventListener('click', async ()=>{
     category_id: document.getElementById('m-cat').value,
     plan_id: document.getElementById('m-plan').value,
     address: document.getElementById('m-addr').value,
+    city: document.getElementById('m-city').value || 'Tupã',
+    state: (document.getElementById('m-state').value || 'SP').toUpperCase(),
     hours_start: hStart || null,
     hours_end: hEnd || null,
     whatsapp_phone: document.getElementById('m-phone').value,

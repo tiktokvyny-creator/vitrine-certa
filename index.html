@@ -4,12 +4,12 @@
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2768171974814317" crossorigin="anonymous"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vitrine Certa — Tupã, SP</title>
-<meta name="description" content="Encontre lojas, restaurantes, salões e serviços de Tupã-SP em um só lugar. Veja endereço, horário e fale direto no WhatsApp com cada estabelecimento.">
+<title>Vitrine Certa — comércio local perto de você</title>
+<meta name="description" content="Encontre lojas, restaurantes, salões e serviços da sua cidade em um só lugar. Veja endereço, horário e fale direto no WhatsApp com cada estabelecimento.">
 <link rel="canonical" href="https://vitrinecertaa.com.br/">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Vitrine Certa — Tupã, SP">
-<meta property="og:description" content="Encontre lojas, restaurantes, salões e serviços de Tupã-SP em um só lugar. Fale direto no WhatsApp com cada loja.">
+<meta property="og:title" content="Vitrine Certa — comércio local perto de você">
+<meta property="og:description" content="Encontre lojas, restaurantes, salões e serviços da sua cidade em um só lugar. Fale direto no WhatsApp com cada loja.">
 <meta property="og:url" content="https://vitrinecertaa.com.br/">
 <meta property="og:locale" content="pt_BR">
 <meta name="twitter:card" content="summary">
@@ -42,6 +42,11 @@
   .header-nav a{font-size:13.5px;font-weight:500;color:var(--ink-soft);margin-left:20px;}
   .header-nav a:hover{color:var(--coral);}
   .city-tag{font-size:13px;color:var(--ink-soft);background:var(--amber-pale);padding:5px 12px;border-radius:20px;font-weight:500;}
+  .location-select{display:flex;gap:6px;}
+  .location-select select{
+    font-size:13px;color:var(--ink);background:var(--amber-pale);border:none;
+    padding:6px 10px;border-radius:20px;font-weight:500;font-family:'Inter',sans-serif;cursor:pointer;
+  }
 
   .hero{padding:0;max-width:1200px;margin:0 auto;}
   .hero-inner{
@@ -220,7 +225,10 @@
       <a href="sobre.html">Sobre</a>
       <a href="faq.html">Dúvidas</a>
     </nav>
-    <div class="city-tag">Tupã, SP</div>
+    <div class="location-select">
+      <select id="stateSelect" aria-label="Estado"></select>
+      <select id="citySelect" aria-label="Cidade"></select>
+    </div>
   </div>
 </header>
 
@@ -232,7 +240,7 @@
 </div>
 
 <footer>
-  Vitrine Certa · Tupã-SP ·
+  Vitrine Certa ·
   <a href="politica-privacidade.html" style="color:var(--ink-soft);text-decoration:underline;">Privacidade</a> ·
   <a href="termos-de-uso.html" style="color:var(--ink-soft);text-decoration:underline;">Termos de Uso</a>
 </footer>
@@ -250,6 +258,8 @@ const MAX_FEATURED = 6;
 let STORES = [];
 let OFFERS = [];
 let activeCat = "Todos";
+let selectedState = "SP";
+let selectedCity = "Tupã";
 
 async function loadOffers(){
   const { data, error } = await sb.from('affiliate_products').select('title, price, image_url, affiliate_url').eq('active', true).order('sort_order');
@@ -273,7 +283,9 @@ async function loadStores(){
   const { data, error } = await sb
     .from('stores')
     .select('id, name, address, whatsapp_phone, hours_start, hours_end, description, plan_id, promo_text, promo_expires_at, categories(name)')
-    .eq('status', 'active');
+    .eq('status', 'active')
+    .eq('city', selectedCity)
+    .eq('state', selectedState);
   if(error){ console.error('Erro ao carregar lojas:', error); STORES = []; return; }
   const today = new Date().toISOString().slice(0,10);
   STORES = (data || []).map(s => {
@@ -318,7 +330,7 @@ function renderHome(){
     <div class="main-col">
     <div class="hero">
       <div class="hero-inner">
-        <h1>O que você procura em Tupã?</h1>
+        <h1>O que você procura em ${selectedCity}?</h1>
         <p>Encontre lojas e serviços da cidade em um só lugar</p>
         <div class="search-box">
           ${iconSearch()}
@@ -437,7 +449,7 @@ function renderHome(){
     <div class="lojista-sticky-wrap">
       <div class="lojista-card">
         <div class="lc-icon">🏪📍</div>
-        <h3>Quanto vale um novo cliente em Tupã?</h3>
+        <h3>Quanto vale um novo cliente em ${selectedCity}?</h3>
         <p>Anuncie sua loja na Vitrine Certa a partir de R$ 0,00/mês.</p>
         <button class="lojista-cta-btn" id="lojistaCtaBtn">${iconWpp()} Falar com um Consultor no WhatsApp</button>
       </div>
@@ -485,7 +497,7 @@ function emptyStateHtml(){
       <div style="grid-column:1/-1;text-align:center;padding:50px 20px;">
         <div style="font-size:44px;margin-bottom:10px;">🏪✨</div>
         <h3 style="margin:0 0 8px;font-size:18px;">As primeiras lojas estão chegando!</h3>
-        <p style="color:var(--ink-soft);font-size:14px;max-width:360px;margin:0 auto;">Estamos cadastrando os comércios de Tupã. Volte em breve pra conferir as novidades.</p>
+        <p style="color:var(--ink-soft);font-size:14px;max-width:360px;margin:0 auto;">Estamos cadastrando os comércios de ${selectedCity}. Volte em breve pra conferir as novidades.</p>
       </div>
     `;
   }
@@ -609,8 +621,55 @@ function renderStore(id){
   window.scrollTo(0,0);
 }
 
+async function loadStatesIntoSelect(){
+  const stateSelect = document.getElementById('stateSelect');
+  try{
+    const resp = await fetch('https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nome');
+    const states = await resp.json();
+    stateSelect.innerHTML = states.map(s => `<option value="${s.sigla}" ${s.sigla===selectedState?'selected':''}>${s.sigla}</option>`).join('');
+  } catch(e){
+    console.error('Erro ao carregar estados:', e);
+    stateSelect.innerHTML = `<option value="SP" selected>SP</option>`;
+  }
+}
+
+async function loadCitiesIntoSelect(uf){
+  const citySelect = document.getElementById('citySelect');
+  citySelect.innerHTML = `<option>Carregando...</option>`;
+  try{
+    const resp = await fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios?orderBy=nome`);
+    const cities = await resp.json();
+    citySelect.innerHTML = cities.map(c => `<option value="${c.nome}" ${c.nome===selectedCity?'selected':''}>${c.nome}</option>`).join('');
+    if(!cities.some(c => c.nome === selectedCity) && cities.length){
+      selectedCity = cities[0].nome;
+    }
+  } catch(e){
+    console.error('Erro ao carregar cidades:', e);
+    citySelect.innerHTML = `<option value="${selectedCity}" selected>${selectedCity}</option>`;
+  }
+}
+
+async function initLocationSelectors(){
+  await loadStatesIntoSelect();
+  await loadCitiesIntoSelect(selectedState);
+
+  document.getElementById('stateSelect').addEventListener('change', async (e)=>{
+    selectedState = e.target.value;
+    await loadCitiesIntoSelect(selectedState);
+    await Promise.all([loadStores(), loadOffers()]);
+    renderHome();
+  });
+
+  document.getElementById('citySelect').addEventListener('change', async (e)=>{
+    selectedCity = e.target.value;
+    await Promise.all([loadStores(), loadOffers()]);
+    renderHome();
+  });
+}
+
 (async function init(){
   app.innerHTML = `<p style="padding:60px 28px;text-align:center;color:var(--ink-soft);">Carregando lojas...</p>`;
+  initLocationSelectors();
   await Promise.all([loadStores(), loadOffers()]);
   renderHome();
 })();
