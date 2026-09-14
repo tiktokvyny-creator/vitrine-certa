@@ -72,6 +72,11 @@
   .pill[data-cat="Alimentação"]{background:var(--amber-pale);color:var(--amber-dark);}
   .pill[data-cat="Beleza"]{background:var(--pink-pale);color:var(--pink-dark);}
   .pill[data-cat="Serviços"]{background:var(--purple-pale);color:var(--purple-dark);}
+  .pill[data-cat="Tecnologia"]{background:#E0ECFF;color:#1D4ED8;}
+  .pill[data-cat="Saúde"]{background:#FDE2E2;color:#B91C1C;}
+  .pill[data-cat="Pet Shop"]{background:#E8F5D9;color:#4D7C0F;}
+  .pill[data-cat="Mercado"]{background:#FDECD1;color:#92400E;}
+  .pill[data-cat="Educação"]{background:#CFFAFE;color:#0E7490;}
   .pill.selected{outline:2px solid currentColor;}
 
   .cookie-banner{
@@ -285,8 +290,8 @@ const SUPABASE_URL = "https://ppoelkclmuqojgjrzpkw.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwb2Vsa2NsbXVxb2pnanJ6cGt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkxNTk5OTEsImV4cCI6MjEwNDczNTk5MX0.t8b2FiDioq4YoIYV-8kAEo285IH2lSzjJEIFAzeis3k";
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const CATEGORY_COLORS = { "Moda":"#F5C4B3", "Alimentação":"#FAC775", "Beleza":"#F4C0D1", "Serviços":"#CECBF6" };
-const CATS = ["Moda","Alimentação","Beleza","Serviços"];
+const CATEGORY_COLORS = { "Moda":"#F5C4B3", "Alimentação":"#FAC775", "Beleza":"#F4C0D1", "Serviços":"#CECBF6", "Tecnologia":"#B3CCFF", "Saúde":"#F5B3B3", "Pet Shop":"#C7E8A3", "Mercado":"#F5D2A3", "Educação":"#A3E8EA" };
+const CATS = ["Moda","Alimentação","Beleza","Serviços","Tecnologia","Saúde","Pet Shop","Mercado","Educação"];
 const MAX_FEATURED = 6;
 
 let STORES = [];
@@ -597,7 +602,7 @@ function emptyStateHtml(){
       <div style="grid-column:1/-1;text-align:center;padding:50px 20px;">
         <div style="font-size:44px;margin-bottom:10px;">🏪✨</div>
         <h3 style="margin:0 0 8px;font-size:18px;">As primeiras lojas estão chegando!</h3>
-        <p style="color:var(--ink-soft);font-size:14px;max-width:360px;margin:0 auto;">Estamos cadastrando os comércios de ${selectedCity}. Volte em breve pra conferir as novidades.</p>
+        <p style="color:var(--ink-soft);font-size:14px;max-width:360px;margin:0 auto;">Estamos cadastrando novos comércios. Em breve venha conferir as novidades.</p>
       </div>
     `;
   }
@@ -689,7 +694,7 @@ function renderStore(id){
   const s = STORES.find(x=>x.id===id);
   sb.rpc('increment_store_view', { p_store_id: id }).then(({error})=>{ if(error) console.error(error); });
 
-  const catColors = { "Moda":["#E1F5EE","#0F6E56"], "Alimentação":["#FAEEDA","#633806"], "Beleza":["#FBEAF0","#4B1528"], "Serviços":["#EEEDFE","#3C3489"] };
+  const catColors = { "Moda":["#E1F5EE","#0F6E56"], "Alimentação":["#FAEEDA","#633806"], "Beleza":["#FBEAF0","#4B1528"], "Serviços":["#EEEDFE","#3C3489"], "Tecnologia":["#E0ECFF","#1D4ED8"], "Saúde":["#FDE2E2","#B91C1C"], "Pet Shop":["#E8F5D9","#4D7C0F"], "Mercado":["#FDECD1","#92400E"], "Educação":["#CFFAFE","#0E7490"] };
   const [bg, fg] = catColors[s.category] || ["#EDE1D4", "#2C1810"];
   let galleryIndex = 0;
 
