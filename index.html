@@ -177,6 +177,27 @@
   .plans-head h2{font-size:26px;margin:0 0 8px;}
   .plans-head p{margin:0;color:var(--ink-soft);font-size:15px;line-height:1.6;}
   .plans-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:18px;}
+
+  .lead-form-box{
+    max-width:520px;margin:36px auto 0;background:var(--cream);border:2px solid var(--line);
+    border-radius:20px;padding:26px 24px;text-align:center;
+  }
+  .lead-form-box h3{font-size:17px;margin:0 0 6px;}
+  .lead-form-box p{font-size:13.5px;color:var(--ink-soft);margin:0 0 18px;}
+  .lead-form-row{display:flex;gap:10px;flex-wrap:wrap;}
+  .lead-form-row input, .lead-form-row select{
+    flex:1;min-width:140px;padding:12px 14px;border:2px solid var(--line);border-radius:12px;
+    font-size:14px;font-family:'Inter',sans-serif;background:var(--paper);color:var(--ink);outline:none;
+  }
+  .lead-form-row input:focus, .lead-form-row select:focus{border-color:var(--coral);}
+  .lead-submit-btn{
+    margin-top:12px;width:100%;background:var(--coral);color:#fff;border:none;padding:14px;
+    border-radius:12px;font-size:14.5px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;
+  }
+  .lead-submit-btn:disabled{opacity:.6;cursor:default;}
+  .lead-form-msg{font-size:13px;margin-top:12px;display:none;}
+  .lead-form-msg.success{color:var(--teal);display:block;}
+  .lead-form-msg.error{color:var(--coral);display:block;}
   .plan-card{border:2px solid var(--line);border-radius:20px;padding:34px 28px;background:var(--paper);display:flex;flex-direction:column;position:relative;box-shadow:0 4px 16px rgba(74,27,12,.05);}
   .plan-card.highlight{border-color:var(--coral);background:#FFF3EC;box-shadow:0 8px 24px rgba(216,90,48,.15);transform:scale(1.02);}
   .plan-tag{position:absolute;top:-12px;right:20px;background:var(--coral);color:#fff;font-size:11px;font-weight:600;padding:4px 12px;border-radius:10px;}
@@ -453,6 +474,21 @@ function renderHome(){
             <button class="plan-cta" data-plan="Perto Top">Falar no WhatsApp</button>
           </div>
         </div>
+
+        <div class="lead-form-box">
+          <h3>Prefere que a gente te chame?</h3>
+          <p>Deixa o nome da sua loja e seu WhatsApp que entramos em contato — sem compromisso.</p>
+          <div class="lead-form-row">
+            <input type="text" id="leadStoreName" placeholder="Nome da sua loja">
+            <input type="text" id="leadPhone" placeholder="Seu WhatsApp">
+          </div>
+          <select id="leadCategory" style="width:100%;margin-top:10px;padding:12px 14px;border:2px solid var(--line);border-radius:12px;font-size:14px;font-family:'Inter',sans-serif;background:var(--paper);color:var(--ink-soft);">
+            <option value="">Categoria (opcional)</option>
+            ${CATS.map(c => `<option value="${c}">${c}</option>`).join('')}
+          </select>
+          <button class="lead-submit-btn" id="leadSubmitBtn">Quero ser contatado</button>
+          <p class="lead-form-msg" id="leadFormMsg"></p>
+        </div>
       </div>
     </div>
 
@@ -496,6 +532,44 @@ function renderHome(){
 
   const clearBtn = document.getElementById('clearFiltersBtn');
   if(clearBtn) clearBtn.addEventListener('click', ()=>{ searchTerm = ''; activeCat = 'Todos'; renderHome(); });
+
+  const leadSubmitBtn = document.getElementById('leadSubmitBtn');
+  if(leadSubmitBtn) leadSubmitBtn.addEventListener('click', async ()=>{
+    const storeName = document.getElementById('leadStoreName').value.trim();
+    const phone = document.getElementById('leadPhone').value.trim();
+    const category = document.getElementById('leadCategory').value || null;
+    const msgEl = document.getElementById('leadFormMsg');
+    msgEl.className = 'lead-form-msg';
+
+    if(!storeName || !phone){
+      msgEl.textContent = 'Preencha o nome da loja e o WhatsApp.';
+      msgEl.classList.add('error');
+      return;
+    }
+
+    leadSubmitBtn.disabled = true;
+    leadSubmitBtn.textContent = 'Enviando...';
+
+    const { error } = await sb.from('leads').insert({
+      store_name: storeName,
+      whatsapp_phone: phone,
+      category_interest: category
+    });
+
+    leadSubmitBtn.disabled = false;
+    leadSubmitBtn.textContent = 'Quero ser contatado';
+
+    if(error){
+      msgEl.textContent = 'Erro ao enviar. Tenta de novo ou chama no WhatsApp.';
+      msgEl.classList.add('error');
+    } else {
+      msgEl.textContent = '✓ Recebemos seus dados! Vamos te chamar em breve.';
+      msgEl.classList.add('success');
+      document.getElementById('leadStoreName').value = '';
+      document.getElementById('leadPhone').value = '';
+      document.getElementById('leadCategory').value = '';
+    }
+  });
 
   const lojistaCtaBtn = document.getElementById('lojistaCtaBtn');
   if(lojistaCtaBtn) lojistaCtaBtn.addEventListener('click', ()=>{

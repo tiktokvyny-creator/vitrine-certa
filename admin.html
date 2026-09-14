@@ -172,6 +172,14 @@
     </table>
 
     <div class="head-row" style="margin-top:44px;">
+      <h1>Leads (formulário "Prefere que a gente te chame?")</h1>
+    </div>
+    <table>
+      <thead><tr><th>Loja</th><th>WhatsApp</th><th>Categoria</th><th>Data</th><th>Status</th><th>Ações</th></tr></thead>
+      <tbody id="leadsBody"></tbody>
+    </table>
+
+    <div class="head-row" style="margin-top:44px;">
       <h1>Ofertas (produtos afiliados)</h1>
     </div>
     <div class="modal" style="max-width:100%;padding:20px 24px;margin-bottom:20px;">
@@ -198,6 +206,13 @@
       <div class="field full" id="fw-name"><label>Nome da loja</label><input id="m-name"><div class="field-error">Informe o nome da loja.</div></div>
       <div class="field"><label>Categoria</label><select id="m-cat"></select></div>
       <div class="field"><label>Plano</label><select id="m-plan"></select></div>
+      <div class="field full" id="trial-wrap" style="display:none;">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+          <input type="checkbox" id="m-trial" style="width:auto;">
+          🎁 Ativar 7 dias grátis (vira cobrança automaticamente depois)
+        </label>
+        <p id="trial-status" style="font-size:12.5px;color:var(--ink-soft);margin:6px 0 0;"></p>
+      </div>
       <div class="field full" id="fw-addr"><label>Endereço</label><input id="m-addr"><div class="field-error">Informe o endereço da loja.</div></div>
       <div class="field"><label>Cidade</label><input id="m-city" placeholder="Tupã"></div>
       <div class="field"><label>Estado (UF)</label><input id="m-state" placeholder="SP" maxlength="2" style="text-transform:uppercase;"></div>
@@ -276,6 +291,10 @@ function isPromoActive(s){
   return s.promo_expires_at >= new Date().toISOString().slice(0,10);
 }
 
+function isTrialActive(s){
+  return !!s.trial_ends_at && s.trial_ends_at >= new Date().toISOString().slice(0,10);
+}
+
 async function enterAdminApp(email){
   document.querySelector('.who').innerHTML = `${email} <button class="logout-link" id="logoutBtn">Sair</button>`;
   document.getElementById('logoutBtn').addEventListener('click', doLogout);
@@ -288,6 +307,8 @@ async function enterAdminApp(email){
   renderAffTable();
   renderAll();
   await loadSiteStats();
+  await loadLeads();
+  renderLeads();
 }
 
 document.getElementById('loginBtn').addEventListener('click', async ()=>{
@@ -339,7 +360,7 @@ async function loadReferenceData(){
 }
 
 async function loadStores(){
-  const { data, error } = await sb.from('stores').select('id, name, category_id, plan_id, status, address, city, state, hours_start, hours_end, whatsapp_phone, contact_email, description, promo_text, promo_expires_at, photo_urls, logo_url');
+  const { data, error } = await sb.from('stores').select('id, name, category_id, plan_id, status, address, city, state, hours_start, hours_end, whatsapp_phone, contact_email, description, promo_text, promo_expires_at, photo_urls, logo_url, trial_ends_at');
   if(error){ console.error(error); STORES = []; return; }
   STORES = data || [];
 }
@@ -356,6 +377,52 @@ document.querySelectorAll('#statsPeriodSelector .period-pill').forEach(pill=>{
     loadSiteStats();
   });
 });
+
+let LEADS = [];
+
+async function loadLeads(){
+  const { data, error } = await sb.from('leads').select('id, store_name, whatsapp_phone, category_interest, contacted, created_at').order('created_at', { ascending: false });
+  if(error){ console.error('Erro ao carregar leads:', error); LEADS = []; return; }
+  LEADS = data || [];
+}
+
+function renderLeads(){
+  document.getElementById('leadsBody').innerHTML = LEADS.map(l => `
+    <tr class="${l.contacted ? 'banned' : ''}">
+      <td class="store-name">${l.store_name}</td>
+      <td>${l.whatsapp_phone}</td>
+      <td>${l.category_interest || '—'}</td>
+      <td>${new Date(l.created_at).toLocaleDateString('pt-BR')}</td>
+      <td><span class="status-badge ${l.contacted ? 'active' : 'banned'}">${l.contacted ? 'Contatado' : 'Pendente'}</span></td>
+      <td>
+        <div class="row-actions">
+          <button class="icon-btn" title="${l.contacted ? 'Marcar como pendente' : 'Marcar como contatado'}" data-lead-action="toggle" data-id="${l.id}">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </button>
+          <button class="icon-btn danger" title="Remover" data-lead-action="remove" data-id="${l.id}">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+          </button>
+        </div>
+      </td>
+    </tr>
+  `).join('') || `<tr><td colspan="6" style="text-align:center;color:var(--ink-soft);padding:20px;">Nenhum lead recebido ainda.</td></tr>`;
+
+  document.querySelectorAll('[data-lead-action]').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const id = btn.dataset.id;
+      const action = btn.dataset.leadAction;
+      if(action === 'remove'){
+        if(!confirm('Remover este lead?')) return;
+        await sb.from('leads').delete().eq('id', id);
+      } else {
+        const lead = LEADS.find(x=>x.id===id);
+        await sb.from('leads').update({ contacted: !lead.contacted }).eq('id', id);
+      }
+      await loadLeads();
+      renderLeads();
+    });
+  });
+}
 
 async function loadSiteStats(){
   const today = new Date();
@@ -404,6 +471,7 @@ let existingPhotoUrls = [];
 let newPhotoFiles = [];
 let existingLogoUrl = null;
 let newLogoFile = null;
+let existingTrialEndsAt = null;
 
 function renderPhotoPreview(){
   const box = document.getElementById('photo-preview');
@@ -611,7 +679,7 @@ function renderTable(){
       <td class="store-name">${s.name}</td>
       <td>${s.city || ''}${s.state ? '/'+s.state : ''}</td>
       <td>${catNameById(s.category_id)}</td>
-      <td><span class="plan-tag ${planLabelById(s.plan_id)}">${planLabelById(s.plan_id)}</span> ${isPromoActive(s) ? '🔥' : ''}</td>
+      <td><span class="plan-tag ${planLabelById(s.plan_id)}">${planLabelById(s.plan_id)}</span> ${isPromoActive(s) ? '🔥' : ''} ${isTrialActive(s) ? '🎁' : ''}</td>
       <td><span class="status-badge ${s.status}">${s.status==='active' ? 'Ativa' : 'Banida'}</span></td>
       <td>
         <div class="row-actions">
@@ -679,6 +747,9 @@ function openModal(id){
     newPhotoFiles = [];
     existingLogoUrl = s.logo_url || null;
     newLogoFile = null;
+    existingTrialEndsAt = s.trial_ends_at || null;
+    document.getElementById('m-trial').checked = !!existingTrialEndsAt;
+    originalTrialChecked = !!existingTrialEndsAt;
   } else {
     document.getElementById('modalTitle').textContent = 'Cadastrar nova loja';
     ['m-name','m-addr','m-phone','m-email','m-desc','m-promo','m-promo-expires'].forEach(fid=> document.getElementById(fid).value = '');
@@ -692,17 +763,44 @@ function openModal(id){
     newPhotoFiles = [];
     existingLogoUrl = null;
     newLogoFile = null;
+    existingTrialEndsAt = null;
+    document.getElementById('m-trial').checked = false;
+    originalTrialChecked = false;
   }
   renderPhotoPreview();
   renderLogoPreview();
   bg.classList.add('open');
   updatePromoVisibility();
+  updateTrialVisibility();
 }
-document.getElementById('m-plan').addEventListener('change', updatePromoVisibility);
 function updatePromoVisibility(){
   const isPaid = document.getElementById('m-plan').value !== 'basico';
   document.getElementById('promo-wrap').style.display = isPaid ? 'block' : 'none';
+  updateTrialVisibility();
 }
+
+let originalTrialChecked = false;
+
+function updateTrialVisibility(){
+  const isPertoMais = document.getElementById('m-plan').value === 'perto_mais';
+  document.getElementById('trial-wrap').style.display = isPertoMais ? 'block' : 'none';
+  const statusEl = document.getElementById('trial-status');
+  const checked = document.getElementById('m-trial').checked;
+  if(!isPertoMais){ statusEl.textContent = ''; return; }
+  if(checked && existingTrialEndsAt){
+    const daysLeft = Math.ceil((new Date(existingTrialEndsAt) - new Date()) / (1000*60*60*24));
+    statusEl.textContent = daysLeft >= 0
+      ? `Teste ativo — termina em ${daysLeft} dia(s), no dia ${new Date(existingTrialEndsAt+'T00:00:00').toLocaleDateString('pt-BR')}.`
+      : `Teste já encerrado em ${new Date(existingTrialEndsAt+'T00:00:00').toLocaleDateString('pt-BR')}. Desmarque e marque de novo pra reiniciar.`;
+  } else if(checked){
+    statusEl.textContent = 'Ao salvar, o teste de 7 dias começa hoje.';
+  } else {
+    statusEl.textContent = '';
+  }
+}
+
+document.getElementById('m-plan').addEventListener('change', updatePromoVisibility);
+document.getElementById('m-trial').addEventListener('change', updateTrialVisibility);
 
 document.getElementById('openAddBtn').addEventListener('click', ()=> openModal(null));
 document.getElementById('cancelModalBtn').addEventListener('click', ()=> document.getElementById('addModalBg').classList.remove('open'));
@@ -731,6 +829,16 @@ function validateStoreForm(){
   return valid;
 }
 
+function computeTrialEndsAt(){
+  const isPertoMais = document.getElementById('m-plan').value === 'perto_mais';
+  const checked = document.getElementById('m-trial').checked;
+  if(!isPertoMais || !checked) return null;
+  if(originalTrialChecked && existingTrialEndsAt) return existingTrialEndsAt; // já estava em teste, mantém a data
+  const d = new Date();
+  d.setDate(d.getDate() + 7);
+  return d.toISOString().slice(0,10); // recém-marcado agora: começa hoje
+}
+
 document.getElementById('saveModalBtn').addEventListener('click', async ()=>{
   if(!validateStoreForm()) return;
   const saveBtn = document.getElementById('saveModalBtn');
@@ -749,7 +857,8 @@ document.getElementById('saveModalBtn').addEventListener('click', async ()=>{
     contact_email: document.getElementById('m-email').value || null,
     description: document.getElementById('m-desc').value || null,
     promo_text: document.getElementById('m-plan').value !== 'basico' ? (document.getElementById('m-promo').value || null) : null,
-    promo_expires_at: document.getElementById('m-plan').value !== 'basico' ? (document.getElementById('m-promo-expires').value || null) : null
+    promo_expires_at: document.getElementById('m-plan').value !== 'basico' ? (document.getElementById('m-promo-expires').value || null) : null,
+    trial_ends_at: computeTrialEndsAt()
   };
 
   saveBtn.disabled = true;
