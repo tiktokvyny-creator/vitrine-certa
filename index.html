@@ -411,7 +411,7 @@ function renderHome(){
               <li>Espaço de promoção/cupom em destaque</li>
               <li>Pague 10 meses, leve 12 no plano anual</li>
             </ul>
-            <button class="plan-cta" data-plan="Perto+">Quero testar 7 dias grátis</button>
+            <button class="plan-cta" data-plan="Perto+" data-payment-url="https://www.asaas.com/c/yb85g3d3coueh85r">Quero testar 7 dias grátis</button>
           </div>
           <div class="plan-card">
             <p class="plan-name">Perto Top</p>
@@ -421,7 +421,7 @@ function renderHome(){
               <li>Topo fixo dentro da sua categoria</li>
               <li>Pague 10 meses, leve 12 no plano anual</li>
             </ul>
-            <button class="plan-cta" data-plan="Perto Top">Falar no WhatsApp</button>
+            <button class="plan-cta" data-plan="Perto Top" data-payment-url="https://www.asaas.com/c/9kmpasvo2t94160q">Assinar Perto Top</button>
           </div>
         </div>
       </div>
@@ -449,7 +449,7 @@ function renderHome(){
     <div class="lojista-sticky-wrap">
       <div class="lojista-card">
         <div class="lc-icon">🏪📍</div>
-        <h3>Quanto vale um novo cliente em ${selectedCity}?</h3>
+        <h3>Quanto vale um novo cliente pra você?</h3>
         <p>Anuncie sua loja na Vitrine Certa a partir de R$ 0,00/mês.</p>
         <button class="lojista-cta-btn" id="lojistaCtaBtn">${iconWpp()} Falar com um Consultor no WhatsApp</button>
       </div>
@@ -485,6 +485,10 @@ function renderHome(){
 
   document.querySelectorAll('.plan-cta').forEach(btn=>{
     btn.addEventListener('click', ()=>{
+      if(btn.dataset.paymentUrl){
+        window.open(btn.dataset.paymentUrl, '_blank');
+        return;
+      }
       const msg = encodeURIComponent(`Olá! Tenho interesse no plano ${btn.dataset.plan} do Vitrine Certa para cadastrar minha loja.`);
       window.open(`https://wa.me/5514998471171?text=${msg}`, '_blank');
     });
