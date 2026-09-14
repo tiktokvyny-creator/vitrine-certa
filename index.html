@@ -204,6 +204,13 @@
   .store-gallery img.active{border-color:var(--coral);}
 
   .name-row{display:flex;align-items:center;gap:8px;}
+  .verified-badge{
+    display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;
+    background:var(--teal);border-radius:50%;color:#fff;flex-shrink:0;
+  }
+  .verified-badge.big{width:22px;height:22px;}
+  .verified-badge svg{width:11px;height:11px;}
+  .verified-badge.big svg{width:13px;height:13px;}
   .store-logo{width:28px;height:28px;border-radius:50%;object-fit:cover;border:2px solid var(--paper);box-shadow:0 0 0 1px var(--line);flex-shrink:0;}
   .store-logo.big{width:44px;height:44px;}
   .store-cat-pill{display:inline-block;font-size:12px;font-weight:600;padding:5px 12px;border-radius:14px;margin-bottom:10px;}
@@ -312,6 +319,10 @@ async function loadStores(){
 function iconSearch(){ return `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`; }
 function iconPin(){ return `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:2px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>`; }
 function iconWpp(){ return `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 6.3A8.86 8.86 0 0 0 12.05 4a8.94 8.94 0 0 0-7.75 13.4L3 21l3.7-1.24a8.9 8.9 0 0 0 5.35 1.8h.01a8.94 8.94 0 0 0 8.94-8.9 8.85 8.85 0 0 0-3.4-6.36zM12.05 20a7.4 7.4 0 0 1-3.8-1.04l-.27-.16-2.84.94.93-2.75-.18-.28a7.43 7.43 0 0 1 6.16-11.4 7.34 7.34 0 0 1 5.2 2.16 7.35 7.35 0 0 1 2.17 5.22A7.43 7.43 0 0 1 12.05 20z"/></svg>`; }
+
+function verifiedBadgeHtml(big){
+  return `<span class="verified-badge${big ? ' big' : ''}" title="Loja verificada"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>`;
+}
 
 function toWhatsAppNumber(raw){
   let digits = (raw || '').replace(/\D/g, '');
@@ -542,6 +553,7 @@ function cardHtml(s){
         <div class="name-row">
           ${s.logo ? `<img src="${s.logo}" class="store-logo" alt="">` : ''}
           <h3>${s.name}</h3>
+          ${s.destaque ? verifiedBadgeHtml(false) : ''}
         </div>
         <p class="cat">${s.category}</p>
         <p class="addr">${iconPin()}${s.address}</p>
@@ -561,6 +573,7 @@ function featSlideHtml(s){
         <div class="name-row">
           ${s.logo ? `<img src="${s.logo}" class="store-logo" alt="">` : ''}
           <h3>${s.name}</h3>
+          ${s.destaque ? verifiedBadgeHtml(false) : ''}
         </div>
         <p class="cat">${s.category}</p>
         <p class="addr">${iconPin()}${s.address}</p>
@@ -619,6 +632,7 @@ function renderStore(id){
       <div class="name-row">
         ${s.logo ? `<img src="${s.logo}" class="store-logo big" alt="">` : ''}
         <h1>${s.name}</h1>
+        ${s.destaque ? verifiedBadgeHtml(true) : ''}
       </div>
       ${s.promo ? `<div class="promo-banner">🔥 ${s.promo}</div>` : ''}
       <p class="store-desc">${s.description}</p>
