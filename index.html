@@ -388,6 +388,17 @@ function renderHome(){
     <div class="grid">
       ${gridContentHtml(filtered)}
     </div>
+    </div>
+
+    <div class="lojista-sticky-wrap">
+      <div class="lojista-card">
+        <div class="lc-icon">🏪📍</div>
+        <h3>Quanto vale um novo cliente pra você?</h3>
+        <p>Anuncie sua loja na Vitrine Certa a partir de R$ 0,00/mês.</p>
+        <button class="lojista-cta-btn" id="lojistaCtaBtn">${iconWpp()} Falar com um Consultor no WhatsApp</button>
+      </div>
+    </div>
+    </div>
 
     <div class="plans-section" id="planos">
       <div class="plans-inner">
@@ -451,17 +462,6 @@ function renderHome(){
       </div>
     </div>
     ` : ''}
-    </div>
-
-    <div class="lojista-sticky-wrap">
-      <div class="lojista-card">
-        <div class="lc-icon">🏪📍</div>
-        <h3>Quanto vale um novo cliente pra você?</h3>
-        <p>Anuncie sua loja na Vitrine Certa a partir de R$ 0,00/mês.</p>
-        <button class="lojista-cta-btn" id="lojistaCtaBtn">${iconWpp()} Falar com um Consultor no WhatsApp</button>
-      </div>
-    </div>
-    </div>
   `;
 
   if(featured.length) setupCarousel(featured);
