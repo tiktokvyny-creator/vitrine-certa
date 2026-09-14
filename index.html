@@ -86,11 +86,11 @@
   .hero-visual{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:8px;}
   .hero-mini-card{
     background:var(--paper);border:2px solid var(--line);border-radius:16px;padding:14px 16px;
-    width:150px;text-align:left;box-shadow:0 6px 16px rgba(74,27,12,.08);
+    width:150px;text-align:left;box-shadow:0 6px 16px rgba(74,27,12,.08);cursor:pointer;
+    transition:transform .12s ease, border-color .12s ease;
   }
-  .hero-mini-card .mini-dot{width:34px;height:34px;border-radius:50%;margin-bottom:10px;}
-  .hero-mini-card .mini-line{height:8px;border-radius:4px;background:var(--line);margin-bottom:6px;}
-  .hero-mini-card .mini-line.short{width:60%;}
+  .hero-mini-card:hover{transform:translateY(-3px);border-color:var(--coral);}
+  .hero-mini-card .mini-dot{width:100%;height:60px;border-radius:10px;margin-bottom:10px;}
   @media (max-width:640px){ .hero-visual{display:none;} }
   .search-box{
     display:flex;align-items:center;gap:10px;background:var(--paper);border:none;
@@ -437,7 +437,7 @@ function formatHours(start, end){
 async function loadStores(){
   const { data, error } = await sb
     .from('stores')
-    .select('id, name, address, whatsapp_phone, hours_start, hours_end, description, plan_id, promo_text, promo_expires_at, photo_urls, logo_url, instagram_url, categories(name)')
+    .select('id, name, address, whatsapp_phone, hours_start, hours_end, description, plan_id, promo_text, promo_expires_at, photo_urls, logo_url, instagram_url, created_at, categories(name)')
     .eq('status', 'active')
     .eq('city', selectedCity)
     .eq('state', selectedState);
@@ -455,6 +455,7 @@ async function loadStores(){
       promo: promoActive ? s.promo_text : null,
       photos: s.photo_urls || [],
       logo: s.logo_url || null,
+      createdAt: s.created_at,
       instagram: s.instagram_url || null
     };
   });
@@ -488,6 +489,7 @@ function renderHome(){
   const allFeatured = STORES.filter(s => s.destaque);
   const featured = pickFeatured(allFeatured);
   const withPromo = STORES.filter(s => s.promo);
+  const latestStores = [...STORES].sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0,3);
   const PLAN_RANK = { perto_top: 0, perto_mais: 1, basico: 2 };
   const filtered = STORES.filter(s => {
     const matchCat = activeCat === "Todos" || s.category === activeCat;
@@ -502,11 +504,19 @@ function renderHome(){
       <div class="hero-inner">
         <h1>Sua loja merece ser encontrada.</h1>
         <p>A Vitrine Certa conecta lojas e clientes em um só lugar.</p>
+        ${latestStores.length ? `
         <div class="hero-visual">
-          <div class="hero-mini-card"><div class="mini-dot" style="background:var(--teal-pale);"></div><div class="mini-line"></div><div class="mini-line short"></div></div>
-          <div class="hero-mini-card"><div class="mini-dot" style="background:var(--pink-pale);"></div><div class="mini-line"></div><div class="mini-line short"></div></div>
-          <div class="hero-mini-card"><div class="mini-dot" style="background:var(--amber-pale);"></div><div class="mini-line"></div><div class="mini-line short"></div></div>
+          ${latestStores.map(s => `
+            <div class="hero-mini-card" data-id="${s.id}">
+              ${s.photos[0] || s.logo
+                ? `<img src="${s.photos[0] || s.logo}" alt="${s.name}" style="width:100%;height:60px;object-fit:cover;border-radius:10px;margin-bottom:10px;">`
+                : `<div class="mini-dot" style="background:${s.color}40;"></div>`}
+              <p style="font-size:13px;font-weight:600;margin:0 0 3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${s.name}</p>
+              <p style="font-size:11.5px;color:var(--ink-soft);margin:0;">${s.category}</p>
+            </div>
+          `).join('')}
         </div>
+        ` : ''}
         <div class="hero-ctas">
           <button class="hero-cta-primary" id="heroCtaLojista">Cadastrar minha loja grátis</button>
           <button class="hero-cta-secondary" id="heroCtaBuscar">Encontrar uma loja</button>
@@ -757,6 +767,10 @@ function renderHome(){
       document.getElementById('leadPhone').value = '';
       document.getElementById('leadCategory').value = '';
     }
+  });
+
+  document.querySelectorAll('.hero-mini-card').forEach(card=>{
+    card.addEventListener('click', ()=> renderStore(card.dataset.id));
   });
 
   const heroCtaLojista = document.getElementById('heroCtaLojista');
