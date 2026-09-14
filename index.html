@@ -26,7 +26,7 @@
     --cream:#FFF8F0; --paper:#FFFFFF; --ink:#2C1810; --ink-soft:#6B5B4F; --line:#EDE1D4;
   }
   *{box-sizing:border-box;}
-  body{margin:0;font-family:'Inter',sans-serif;background:var(--cream);color:var(--ink);}
+  body{margin:0;font-family:'Inter',sans-serif;background:#F8F9FA;color:var(--ink);}
   h1,h2,h3,.brand{font-family:'Fredoka',sans-serif;}
   a{text-decoration:none;color:inherit;}
 
@@ -43,17 +43,22 @@
   .header-nav a:hover{color:var(--coral);}
   .city-tag{font-size:13px;color:var(--ink-soft);background:var(--amber-pale);padding:5px 12px;border-radius:20px;font-weight:500;}
 
-  .hero{padding:36px 28px 20px;max-width:1100px;margin:0 auto;}
-  .hero h1{font-size:32px;margin:0 0 6px;font-weight:600;}
-  .hero p{margin:0 0 22px;color:var(--ink-soft);font-size:15px;}
-  .search-box{
-    display:flex;align-items:center;gap:8px;background:var(--paper);border:2px solid var(--line);
-    border-radius:14px;padding:12px 16px;max-width:520px;
+  .hero{padding:0;max-width:1200px;margin:0 auto;}
+  .hero-inner{
+    background:linear-gradient(135deg, var(--coral-light) 0%, var(--amber-pale) 100%);
+    border-radius:0 0 28px 28px;padding:48px 28px 40px;text-align:center;
   }
-  .search-box input{border:none;outline:none;font-size:15px;width:100%;background:transparent;color:var(--ink);font-family:'Inter',sans-serif;}
-  .search-box svg{flex-shrink:0;color:var(--ink-soft);}
+  .hero-inner h1{font-size:36px;margin:0 0 10px;font-weight:600;}
+  .hero-inner p{margin:0 0 26px;color:var(--coral-dark);font-size:16px;opacity:.85;}
+  .search-box{
+    display:flex;align-items:center;gap:10px;background:var(--paper);border:none;
+    border-radius:18px;padding:18px 22px;max-width:600px;margin:0 auto;
+    box-shadow:0 10px 30px rgba(74,27,12,.12);
+  }
+  .search-box input{border:none;outline:none;font-size:17px;width:100%;background:transparent;color:var(--ink);font-family:'Inter',sans-serif;}
+  .search-box svg{flex-shrink:0;color:var(--ink-soft);width:20px;height:20px;}
 
-  .categories{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;}
+  .categories{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px;justify-content:center;}
   .pill{padding:9px 18px;border-radius:20px;font-size:14px;font-weight:500;border:2px solid transparent;cursor:pointer;font-family:'Inter',sans-serif;transition:transform .12s ease;}
   .pill:active{transform:scale(0.96);}
   .pill.all{background:var(--ink);color:var(--cream);}
@@ -64,7 +69,7 @@
   .pill[data-cat="Serviços"]{background:var(--purple-pale);color:var(--purple-dark);}
   .pill.selected{outline:2px solid currentColor;}
 
-  .ad-slot{max-width:1100px;margin:0 auto 26px;padding:0 28px;}
+  .ad-slot{max-width:1200px;margin:0 auto 26px;padding:0 28px;}
   .ad-slot-inner{border:2px dashed var(--line);border-radius:16px;background:var(--paper);display:flex;align-items:center;justify-content:center;min-height:90px;color:var(--ink-soft);font-size:12.5px;font-weight:500;}
 
   .cookie-banner{
@@ -79,7 +84,7 @@
     font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;
   }
 
-  .featured-wrap{max-width:1100px;margin:0 auto;padding:0 28px;}
+  .featured-wrap{max-width:1200px;margin:0 auto;padding:0 28px;}
   .featured-label{margin-bottom:12px;}
   .featured-label span{font-size:13px;font-weight:600;color:var(--amber-dark);background:var(--amber-pale);padding:5px 12px;border-radius:12px;}
   .carousel{position:relative;overflow:hidden;border-radius:20px;}
@@ -105,10 +110,10 @@
     background:linear-gradient(90deg, var(--coral), #ef7a4e);color:#fff;border-radius:14px;
     padding:14px 18px;margin-bottom:20px;font-size:14.5px;font-weight:600;display:flex;align-items:center;gap:10px;
   }
-  .promo-section{max-width:1100px;margin:0 auto 26px;padding:0 28px;}
+  .promo-section{max-width:1200px;margin:0 auto 26px;padding:0 28px;}
   .promo-section h2{font-size:19px;margin:0 0 14px;}
 
-  .offers-section{max-width:1100px;margin:0 auto 26px;padding:0 28px;}
+  .offers-section{max-width:1200px;margin:0 auto 26px;padding:0 28px;}
   .offers-section h2{font-size:19px;margin:0 0 4px;}
   .offers-section .offers-sub{font-size:12.5px;color:var(--ink-soft);margin:0 0 14px;}
   .offers-strip{display:flex;gap:14px;overflow-x:auto;padding-bottom:6px;}
@@ -142,7 +147,7 @@
   .promo-card .p-store{font-size:13px;font-weight:600;color:var(--coral-dark);margin:0 0 4px;}
   .promo-card .p-text{font-size:13.5px;margin:0;}
 
-  .grid{max-width:1100px;margin:26px auto;padding:0 28px;display:grid;grid-template-columns:repeat(auto-fit, minmax(230px, 1fr));gap:20px;}
+  .grid{max-width:1200px;margin:26px auto;padding:0 28px;display:grid;grid-template-columns:repeat(auto-fit, minmax(230px, 1fr));gap:20px;}
   .card{background:var(--paper);border:2px solid var(--line);border-radius:18px;overflow:hidden;cursor:pointer;transition:border-color .15s ease, transform .15s ease;display:flex;flex-direction:column;}
   .card:hover{border-color:var(--coral);transform:translateY(-2px);}
   .card-photo{height:120px;display:flex;align-items:center;justify-content:center;font-family:'Fredoka',sans-serif;font-size:15px;font-weight:500;color:rgba(0,0,0,.35);position:relative;}
@@ -153,7 +158,7 @@
   .card-body .addr{font-size:13px;color:var(--ink-soft);margin:0;display:flex;gap:6px;align-items:flex-start;}
 
   .plans-section{background:var(--paper);border-top:2px solid var(--line);margin-top:20px;padding:50px 28px;}
-  .plans-inner{max-width:1100px;margin:0 auto;}
+  .plans-inner{max-width:1200px;margin:0 auto;}
   .plans-head{max-width:520px;margin-bottom:28px;}
   .plans-head h2{font-size:26px;margin:0 0 8px;}
   .plans-head p{margin:0;color:var(--ink-soft);font-size:15px;line-height:1.6;}
@@ -317,15 +322,17 @@ function renderHome(){
     </aside>
     <div>
     <div class="hero">
-      <h1>O que você procura em Tupã?</h1>
-      <p>Encontre lojas e serviços da cidade em um só lugar</p>
-      <div class="search-box">
-        ${iconSearch()}
-        <input id="searchInput" type="text" placeholder="Buscar loja ou categoria..." value="${searchTerm}">
-      </div>
-      <div class="categories" id="cats">
-        <button class="pill all ${activeCat==='Todos' ? '' : 'inactive'}" data-cat="Todos">Todos</button>
-        ${CATS.map(c => `<button class="pill ${activeCat===c ? 'selected' : ''}" data-cat="${c}">${c}</button>`).join('')}
+      <div class="hero-inner">
+        <h1>O que você procura em Tupã?</h1>
+        <p>Encontre lojas e serviços da cidade em um só lugar</p>
+        <div class="search-box">
+          ${iconSearch()}
+          <input id="searchInput" type="text" placeholder="Buscar loja ou categoria..." value="${searchTerm}">
+        </div>
+        <div class="categories" id="cats">
+          <button class="pill all ${activeCat==='Todos' ? '' : 'inactive'}" data-cat="Todos">Todos</button>
+          ${CATS.map(c => `<button class="pill ${activeCat===c ? 'selected' : ''}" data-cat="${c}">${c}</button>`).join('')}
+        </div>
       </div>
     </div>
 
@@ -379,7 +386,7 @@ function renderHome(){
     </div>
 
     <div class="grid">
-      ${filtered.map(cardHtml).join('') || `<p style="color:var(--ink-soft);grid-column:1/-1;">Nenhuma loja encontrada.</p>`}
+      ${gridContentHtml(filtered)}
     </div>
 
     <div class="ad-slot">
@@ -455,12 +462,49 @@ function renderHome(){
   document.querySelectorAll('.promo-card').forEach(c=>{
     c.addEventListener('click', ()=> renderStore(c.dataset.id));
   });
+  const clearBtn = document.getElementById('clearFiltersBtn');
+  if(clearBtn) clearBtn.addEventListener('click', ()=>{ searchTerm = ''; activeCat = 'Todos'; renderHome(); });
+
   document.querySelectorAll('.plan-cta').forEach(btn=>{
     btn.addEventListener('click', ()=>{
       const msg = encodeURIComponent(`Olá! Tenho interesse no plano ${btn.dataset.plan} do Vitrine Certa para cadastrar minha loja.`);
       window.open(`https://wa.me/5514998471171?text=${msg}`, '_blank');
     });
   });
+}
+
+function emptyStateHtml(){
+  if(STORES.length === 0){
+    return `
+      <div style="grid-column:1/-1;text-align:center;padding:50px 20px;">
+        <div style="font-size:44px;margin-bottom:10px;">🏪✨</div>
+        <h3 style="margin:0 0 8px;font-size:18px;">As primeiras lojas estão chegando!</h3>
+        <p style="color:var(--ink-soft);font-size:14px;max-width:360px;margin:0 auto;">Estamos cadastrando os comércios de Tupã. Volte em breve pra conferir as novidades.</p>
+      </div>
+    `;
+  }
+  return `
+    <div style="grid-column:1/-1;text-align:center;padding:50px 20px;">
+      <div style="font-size:40px;margin-bottom:10px;">🔎</div>
+      <h3 style="margin:0 0 8px;font-size:17px;">Nada por aqui com esse filtro</h3>
+      <p style="color:var(--ink-soft);font-size:14px;margin:0 0 16px;">Tenta outra categoria ou termo de busca.</p>
+      <button id="clearFiltersBtn" style="background:var(--coral);color:#fff;border:none;padding:10px 20px;border-radius:10px;font-size:13.5px;font-weight:600;cursor:pointer;">Limpar filtros</button>
+    </div>
+  `;
+}
+
+function gridContentHtml(list){
+  if(!list.length) return emptyStateHtml();
+  const adBanner = `
+    <div class="ad-slot" style="grid-column:1/-1;margin:0;">
+      <div class="ad-slot-inner"><!-- AD_SLOT_FEED --> Espaço de anúncio</div>
+    </div>
+  `;
+  const cards = list.map(cardHtml);
+  if(cards.length > 3){
+    cards.splice(3, 0, adBanner);
+  }
+  return cards.join('');
 }
 
 function cardHtml(s){
