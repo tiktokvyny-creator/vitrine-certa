@@ -222,19 +222,6 @@ function catColor(name){
   return c ? c.color : "#EDE1D4";
 }
 
-function escapeHtml(value){
-  return String(value ?? '').replace(/[&<>'"]/g, char => ({
-    '&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'
-  })[char]);
-}
-
-function safeUrl(value, fallback = '#'){
-  try {
-    const url = new URL(value, window.location.origin);
-    return ['http:', 'https:'].includes(url.protocol) ? url.href : fallback;
-  } catch { return fallback; }
-}
-
 async function loadOffers(){
   const { data, error } = await sb
     .from('affiliate_products')
@@ -277,13 +264,13 @@ function renderGrid(){
   document.getElementById('offersGrid').innerHTML = filtered.map(o => `
     <div class="offer-card">
       <div class="offer-thumb">
-        ${o.image_url ? `<img src="${safeUrl(o.image_url, '')}" alt="${escapeHtml(o.title)}" loading="lazy" referrerpolicy="no-referrer">` : `<span class="noimg">sem foto</span>`}
-        ${o.category ? `<span class="offer-cat-badge" style="background:${catColor(o.category)};border-color:transparent;">${escapeHtml(o.category)}</span>` : ''}
+        ${o.image_url ? `<img src="${o.image_url}" alt="${o.title || ''}" loading="lazy">` : `<span class="noimg">sem foto</span>`}
+        ${o.category ? `<span class="offer-cat-badge" style="background:${catColor(o.category)};border-color:transparent;">${o.category}</span>` : ''}
       </div>
       <div class="offer-body">
-        <div class="offer-title">${escapeHtml(o.title || 'Oferta')}</div>
+        <div class="offer-title">${o.title || 'Oferta'}</div>
         ${o.price != null ? `<div class="offer-price"><span class="n">R$</span> ${formatPrice(o.price)}</div>` : ''}
-        <a class="offer-btn" href="${safeUrl(o.affiliate_url)}" target="_blank" rel="noopener noreferrer sponsored">
+        <a class="offer-btn" href="${o.affiliate_url}" target="_blank" rel="noopener sponsored">
           Ver oferta
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
         </a>
