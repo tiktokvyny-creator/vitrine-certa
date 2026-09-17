@@ -266,7 +266,7 @@ function formatUpdated(value){
 async function loadOffers(){
   const { data, error } = await sb
     .from('affiliate_products')
-    .select('title, price, image_url, affiliate_url, category, last_synced_at')
+    .select('title, display_title, price, image_url, affiliate_url, category, last_synced_at')
     .eq('active', true)
     .order('sort_order');
   if(error){ console.error('Erro ao carregar ofertas:', error); OFFERS = []; return; }
@@ -304,14 +304,18 @@ function renderGrid(){
 
   document.getElementById('offersGrid').innerHTML = filtered.map(o => {
     const updatedLabel = formatUpdated(o.last_synced_at || o.updated_at);
+    // display_title é um título de exibição em português, opcional, preenchido manualmente
+    // por produto; title (original, em inglês) é sempre preservado no banco para auditoria
+    // e continua sendo usado na busca. Quando display_title não existir, cai no title original.
+    const displayTitle = o.display_title || o.title || 'Oferta';
     return `
     <div class="offer-card">
       <div class="offer-thumb">
-        ${o.image_url ? `<img src="${safeUrl(o.image_url, '')}" alt="${escapeHtml(o.title)}" loading="lazy" referrerpolicy="no-referrer">` : `<span class="noimg">sem foto</span>`}
+        ${o.image_url ? `<img src="${safeUrl(o.image_url, '')}" alt="${escapeHtml(displayTitle)}" loading="lazy" referrerpolicy="no-referrer">` : `<span class="noimg">sem foto</span>`}
         ${o.category ? `<span class="offer-cat-badge" style="background:${catColor(o.category)};border-color:transparent;">${escapeHtml(o.category)}</span>` : ''}
       </div>
       <div class="offer-body">
-        <div class="offer-title">${escapeHtml(o.title || 'Oferta')}</div>
+        <div class="offer-title">${escapeHtml(displayTitle)}</div>
         ${o.price != null ? `<div class="offer-price"><span class="n">R$</span> ${formatPrice(o.price)}</div>` : ''}
         <div class="offer-meta">
           <p class="offer-disclaimer">Preço e frete podem mudar. Confira o valor final no site da loja.</p>
