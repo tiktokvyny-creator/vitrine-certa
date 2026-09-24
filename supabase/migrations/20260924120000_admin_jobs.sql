@@ -29,7 +29,7 @@ create index if not exists admin_job_runs_product
   on public.admin_job_runs (product_id, created_at desc) where kind = 'price_check';
 
 alter table public.admin_job_runs enable row level security;
-revoke all on public.admin_job_runs from anon, authenticated;
+revoke all on public.admin_job_runs from anon, authenticated, service_role;
 grant select on public.admin_job_runs to authenticated;
 grant select, insert, update on public.admin_job_runs to service_role;
 drop policy if exists admin_job_runs_admin_read on public.admin_job_runs;
