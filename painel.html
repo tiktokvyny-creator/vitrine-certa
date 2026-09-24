@@ -179,6 +179,20 @@
   .toast.ok{background:#0d5f4a;} .toast.err{background:var(--red);}
   .log-list{list-style:none;margin:8px 0 0;padding:0;font-size:12.5px;display:flex;flex-direction:column;gap:4px;}
   @media (max-width:760px){ .form-grid{grid-template-columns:1fr;} .modal-bg{align-items:flex-end;padding:0;} .modal,.modal.sm{width:100%;max-height:92vh;border-radius:18px 18px 0 0;} .modal-foot .btn{flex:1;} .ro-box dl{grid-template-columns:100px 1fr;} }
+  .sync-panel{background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--amber);border-radius:var(--radius);padding:14px 16px;margin-bottom:14px;box-shadow:var(--shadow);}
+  .sync-panel.is-ok{border-left-color:var(--teal);} .sync-panel.is-err{border-left-color:var(--red);}
+  .sync-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;}
+  .sync-head h2{margin:0;font-size:16px;color:var(--coral-dark);}
+  .steps{list-style:none;display:flex;gap:6px;margin:0;padding:0;flex-wrap:wrap;}
+  .steps li{font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;background:var(--bg);color:var(--ink-soft);}
+  .steps li.now{background:var(--amber-pale);color:var(--amber-dark);} .steps li.done{background:var(--teal-pale);color:var(--teal);} .steps li.err{background:var(--red-pale);color:var(--red);}
+  .sync-nums{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0 6px;}
+  .sync-nums .n{font-family:'Fredoka',sans-serif;font-size:22px;font-weight:600;} .sync-nums .l{font-size:12px;color:var(--ink-soft);}
+  .sync-msg{margin:0;font-size:12.5px;color:var(--ink-soft);}
+  .price-check{border-radius:12px;padding:10px 12px;margin-top:14px;font-size:13px;background:var(--bg);}
+  .price-check.is-ok{background:var(--teal-pale);} .price-check.is-warn{background:var(--amber-pale);} .price-check.is-err{background:var(--red-pale);}
+  #syncBtn[disabled]{opacity:.7;cursor:progress;}
+  @media (max-width:760px){ .sync-nums{grid-template-columns:repeat(2,minmax(0,1fr));} }
   .icon-btn{border:1px solid var(--line);background:#fff;border-radius:10px;width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;}
 
   /* Responsivo */
@@ -276,13 +290,19 @@
     <div class="page-head">
       <div>
         <h1>Ofertas</h1>
-        <p>Gerencie o catálogo: edite, ative, pause ou exclua ofertas, uma por vez.</p>
+        <p>Gerencie o catálogo e busque novas ofertas. Nada é ativado sem a sua aprovação.</p>
       </div>
       <div class="head-actions">
-        <button class="btn btn-ghost" type="button" aria-disabled="true" title="Disponível em uma próxima fase">Pesquisar novas ofertas <span class="soon">Em breve</span></button>
-        <button class="btn btn-ghost" type="button" aria-disabled="true" title="Disponível em uma próxima fase">Verificar preços <span class="soon">Em breve</span></button>
+        <button class="btn btn-primary" type="button" id="syncBtn"><span class="lbl">Pesquisar novas ofertas</span></button>
+        <button class="btn btn-ghost" type="button" aria-disabled="true" title="Verificação em massa aguarda autorização. Para uma oferta, use “Verificar preço” nos detalhes.">Verificar todos os preços <span class="soon">Em breve</span></button>
       </div>
     </div>
+
+    <section class="sync-panel" id="syncPanel" aria-label="Busca de novas ofertas" aria-live="polite" hidden>
+      <div class="sync-head"><h2>Busca de novas ofertas</h2><ol class="steps" id="syncSteps"></ol></div>
+      <div class="sync-nums" id="syncNums"></div>
+      <p class="sync-msg" id="syncMsg"></p>
+    </section>
 
     <section class="stats" aria-label="Resumo">
       <div class="stat total"><div class="n" id="stTotal">–</div><div class="l">Total</div></div>
@@ -499,6 +519,7 @@ async function enterApp(session){
   $('sessionEmail').title = session.user.email || '';
   show('app');
   await loadOffers();
+  restoreSync();
 }
 
 async function boot(){
@@ -552,6 +573,7 @@ async function doLogin(){
 
 async function doLogout(){
   try { await sb.auth.signOut(); } catch(e){ logError('logout', e); }
+  stopSyncPoll(); syncRun = null; renderSync();
   ROWS = [];
   closeModal();
   closeDrawer();
@@ -761,6 +783,7 @@ async function openDetails(id, keepFocus = false){
       ${row('Link afiliado', '<span class="muted" id="linkHost">Carregando…</span>')}
     </dl>
     <p class="note">O link afiliado completo não é exibido aqui; aparece apenas o domínio. Ele pode ser visto e alterado em Editar.</p>
+    ${priceBoxHtml(o)}
     ${historyHtml(o)}`;
   $('drawer').dataset.id = String(o.id);
   renderDrawerFoot(o);
@@ -856,6 +879,7 @@ async function requireSession(){
   return null;
 }
 function sessionLost(){
+  if(typeof stopSyncPoll === 'function'){ stopSyncPoll(); syncRun = null; }
   closeModal(); closeDrawer();
   ROWS = [];
   show('login');
@@ -1193,6 +1217,9 @@ function renderDrawerFoot(o){
   $('drawerFoot').innerHTML = `
     <button class="btn btn-primary" type="button" data-edit="${escapeHtml(String(o.id))}">Editar</button>
     <button class="btn ${o.active ? 'btn-ghost' : 'btn-ok'}" type="button" data-toggle="${escapeHtml(String(o.id))}">${o.active ? 'Pausar' : 'Ativar'}</button>
+    ${isManual(o) || !o.external_id
+      ? '<button class="btn btn-ghost" type="button" aria-disabled="true" title="Oferta manual: sem fonte automática de preço">Verificar preço</button>'
+      : `<button class="btn btn-ghost" type="button" data-price="${escapeHtml(String(o.id))}"${priceBusy.has(String(o.id)) ? ' disabled' : ''}>${priceBusy.has(String(o.id)) ? 'Verificando…' : 'Verificar preço'}</button>`}
     <button class="btn btn-ghost danger-text" type="button" data-delete="${escapeHtml(String(o.id))}" style="margin-left:auto;">Excluir</button>`;
 }
 function historyHtml(o){
@@ -1204,7 +1231,224 @@ function historyHtml(o){
       `<li>${escapeHtml(formatDate(l.at))} · ${escapeHtml(l.action)}</li>`).join('')}</ul>` : ''}`;
 }
 
+// ---------- busca de novas ofertas e verificação de preço (via Edge Function) ----------
+// O navegador só conhece o NOME da função. Webhook, segredo e service_role ficam no backend.
+const ADMIN_FN = 'admin-sync';
+const TERMINAL = ['completed', 'failed', 'timeout'];
+const SYNC_POLL_MS = 4000;
+const SYNC_POLL_MAX_MS = 20 * 60 * 1000;
+let syncRun = null, syncTimer = null, syncPollStarted = 0, syncBusy = false;
+const priceBusy = new Set();
+const priceResults = new Map(); // id -> {cls, html} do último resultado nesta sessão
+
+const CODE_MSG = {
+  unauthenticated: 'Sessão expirada. Entre novamente.',
+  forbidden: 'Esta conta não tem acesso a esta ação.',
+  already_running: 'Já existe uma busca em andamento.',
+  cooldown: 'Aguarde alguns minutos antes de uma nova busca.',
+  rate_limited: 'Muitas verificações seguidas. Aguarde um pouco.',
+  n8n_timeout: 'A automação não respondeu a tempo.',
+  n8n_error: 'A automação retornou um erro.',
+  invalid_response: 'A automação respondeu de forma inválida.',
+  not_configured: 'A função ainda não foi configurada no servidor.',
+  client_timeout: 'Sem resposta do servidor. Verifique a conexão.',
+  network_error: 'Não foi possível falar com o servidor.',
+  timeout: 'A busca passou do tempo limite.',
+  not_found: 'Oferta não encontrada.'
+};
+const safeInt = (v) => Number.isInteger(v) && v >= 0 && v < 1e6 ? v : null;
+const safeCode = (v) => typeof v === 'string' && /^[a-z0-9_]{1,40}$/.test(v) ? v : null;
+// Aceita só os campos esperados da resposta; nada além disso chega à tela.
+function cleanRun(r){
+  if(!r || typeof r !== 'object') return null;
+  const status = ['requested','running','completed','failed','timeout','unconfirmed'].includes(r.status) ? r.status : null;
+  if(!status || typeof r.id !== 'string' || !/^[A-Za-z0-9-]{1,64}$/.test(r.id)) return null;
+  const d = (v) => typeof v === 'string' && !isNaN(Date.parse(v)) ? v : null;
+  return { id: r.id, status, created_at: d(r.created_at), started_at: d(r.started_at), finished_at: d(r.finished_at),
+    found: safeInt(r.found), rejected: safeInt(r.rejected), approved: safeInt(r.approved), saved: safeInt(r.saved), error_code: safeCode(r.error_code) };
+}
+async function callAdminFn(body, timeout = 35000){
+  if(!(await requireSession())) return { ok: false, code: 'unauthenticated', status: 401 };
+  try {
+    const { data, error } = await sb.functions.invoke(ADMIN_FN, { body, timeout });
+    if(!error) return (data && typeof data === 'object') ? { ...data, status: 200 } : { ok: false, code: 'invalid_response' };
+    let payload = null;
+    const resp = error.context;
+    if(resp && typeof resp.json === 'function'){ try { payload = await resp.json(); } catch {} }
+    if(payload && typeof payload === 'object') return { ...payload, ok: false, status: resp.status };
+    if(error.name === 'SyntaxError') return { ok: false, code: 'invalid_response' };
+    return { ok: false, code: /abort|timeout/i.test(String(error.name) + String(error.message)) ? 'client_timeout' : 'network_error' };
+  } catch(e){
+    logError('função administrativa', e);
+    return { ok: false, code: 'network_error' };
+  }
+}
+function fnMessage(res, fallback){
+  const code = safeCode(res && res.code);
+  if(code === 'cooldown' && Number.isInteger(res.retry_after_s)) return `Aguarde ${Math.max(1, Math.ceil(res.retry_after_s / 60))} min para uma nova busca.`;
+  return (code && CODE_MSG[code]) || fallback;
+}
+
+// ----- busca de novas ofertas -----
+function setSyncButton(){
+  const b = $('syncBtn');
+  const active = syncBusy || (syncRun && !TERMINAL.includes(syncRun.status));
+  b.disabled = !!active;
+  b.setAttribute('aria-busy', active ? 'true' : 'false');
+  b.querySelector('.lbl').textContent = active ? 'Busca em andamento…' : 'Pesquisar novas ofertas';
+}
+function renderSync(extraMsg){
+  const p = $('syncPanel');
+  if(!syncRun){ p.hidden = true; setSyncButton(); return; }
+  p.hidden = false;
+  const st = syncRun.status;
+  const step = st === 'requested' ? 1 : st === 'running' ? 2 : 3;
+  const failed = ['failed','timeout'].includes(st);
+  const steps = [['Solicitado', 1], ['Processando', 2], [failed ? (st === 'timeout' ? 'Tempo esgotado' : 'Erro') : 'Concluído', 3]];
+  $('syncSteps').innerHTML = steps.map(([label, n]) => {
+    const cls = n < step ? 'done' : n === step ? (failed ? 'err' : st === 'completed' ? 'done' : 'now') : '';
+    return `<li class="${cls}"${n === step ? ' aria-current="step"' : ''}>${escapeHtml(label)}</li>`;
+  }).join('');
+  const nums = [['Encontrados', syncRun.found], ['Rejeitados', syncRun.rejected], ['Aprovados', syncRun.approved], ['Gravados', syncRun.saved]];
+  $('syncNums').innerHTML = nums.map(([l, v]) => `<div><div class="n">${v == null ? '–' : v}</div><div class="l">${l}</div></div>`).join('');
+  const when = formatDate(syncRun.finished_at || syncRun.started_at || syncRun.created_at);
+  let msg = st === 'requested' ? 'Solicitação enviada.' : st === 'running' ? 'A automação está lendo o feed. Isso pode levar alguns minutos.'
+    : st === 'completed' ? 'Busca concluída. Produtos novos entram como “Em revisão” (inativos) e só vão ao site depois da sua aprovação.'
+    : (CODE_MSG[syncRun.error_code] || 'A busca não foi concluída.') + ' Nenhum produto foi ativado.';
+  if(extraMsg) msg = extraMsg;
+  $('syncMsg').textContent = msg + (when ? ` · ${when}` : '');
+  $('syncPanel').className = 'sync-panel ' + (failed ? 'is-err' : st === 'completed' ? 'is-ok' : 'is-run');
+  setSyncButton();
+}
+function stopSyncPoll(){ if(syncTimer){ clearTimeout(syncTimer); syncTimer = null; } }
+function scheduleSyncPoll(){
+  stopSyncPoll();
+  if(!syncRun || TERMINAL.includes(syncRun.status)) return;
+  if(Date.now() - syncPollStarted > SYNC_POLL_MAX_MS){ renderSync('Sem atualização há muito tempo. Recarregue a página para consultar o status.'); return; }
+  syncTimer = setTimeout(pollSync, SYNC_POLL_MS);
+}
+async function pollSync(){
+  if(!syncRun || $('app').hidden) return;
+  const prev = syncRun.status;
+  const res = await callAdminFn({ action: 'status', run_id: syncRun.id }, 15000);
+  if(res.code === 'unauthenticated'){ sessionLost(); return; }
+  const run = res.ok ? cleanRun(res.run) : null;
+  if(run) syncRun = run;
+  renderSync();
+  if(run && run.status === 'completed' && prev !== 'completed'){
+    toast(`Busca concluída: ${run.saved ?? 0} gravado(s), todos aguardando revisão.`, 'ok');
+    await loadOffers();
+  } else if(run && ['failed','timeout'].includes(run.status) && prev !== run.status){
+    toast('A busca de ofertas não foi concluída.', 'err');
+  }
+  scheduleSyncPoll();
+}
+async function restoreSync(){
+  const res = await callAdminFn({ action: 'status' }, 15000);
+  const run = res.ok ? cleanRun(res.run) : null;
+  if(!run) return;
+  const age = Date.now() - Date.parse(run.created_at || 0);
+  if(!TERMINAL.includes(run.status) || age < 24 * 3600 * 1000){ syncRun = run; syncPollStarted = Date.now(); renderSync(); scheduleSyncPoll(); }
+}
+function openSyncConfirm(){
+  if(syncBusy || (syncRun && !TERMINAL.includes(syncRun.status))) return;
+  showConfirm({
+    title: 'Pesquisar novas ofertas?',
+    bodyHtml: `<p style="margin:0 0 8px">Executa <strong>uma</strong> leitura do feed da Admitad (AliExpress, BRL).</p>
+      <ul class="check-list"><li><span class="ok" aria-hidden="true">✓</span><span>Produtos novos entram como <strong>Em revisão</strong> (inativos).</span></li>
+      <li><span class="ok" aria-hidden="true">✓</span><span>Nenhuma oferta é ativada ou pausada automaticamente.</span></li>
+      <li><span class="ok" aria-hidden="true">✓</span><span>Títulos, categorias e decisões manuais são preservados.</span></li></ul>`,
+    okText: 'Iniciar busca',
+    onOk: () => { closeModal(); startSync(); }
+  });
+}
+async function startSync(){
+  if(syncBusy || (syncRun && !TERMINAL.includes(syncRun.status))) return;
+  syncBusy = true;
+  syncRun = { id: 'pendente', status: 'requested', created_at: new Date().toISOString(), started_at: null, finished_at: null,
+    found: null, rejected: null, approved: null, saved: null, error_code: null };
+  renderSync();
+  try {
+    const res = await callAdminFn({ action: 'start_sync' }, 20000);
+    if(res.code === 'unauthenticated' && res.status === 401){ syncRun = null; sessionLost(); return; }
+    const run = cleanRun(res.run);
+    if(res.ok && run){ syncRun = run; syncPollStarted = Date.now(); renderSync(); scheduleSyncPoll(); toast('Busca iniciada.', 'ok'); return; }
+    if(res.code === 'already_running' && run){ syncRun = run; syncPollStarted = Date.now(); renderSync(); scheduleSyncPoll(); toast(CODE_MSG.already_running); return; }
+    const msg = fnMessage(res, 'Não foi possível iniciar a busca.');
+    if(run){ syncRun = run; renderSync(msg); } else { syncRun = { ...syncRun, status: 'failed', error_code: safeCode(res.code) }; renderSync(msg); }
+    if(res.code === 'cooldown' && run) renderSync(msg);
+    toast(msg, 'err');
+  } finally {
+    syncBusy = false;
+    setSyncButton();
+  }
+}
+
+// ----- verificação de preço de UMA oferta -----
+function revealInDrawer(el, again = true){
+  const body = document.querySelector('.drawer-body');
+  if(!el || !body) return;
+  // Repete após o layout assentar (a imagem da gaveta pode carregar depois).
+  if(again) requestAnimationFrame(() => setTimeout(() => revealInDrawer(document.getElementById(el.id) || el, false), 250));
+  const b = el.getBoundingClientRect(), r = body.getBoundingClientRect();
+  if(b.bottom > r.bottom) body.scrollTop += (b.bottom - r.bottom) + 12;
+  else if(b.top < r.top) body.scrollTop -= (r.top - b.top) + 12;
+}
+function priceBoxHtml(o){
+  const r = priceResults.get(String(o.id));
+  return r ? `<div class="price-check ${r.cls}" id="priceCheckBox" aria-live="polite">${r.html}</div>`
+           : '<div class="price-check" id="priceCheckBox" hidden aria-live="polite"></div>';
+}
+async function checkPrice(id){
+  const o = ROWS.find(x => String(x.id) === String(id));
+  if(!o || priceBusy.has(String(o.id))) return;
+  if(isManual(o) || !o.external_id){ return; }
+  priceBusy.add(String(o.id));
+  const btn = document.querySelector(`[data-price="${CSS.escape(String(o.id))}"]`);
+  if(btn){ btn.disabled = true; btn.textContent = 'Verificando…'; }
+  const showBox = (cls, html) => {
+    priceResults.set(String(o.id), { cls, html });
+    const box = $('priceCheckBox');
+    if(box && $('drawer').dataset.id === String(o.id)){
+      box.className = 'price-check ' + cls; box.innerHTML = html; box.hidden = false;
+      revealInDrawer(box);
+    }
+  };
+  showBox('is-run', 'Consultando a fonte…'); priceResults.delete(String(o.id));
+  try {
+    const res = await callAdminFn({ action: 'check_price', product_id: String(o.id) }, 40000);
+    if(res.code === 'unauthenticated' && res.status === 401){ sessionLost(); return; }
+    const when = formatDate(res.checked_at) || formatDate(new Date().toISOString());
+    if(res.ok && res.result === 'confirmed' && Number(res.price) > 0){
+      const prev = Number(res.previous_price);
+      const changed = Number.isFinite(prev) && Math.abs(prev - Number(res.price)) >= 0.005;
+      showBox('is-ok', `<strong>Preço confirmado pela fonte:</strong> ${escapeHtml(brl(res.price))}` +
+        (res.old_price ? ` <span class="muted">(de ${escapeHtml(brl(res.old_price))})</span>` : '') +
+        `<br><span class="muted">${changed ? `Antes: ${escapeHtml(brl(prev))}. ` : 'Sem mudança de preço. '}Verificado em ${escapeHtml(when)}.</span>`);
+      logAction(o, `Preço verificado: ${brl(res.price)}${changed ? ' (atualizado)' : ''}`);
+      const { data, error } = await sb.from('affiliate_products').select(LIST_COLUMNS).eq('id', o.id).maybeSingle();
+      if(!error && data){
+        const i = ROWS.findIndex(x => String(x.id) === String(o.id));
+        if(i >= 0){ ROWS[i] = data; renderStats(); render(); }
+        if($('drawer').dataset.id === String(o.id)){ await openDetails(o.id, true); revealInDrawer($('priceCheckBox')); }
+      }
+      toast('Preço confirmado.', 'ok');
+    } else if(res.ok && res.result === 'unconfirmed'){
+      const reason = res.reason === 'not_in_feed' ? 'A oferta não está no feed atual da fonte.' : res.reason === 'no_source' ? 'Esta oferta não tem fonte automática de preço.' : '';
+      showBox('is-warn', `<strong>Não foi possível confirmar o preço.</strong> ${escapeHtml(reason)}<br><span class="muted">O preço atual foi mantido. Verificado em ${escapeHtml(when)}.</span>`);
+      logAction(o, 'Preço não confirmado');
+    } else {
+      showBox('is-err', `<strong>Não foi possível confirmar o preço.</strong> ${escapeHtml(fnMessage(res, ''))}<br><span class="muted">Nenhum valor foi alterado.</span>`);
+    }
+  } finally {
+    priceBusy.delete(String(o.id));
+    const b2 = document.querySelector(`[data-price="${CSS.escape(String(o.id))}"]`);
+    if(b2){ b2.disabled = false; b2.textContent = 'Verificar preço'; }
+  }
+}
+
 // ---------- eventos ----------
+$('syncBtn').addEventListener('click', openSyncConfirm);
 $('loginBtn').addEventListener('click', doLogin);
 ['loginEmail','loginPass'].forEach(id => $(id).addEventListener('keydown', e => { if(e.key === 'Enter') doLogin(); }));
 $('logoutBtn').addEventListener('click', doLogout);
@@ -1218,6 +1462,7 @@ function actionClick(e){
   const ed = e.target.closest('[data-edit]'); if(ed) return openEdit(ed.dataset.edit);
   const t = e.target.closest('[data-toggle]'); if(t) return openToggle(t.dataset.toggle);
   const del = e.target.closest('[data-delete]'); if(del) return openDelete(del.dataset.delete);
+  const pr = e.target.closest('[data-price]'); if(pr) return checkPrice(pr.dataset.price);
 }
 $('rows').addEventListener('click', actionClick);
 $('drawerFoot').addEventListener('click', actionClick);
