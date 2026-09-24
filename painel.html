@@ -146,6 +146,39 @@
   .kv dd{margin:0;word-break:break-word;}
   .drawer-foot{padding:14px 18px;border-top:1px solid var(--line);display:flex;gap:8px;flex-wrap:wrap;}
   .note{font-size:12px;color:var(--ink-soft);background:var(--bg);border-radius:10px;padding:10px 12px;margin-top:14px;}
+  .btn-danger{background:var(--red);color:#fff;}
+  .btn-danger:hover{background:#96201a;}
+  .btn-danger:disabled,.btn-primary:disabled,.btn-ghost:disabled{opacity:.55;cursor:not-allowed;}
+  .btn-ghost.danger-text{color:var(--red);border-color:#f0cfcb;}
+  .btn-ghost.danger-text:hover{border-color:var(--red);}
+  .btn-ok{background:var(--teal);color:#fff;}
+  .btn-ok:hover{background:#0b5a46;}
+  .modal-bg{position:fixed;inset:0;background:rgba(44,24,16,.42);z-index:60;display:flex;align-items:center;justify-content:center;padding:16px;}
+  .modal{background:var(--paper);border-radius:18px;width:min(640px,100%);max-height:calc(100vh - 32px);display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.2);}
+  .modal.sm{width:min(460px,100%);}
+  .modal-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 20px;border-bottom:1px solid var(--line);}
+  .modal-head h2{margin:0;font-size:19px;}
+  .modal-body{padding:18px 20px;overflow-y:auto;}
+  .modal-foot{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;padding:14px 20px;border-top:1px solid var(--line);}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 14px;}
+  .form-grid .full{grid-column:1 / -1;}
+  .field .hint{font-size:11.5px;color:var(--ink-soft);}
+  .field .err{font-size:12px;color:var(--red);font-weight:600;}
+  .input[aria-invalid="true"]{border-color:var(--red);box-shadow:0 0 0 3px var(--red-pale);}
+  .input[readonly]{background:var(--bg);color:var(--ink-soft);}
+  .ro-box{background:var(--bg);border-radius:12px;padding:10px 12px;margin-bottom:14px;font-size:12.5px;}
+  .ro-box dl{margin:0;display:grid;grid-template-columns:120px 1fr;gap:4px 10px;}
+  .ro-box dt{color:var(--ink-soft);} .ro-box dd{margin:0;word-break:break-word;}
+  .check-list{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:6px;}
+  .check-list li{display:flex;gap:8px;align-items:flex-start;font-size:13px;}
+  .check-list .ok{color:var(--teal);font-weight:700;} .check-list .no{color:var(--red);font-weight:700;}
+  .target-box{border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;gap:12px;align-items:center;margin:10px 0;}
+  .danger-box{background:var(--red-pale);color:var(--red);border-radius:12px;padding:10px 12px;font-size:13px;margin-top:10px;}
+  .toast-wrap{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:80;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none;width:min(420px,calc(100% - 24px));}
+  .toast{pointer-events:auto;background:var(--ink);color:#fff;border-radius:12px;padding:11px 14px;font-size:13.5px;box-shadow:0 10px 30px rgba(0,0,0,.2);width:100%;}
+  .toast.ok{background:#0d5f4a;} .toast.err{background:var(--red);}
+  .log-list{list-style:none;margin:8px 0 0;padding:0;font-size:12.5px;display:flex;flex-direction:column;gap:4px;}
+  @media (max-width:760px){ .form-grid{grid-template-columns:1fr;} .modal-bg{align-items:flex-end;padding:0;} .modal,.modal.sm{width:100%;max-height:92vh;border-radius:18px 18px 0 0;} .modal-foot .btn{flex:1;} .ro-box dl{grid-template-columns:100px 1fr;} }
   .icon-btn{border:1px solid var(--line);background:#fff;border-radius:10px;width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;}
 
   /* Responsivo */
@@ -243,7 +276,7 @@
     <div class="page-head">
       <div>
         <h1>Ofertas</h1>
-        <p>Visão geral do catálogo. Nesta versão o painel é somente leitura.</p>
+        <p>Gerencie o catálogo: edite, ative, pause ou exclua ofertas, uma por vez.</p>
       </div>
       <div class="head-actions">
         <button class="btn btn-ghost" type="button" aria-disabled="true" title="Disponível em uma próxima fase">Pesquisar novas ofertas <span class="soon">Em breve</span></button>
@@ -320,10 +353,56 @@
     </button>
   </div>
   <div class="drawer-body" id="drawerBody"></div>
-  <div class="drawer-foot">
-    <button class="btn btn-ghost" type="button" aria-disabled="true" title="Edição disponível na próxima fase">Editar <span class="soon">Em breve</span></button>
-  </div>
+  <div class="drawer-foot" id="drawerFoot"></div>
 </aside>
+
+<!-- Editar oferta -->
+<div class="modal-bg" id="editBg" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="editTitle">
+    <div class="modal-head">
+      <h2 id="editTitle">Editar oferta</h2>
+      <button class="icon-btn" type="button" data-close-modal aria-label="Fechar edição">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="alert alert-error" id="editError" role="alert" hidden></div>
+      <div class="ro-box" id="editReadonly"></div>
+      <div class="form-grid" id="editForm">
+        <div class="field full"><label for="e_display_title">Título de exibição</label>
+          <input class="input" id="e_display_title" maxlength="200" autocomplete="off">
+          <span class="hint">Vazio = usa o título original.</span><span class="err" data-err="display_title"></span></div>
+        <div class="field"><label for="e_category">Categoria</label><select class="input" id="e_category"></select><span class="err" data-err="category"></span></div>
+        <div class="field"><label for="e_merchant">Loja</label><input class="input" id="e_merchant" maxlength="80" autocomplete="off"><span class="err" data-err="merchant"></span></div>
+        <div class="field"><label for="e_price">Preço (R$)</label><input class="input" id="e_price" inputmode="decimal" placeholder="89,90" autocomplete="off"><span class="err" data-err="price"></span></div>
+        <div class="field"><label for="e_old_price">Preço anterior (R$)</label><input class="input" id="e_old_price" inputmode="decimal" placeholder="opcional" autocomplete="off"><span class="err" data-err="old_price"></span></div>
+        <div class="field"><label for="e_discount">Desconto (%)</label><input class="input" id="e_discount" readonly tabindex="-1"><span class="hint">Calculado automaticamente a partir dos preços.</span></div>
+        <div class="field"><label for="e_sort_order">Ordem de exibição</label><input class="input" id="e_sort_order" inputmode="numeric" placeholder="opcional" autocomplete="off"><span class="err" data-err="sort_order"></span></div>
+        <div class="field full"><label for="e_image_url">URL da imagem</label><input class="input" id="e_image_url" type="url" placeholder="https://…" autocomplete="off"><span class="err" data-err="image_url"></span></div>
+        <div class="field full"><label for="e_affiliate_url">Link afiliado</label><input class="input" id="e_affiliate_url" type="url" placeholder="https://…" autocomplete="off" spellcheck="false">
+          <span class="hint">Obrigatório, começando com https://. Não é registrado no console.</span><span class="err" data-err="affiliate_url"></span></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" type="button" data-close-modal>Cancelar</button>
+      <button class="btn btn-primary" type="button" id="editSave">Salvar alterações</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirmação (ativar / pausar / excluir) -->
+<div class="modal-bg" id="confirmBg" hidden>
+  <div class="modal sm" role="alertdialog" aria-modal="true" aria-labelledby="confirmTitle" aria-describedby="confirmBody">
+    <div class="modal-head"><h2 id="confirmTitle"></h2></div>
+    <div class="modal-body" id="confirmBody"></div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" type="button" data-close-modal>Cancelar</button>
+      <button class="btn btn-primary" type="button" id="confirmOk"></button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toasts" role="status" aria-live="polite"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.1/dist/umd/supabase.js"></script>
 <script>
@@ -474,6 +553,7 @@ async function doLogin(){
 async function doLogout(){
   try { await sb.auth.signOut(); } catch(e){ logError('logout', e); }
   ROWS = [];
+  closeModal();
   closeDrawer();
   show('login');
 }
@@ -634,7 +714,8 @@ function render(){
       <td class="c-sync" title="${escapeHtml(synced || '')}">${syncedShort ? escapeHtml(syncedShort) : '<span class="muted">Nunca</span>'}</td>
       <td class="c-actions"><div class="row-actions">
         <button class="btn btn-ghost btn-sm" type="button" data-details="${id}">Detalhes</button>
-        <button class="btn btn-ghost btn-sm" type="button" aria-disabled="true" title="Edição disponível na próxima fase">Editar</button>
+        <button class="btn btn-ghost btn-sm" type="button" data-edit="${id}">Editar</button>
+        <button class="btn btn-ghost btn-sm ${o.active ? '' : 'btn-activate'}" type="button" data-toggle="${id}">${o.active ? 'Pausar' : 'Ativar'}</button>
       </div></td>
     </tr>`;
   }).join('');
@@ -653,10 +734,10 @@ function clearFilters(){
 }
 
 // ---------- detalhes ----------
-async function openDetails(id){
+async function openDetails(id, keepFocus = false){
   const o = ROWS.find(x => String(x.id) === String(id));
   if(!o) return;
-  lastFocus = document.activeElement;
+  if(!keepFocus) lastFocus = document.activeElement;
   const t = titleOf(o);
   const disc = discountOf(o);
   const row = (k, v) => `<dt>${k}</dt><dd>${v}</dd>`;
@@ -679,10 +760,13 @@ async function openDetails(id){
       ${row('Ordem', o.sort_order != null ? escapeHtml(String(o.sort_order)) : dash)}
       ${row('Link afiliado', '<span class="muted" id="linkHost">Carregando…</span>')}
     </dl>
-    <p class="note">O link afiliado completo não é exibido no painel; aparece apenas o domínio de destino.</p>`;
+    <p class="note">O link afiliado completo não é exibido aqui; aparece apenas o domínio. Ele pode ser visto e alterado em Editar.</p>
+    ${historyHtml(o)}`;
+  $('drawer').dataset.id = String(o.id);
+  renderDrawerFoot(o);
   $('drawerBg').hidden = false;
   $('drawer').hidden = false;
-  $('drawerClose').focus();
+  if(!keepFocus) $('drawerClose').focus();
 
   // Busca pontual só do link desta oferta, exibindo apenas o domínio.
   try {
@@ -702,7 +786,422 @@ function closeDrawer(){
   $('drawer').hidden = true;
   $('drawerBg').hidden = true;
   $('drawerBody').innerHTML = '';
+  $('drawerFoot').innerHTML = '';
+  delete $('drawer').dataset.id;
   if(lastFocus && document.contains(lastFocus)) lastFocus.focus();
+}
+
+// ---------- ações administrativas ----------
+// Somente estes campos podem ser enviados numa edição. id, external_id, network, source,
+// raw_payload, created_at e campos de sincronização nunca entram no payload.
+const EDITABLE_FIELDS = ['display_title','category','price','old_price','discount_percent','image_url','affiliate_url','merchant','sort_order'];
+const SESSION_LOG = [];
+let busy = false;
+let modalCtx = null;
+
+function toast(message, kind = ''){
+  const el = document.createElement('div');
+  el.className = 'toast ' + kind;
+  el.textContent = message;
+  $('toasts').appendChild(el);
+  setTimeout(() => el.remove(), kind === 'err' ? 7000 : 4000);
+}
+function isSafeId(id){
+  return (typeof id === 'number' && Number.isInteger(id) && id > 0) ||
+         (typeof id === 'string' && /^[A-Za-z0-9-]{1,64}$/.test(id));
+}
+function httpsUrl(value){
+  if(!value) return null;
+  try { const u = new URL(String(value).trim()); return u.protocol === 'https:' && u.hostname ? u.href : null; }
+  catch { return null; }
+}
+// Aceita 1.999,90 · 89,90 · 1999.90 · 89. Retorna {value} ou {error}.
+function parseBRL(raw){
+  const s = String(raw ?? '').replace(/R\$|\s/g, '');
+  if(!s) return { value: null };
+  let n;
+  if(/^\d{1,3}(\.\d{3})+(,\d{1,2})?$/.test(s)) n = Number(s.replace(/\./g, '').replace(',', '.'));
+  else if(/^\d+(,\d{1,2})?$/.test(s)) n = Number(s.replace(',', '.'));
+  else if(/^\d+(\.\d{1,2})?$/.test(s)) n = Number(s);
+  else return { error: 'Use o formato 89,90 ou 1.999,90.' };
+  if(!Number.isFinite(n) || n <= 0) return { error: 'Informe um valor maior que zero.' };
+  if(n > 10000000) return { error: 'Valor muito alto.' };
+  return { value: Math.round(n * 100) / 100 };
+}
+function computeDiscount(price, oldPrice){
+  if(price == null || oldPrice == null || !(oldPrice > price)) return null;
+  return Math.round((1 - price / oldPrice) * 100);
+}
+const toBRLInput = (v) => v == null || v === '' ? '' : Number(v).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+const cleanText = (v) => String(v ?? '').replace(/[\u0000-\u001F\u007F]/g, ' ').replace(/\s+/g, ' ').trim();
+function allowedCategories(current){
+  return [...new Set([...CATEGORIES, ...(current ? [current] : [])])];
+}
+function isAuthError(error){
+  const msg = String(error && error.message || '');
+  return (error && (error.status === 401 || ['PGRST301','PGRST302','PGRST303'].includes(error.code))) || /jwt/i.test(msg);
+}
+function friendlyError(error){
+  if(!error) return 'Erro desconhecido.';
+  if(error.code === '42501') return 'Permissão negada pelo banco (RLS).';
+  if(error.code === '23514') return 'O banco recusou os valores (regra de validação).';
+  return 'O servidor recusou a operação. Tente novamente.';
+}
+async function requireSession(){
+  try {
+    const { data } = await sb.auth.getSession();
+    if(data && data.session) return data.session;
+  } catch(e){ logError('sessão', e); }
+  sessionLost();
+  return null;
+}
+function sessionLost(){
+  closeModal(); closeDrawer();
+  ROWS = [];
+  show('login');
+  loginError('Sua sessão expirou. Entre novamente para continuar.');
+}
+function setBusy(on){
+  busy = on;
+  ['editSave','confirmOk'].forEach(id => { const b = $(id); if(b) b.dataset.busy = on ? '1' : ''; });
+  document.querySelectorAll('[data-edit],[data-toggle],[data-delete]').forEach(b => b.disabled = on);
+}
+function logAction(o, action){
+  SESSION_LOG.unshift({ id: String(o.id), title: titleOf(o), action, at: new Date().toISOString() });
+}
+function replaceRow(updated){
+  const i = ROWS.findIndex(x => String(x.id) === String(updated.id));
+  if(i >= 0) ROWS[i] = updated;
+  fillFilterOptions(); renderStats(); render();
+  if(!$('drawer').hidden && $('drawer').dataset.id === String(updated.id)) openDetails(updated.id, true);
+}
+// Garante que só campos permitidos e realmente alterados sejam enviados.
+function buildUpdatePayload(values, original){
+  const payload = {};
+  for(const key of EDITABLE_FIELDS){
+    if(!(key in values)) continue;
+    const a = values[key], b = original[key] ?? null;
+    if(String(a ?? '') !== String(b ?? '')) payload[key] = a;
+  }
+  return payload;
+}
+
+// ----- modais -----
+function openModal(id){
+  lastFocus = lastFocus && document.contains(lastFocus) ? lastFocus : document.activeElement;
+  $(id).hidden = false;
+}
+function closeModal(){
+  const wasOpen = !$('editBg').hidden || !$('confirmBg').hidden;
+  $('editBg').hidden = true; $('confirmBg').hidden = true;
+  modalCtx = null;
+  if(wasOpen && lastFocus && document.contains(lastFocus)) lastFocus.focus();
+}
+
+// ----- editar -----
+function fieldError(name, msg){
+  const el = document.querySelector(`[data-err="${name}"]`);
+  const input = $('e_' + name);
+  if(el) el.textContent = msg || '';
+  if(input) input.setAttribute('aria-invalid', msg ? 'true' : 'false');
+}
+function updateDiscountPreview(){
+  const p = parseBRL($('e_price').value).value ?? null;
+  const op = parseBRL($('e_old_price').value).value ?? null;
+  const d = computeDiscount(p, op);
+  $('e_discount').value = d ? `${d}%` : '—';
+}
+async function openEdit(id){
+  const o = ROWS.find(x => String(x.id) === String(id));
+  if(!o || busy) return;
+  lastFocus = document.activeElement;
+  modalCtx = { type: 'edit', id: o.id, original: null };
+  $('editError').hidden = true;
+  EDITABLE_FIELDS.forEach(f => fieldError(f, ''));
+  const row = (k, v) => `<dt>${k}</dt><dd>${v}</dd>`;
+  $('editReadonly').innerHTML = `<dl>
+    ${row('Título original', escapeHtml(o.title || '—'))}
+    ${row('external_id', o.external_id ? `<code>${escapeHtml(o.external_id)}</code>` : '—')}
+    ${row('Origem', escapeHtml(originOf(o)))}
+    ${row('Sincronizado', escapeHtml(formatDate(o.last_synced_at) || 'Nunca'))}
+  </dl>`;
+  $('e_category').innerHTML = allowedCategories(o.category).map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+  $('e_display_title').value = o.display_title || '';
+  $('e_category').value = o.category || CATEGORIES[CATEGORIES.length - 1];
+  $('e_merchant').value = o.merchant || '';
+  $('e_price').value = toBRLInput(o.price);
+  $('e_old_price').value = toBRLInput(o.old_price);
+  $('e_sort_order').value = o.sort_order ?? '';
+  $('e_image_url').value = o.image_url || '';
+  $('e_affiliate_url').value = '';
+  $('e_affiliate_url').placeholder = 'Carregando…';
+  $('editSave').disabled = true;
+  updateDiscountPreview();
+  openModal('editBg');
+  $('e_display_title').focus();
+
+  // O link afiliado só é buscado para a oferta em edição.
+  try {
+    const { data, error } = await sb.from('affiliate_products').select('affiliate_url').eq('id', o.id).maybeSingle();
+    if(error) throw error;
+    if(!modalCtx || modalCtx.id !== o.id) return;
+    $('e_affiliate_url').value = (data && data.affiliate_url) || '';
+    $('e_affiliate_url').placeholder = 'https://…';
+    modalCtx.original = { ...o, affiliate_url: (data && data.affiliate_url) || null };
+    $('editSave').disabled = false;
+  } catch(e){
+    logError('carregar link para edição', e);
+    if(isAuthError(e)){ sessionLost(); return; }
+    $('editError').textContent = 'Não foi possível carregar o link afiliado. A edição foi bloqueada para evitar perda de dados.';
+    $('editError').hidden = false;
+  }
+}
+function validateEdit(original){
+  const errors = {}, v = {};
+  const dt = cleanText($('e_display_title').value);
+  if(dt.length > 200) errors.display_title = 'Máximo de 200 caracteres.';
+  v.display_title = dt || null;
+
+  const cat = $('e_category').value;
+  if(!allowedCategories(original.category).includes(cat)) errors.category = 'Categoria inválida.';
+  v.category = cat;
+
+  const merchant = cleanText($('e_merchant').value);
+  if(merchant.length > 80) errors.merchant = 'Máximo de 80 caracteres.';
+  v.merchant = merchant || null;
+
+  const p = parseBRL($('e_price').value);
+  if(p.error) errors.price = p.error;
+  v.price = p.value ?? null;
+
+  const op = parseBRL($('e_old_price').value);
+  if(op.error) errors.old_price = op.error;
+  else if(op.value != null && (v.price == null || op.value <= v.price)) errors.old_price = 'Deve ser maior que o preço atual.';
+  v.old_price = op.value ?? null;
+  v.discount_percent = errors.price || errors.old_price ? null : computeDiscount(v.price, v.old_price);
+
+  const img = $('e_image_url').value.trim();
+  if(img && !httpsUrl(img)) errors.image_url = 'Use um link completo começando com https://.';
+  v.image_url = img ? httpsUrl(img) : null;
+
+  const aff = $('e_affiliate_url').value.trim();
+  if(!aff) errors.affiliate_url = 'O link afiliado é obrigatório.';
+  else if(!httpsUrl(aff)) errors.affiliate_url = 'Use um link completo começando com https://.';
+  // Preserva exatamente o texto do link informado (sem normalizar parâmetros).
+  v.affiliate_url = aff || null;
+
+  const so = $('e_sort_order').value.trim();
+  if(so && !/^\d{1,7}$/.test(so)) errors.sort_order = 'Use um número inteiro (0 a 9999999).';
+  v.sort_order = so && !errors.sort_order ? Number(so) : null;
+  return { values: v, errors };
+}
+async function saveEdit(){
+  if(busy || !modalCtx || modalCtx.type !== 'edit' || !modalCtx.original) return;
+  const original = modalCtx.original;
+  $('editError').hidden = true;
+  const { values, errors } = validateEdit(original);
+  EDITABLE_FIELDS.forEach(f => fieldError(f, errors[f]));
+  if(Object.keys(errors).length){
+    const first = document.querySelector('#editForm [aria-invalid="true"]');
+    if(first) first.focus();
+    return;
+  }
+  const payload = buildUpdatePayload(values, original);
+  if(!Object.keys(payload).length){ toast('Nenhuma alteração para salvar.'); closeModal(); return; }
+  if(!isSafeId(original.id)){ toast('Identificador inválido. Operação cancelada.', 'err'); return; }
+  if(!(await requireSession())) return;
+
+  setBusy(true);
+  $('editSave').textContent = 'Salvando…';
+  try {
+    const { data, error } = await sb.from('affiliate_products').update(payload).eq('id', original.id).select(LIST_COLUMNS);
+    if(error){
+      logError('salvar edição', error);
+      if(isAuthError(error)){ sessionLost(); return; }
+      $('editError').textContent = friendlyError(error); $('editError').hidden = false; return;
+    }
+    if(!Array.isArray(data) || data.length !== 1){
+      $('editError').textContent = data && data.length > 1
+        ? 'O servidor indicou mais de uma linha alterada. Recarregue e verifique.'
+        : 'Nenhuma linha foi alterada. Verifique se esta conta é administradora (RLS) ou se a oferta ainda existe.';
+      $('editError').hidden = false; return;
+    }
+    logAction(original, 'Editada (' + Object.keys(payload).join(', ') + ')');
+    closeModal();
+    replaceRow(data[0]);
+    toast('Oferta atualizada.', 'ok');
+  } catch(e){
+    logError('salvar edição', e);
+    $('editError').textContent = 'Falha de conexão. Nada foi confirmado; recarregue antes de tentar de novo.'; $('editError').hidden = false;
+  } finally {
+    setBusy(false);
+    $('editSave').textContent = 'Salvar alterações';
+  }
+}
+
+// ----- confirmação genérica -----
+function showConfirm({ title, bodyHtml, okText, okClass = 'btn-primary', okDisabled = false, onOk }){
+  lastFocus = document.activeElement;
+  $('confirmTitle').textContent = title;
+  $('confirmBody').innerHTML = bodyHtml;
+  const ok = $('confirmOk');
+  ok.className = 'btn ' + okClass;
+  ok.textContent = okText;
+  ok.disabled = okDisabled;
+  modalCtx = { type: 'confirm', onOk };
+  openModal('confirmBg');
+  (okDisabled ? $('confirmBg').querySelector('[data-close-modal]') : ok).focus();
+}
+function targetHtml(o){
+  return `<div class="target-box"><div class="thumb">${thumbHtml(o, titleOf(o))}</div>
+    <div><div class="t-title">${escapeHtml(titleOf(o))}</div>
+    <div class="t-sub">external_id: ${o.external_id ? `<code>${escapeHtml(o.external_id)}</code>` : '<span class="muted">nenhum (oferta manual)</span>'} · id <code>${escapeHtml(String(o.id))}</code></div></div></div>`;
+}
+
+// ----- ativar / pausar -----
+async function openToggle(id){
+  const o = ROWS.find(x => String(x.id) === String(id));
+  if(!o || busy) return;
+  if(o.active){
+    showConfirm({
+      title: 'Pausar oferta?',
+      bodyHtml: targetHtml(o) + '<p style="margin:0">A oferta sai do site imediatamente. Nada é excluído e você pode reativar depois.</p>',
+      okText: 'Pausar oferta',
+      onOk: () => doToggle(o, false)
+    });
+    return;
+  }
+  // Ativação: valida os dados antes de liberar a confirmação.
+  let aff = null, affFailed = false;
+  try {
+    const { data, error } = await sb.from('affiliate_products').select('affiliate_url').eq('id', o.id).maybeSingle();
+    if(error) throw error;
+    aff = data && data.affiliate_url;
+  } catch(e){
+    logError('verificar link antes de ativar', e);
+    if(isAuthError(e)){ sessionLost(); return; }
+    affFailed = true;
+  }
+  const checks = [
+    ['Título preenchido', !!cleanText(o.display_title || o.title)],
+    ['Categoria válida', !!o.category && CATEGORIES.includes(o.category)],
+    ['Preço maior que zero', Number(o.price) > 0],
+    ['Imagem com link HTTPS', !!httpsUrl(o.image_url)],
+    ['Link afiliado com HTTPS', !affFailed && !!httpsUrl(aff)]
+  ];
+  const allOk = checks.every(c => c[1]);
+  const list = '<ul class="check-list">' + checks.map(([label, ok]) =>
+    `<li><span class="${ok ? 'ok' : 'no'}" aria-hidden="true">${ok ? '✓' : '✕'}</span><span>${label}${ok ? '' : ' <span class="sr-only">(pendente)</span>'}</span></li>`).join('') + '</ul>';
+  showConfirm({
+    title: allOk ? 'Ativar oferta?' : 'Oferta ainda não pode ser ativada',
+    bodyHtml: targetHtml(o) + (allOk
+      ? '<p style="margin:0">A oferta passa a aparecer no site. Somente o status será alterado.</p>'
+      : '<p style="margin:0">Corrija os itens abaixo pela edição e tente novamente.</p>') + list,
+    okText: allOk ? 'Ativar oferta' : 'Editar oferta',
+    okClass: allOk ? 'btn-ok' : 'btn-primary',
+    onOk: allOk ? () => doToggle(o, true) : () => { closeModal(); openEdit(o.id); }
+  });
+}
+async function doToggle(o, next){
+  if(busy || !isSafeId(o.id)) return;
+  if(!(await requireSession())) return;
+  setBusy(true);
+  $('confirmOk').textContent = next ? 'Ativando…' : 'Pausando…';
+  try {
+    const { data, error } = await sb.from('affiliate_products').update({ active: next }).eq('id', o.id).select(LIST_COLUMNS);
+    if(error){
+      logError(next ? 'ativar' : 'pausar', error);
+      if(isAuthError(error)){ sessionLost(); return; }
+      toast(friendlyError(error), 'err'); return;
+    }
+    if(!Array.isArray(data) || data.length !== 1 || data[0].active !== next){
+      toast('Nenhuma linha foi alterada. Verifique a permissão de administrador (RLS).', 'err'); return;
+    }
+    logAction(o, next ? 'Ativada' : 'Pausada');
+    closeModal();
+    replaceRow(data[0]);
+    toast(next ? 'Oferta ativada.' : 'Oferta pausada.', 'ok');
+  } catch(e){
+    logError(next ? 'ativar' : 'pausar', e);
+    toast('Falha de conexão. Recarregue para confirmar o estado.', 'err');
+  } finally { setBusy(false); }
+}
+
+// ----- excluir (duas etapas) -----
+function openDelete(id){
+  const o = ROWS.find(x => String(x.id) === String(id));
+  if(!o || busy) return;
+  const apiWarn = isManual(o) ? '' :
+    '<div class="danger-box">Esta oferta veio da automação. Se ela continuar no feed, a próxima sincronização pode recriá-la. Para só tirar do site, prefira <strong>Pausar</strong>.</div>';
+  showConfirm({
+    title: 'Excluir oferta? (etapa 1 de 2)',
+    bodyHtml: targetHtml(o) + '<p style="margin:0">A exclusão é definitiva e afeta somente esta oferta.</p>' + apiWarn,
+    okText: 'Continuar',
+    okClass: 'btn-danger',
+    onOk: () => deleteStep2(o)
+  });
+}
+function deleteStep2(o){
+  showConfirm({
+    title: 'Confirmar exclusão (etapa 2 de 2)',
+    bodyHtml: targetHtml(o) + `<div class="field" style="margin:12px 0 0;"><label for="delConfirm">Digite <strong>EXCLUIR</strong> para confirmar</label>
+      <input class="input" id="delConfirm" autocomplete="off" spellcheck="false"></div>`,
+    okText: 'Excluir definitivamente',
+    okClass: 'btn-danger',
+    okDisabled: true,
+    onOk: () => doDelete(o)
+  });
+  const input = $('delConfirm');
+  input.addEventListener('input', () => { $('confirmOk').disabled = input.value.trim() !== 'EXCLUIR'; });
+  input.focus();
+}
+async function doDelete(o){
+  if(busy) return;
+  const input = $('delConfirm');
+  if(!input || input.value.trim() !== 'EXCLUIR') return;
+  if(!isSafeId(o.id)){ toast('Identificador inválido. Exclusão cancelada.', 'err'); return; }
+  if(!(await requireSession())) return;
+  setBusy(true);
+  $('confirmOk').textContent = 'Excluindo…';
+  try {
+    // Alvo único pela chave primária; o retorno mostra exatamente quais linhas saíram.
+    const { data, error } = await sb.from('affiliate_products').delete().eq('id', o.id).select('id');
+    if(error){
+      logError('excluir', error);
+      if(isAuthError(error)){ sessionLost(); return; }
+      toast(friendlyError(error), 'err'); return;
+    }
+    const n = Array.isArray(data) ? data.length : 0;
+    if(n === 0){ toast('Nenhuma linha foi removida (sem permissão ou já excluída).', 'err'); return; }
+    if(n > 1 || String(data[0].id) !== String(o.id)){
+      toast(`ATENÇÃO: o servidor informou ${n} linha(s) removida(s). Recarregue e verifique o banco.`, 'err');
+      await loadOffers(); return;
+    }
+    logAction(o, 'Excluída');
+    closeModal();
+    if(!$('drawer').hidden && $('drawer').dataset.id === String(o.id)) closeDrawer();
+    ROWS = ROWS.filter(x => String(x.id) !== String(o.id));
+    fillFilterOptions(); renderStats(); render();
+    toast('Oferta excluída (1 linha removida).', 'ok');
+  } catch(e){
+    logError('excluir', e);
+    toast('Falha de conexão. Recarregue para confirmar se a oferta foi removida.', 'err');
+  } finally { setBusy(false); }
+}
+
+function renderDrawerFoot(o){
+  $('drawerFoot').innerHTML = `
+    <button class="btn btn-primary" type="button" data-edit="${escapeHtml(String(o.id))}">Editar</button>
+    <button class="btn ${o.active ? 'btn-ghost' : 'btn-ok'}" type="button" data-toggle="${escapeHtml(String(o.id))}">${o.active ? 'Pausar' : 'Ativar'}</button>
+    <button class="btn btn-ghost danger-text" type="button" data-delete="${escapeHtml(String(o.id))}" style="margin-left:auto;">Excluir</button>`;
+}
+function historyHtml(o){
+  const mine = SESSION_LOG.filter(l => l.id === String(o.id));
+  return `<h4 style="margin:18px 0 4px;font-size:14px;">Histórico</h4>
+    <p class="muted" style="margin:0;font-size:12.5px;">Última sincronização: ${escapeHtml(formatDate(o.last_synced_at) || 'nunca')}.
+    O banco ainda não registra alterações feitas pelo administrador.</p>
+    ${mine.length ? `<p style="margin:10px 0 0;font-size:12.5px;font-weight:600;">Nesta sessão</p><ul class="log-list">${mine.map(l =>
+      `<li>${escapeHtml(formatDate(l.at))} · ${escapeHtml(l.action)}</li>`).join('')}</ul>` : ''}`;
 }
 
 // ---------- eventos ----------
@@ -714,13 +1213,26 @@ $('fSearch').addEventListener('input', () => { page = 1; render(); });
 $('clearBtn').addEventListener('click', clearFilters);
 $('prevBtn').addEventListener('click', () => { if(page > 1){ page--; render(); $('main').scrollIntoView({block:'start'}); } });
 $('nextBtn').addEventListener('click', () => { page++; render(); $('main').scrollIntoView({block:'start'}); });
-$('rows').addEventListener('click', e => {
-  const b = e.target.closest('[data-details]');
-  if(b) openDetails(b.dataset.details);
-});
+function actionClick(e){
+  const d = e.target.closest('[data-details]'); if(d) return openDetails(d.dataset.details);
+  const ed = e.target.closest('[data-edit]'); if(ed) return openEdit(ed.dataset.edit);
+  const t = e.target.closest('[data-toggle]'); if(t) return openToggle(t.dataset.toggle);
+  const del = e.target.closest('[data-delete]'); if(del) return openDelete(del.dataset.delete);
+}
+$('rows').addEventListener('click', actionClick);
+$('drawerFoot').addEventListener('click', actionClick);
+document.querySelectorAll('[data-close-modal]').forEach(b => b.addEventListener('click', () => { if(!busy) closeModal(); }));
+['editBg','confirmBg'].forEach(id => $(id).addEventListener('click', e => { if(e.target.id === id && !busy) closeModal(); }));
+$('editSave').addEventListener('click', saveEdit);
+$('confirmOk').addEventListener('click', () => { if(!busy && modalCtx && modalCtx.type === 'confirm' && modalCtx.onOk) modalCtx.onOk(); });
+['e_price','e_old_price'].forEach(id => $(id).addEventListener('input', updateDiscountPreview));
+EDITABLE_FIELDS.forEach(f => { const el = $('e_' + f); if(el) el.addEventListener(el.tagName === 'SELECT' ? 'change' : 'input', () => fieldError(f, '')); });
 $('drawerClose').addEventListener('click', closeDrawer);
 $('drawerBg').addEventListener('click', closeDrawer);
-document.addEventListener('keydown', e => { if(e.key === 'Escape') closeDrawer(); });
+document.addEventListener('keydown', e => {
+  if(e.key !== 'Escape' || busy) return;
+  if(!$('confirmBg').hidden || !$('editBg').hidden) closeModal(); else closeDrawer();
+});
 document.addEventListener('click', e => {
   const b = e.target.closest('[aria-disabled="true"]');
   if(b){ e.preventDefault(); e.stopPropagation(); }
