@@ -7,7 +7,7 @@ flowchart LR
   A["painel.html<br/>(navegador)<br/>só chave anon + sessão"] -- "POST {action}<br/>Authorization: sessão do admin" --> B["Edge Function<br/>vc-admin-jobs"]
   B -- "valida sessão + tabela admins<br/>CORS, rate limit, trava" --> D[("Supabase<br/>admin_job_runs<br/>affiliate_products")]
   B -- "POST + X-VC-Admin-Secret<br/>(segredo só no backend)<br/>timeout" --> C["n8n · vc-admin-gatilho<br/>(Webhook com Header Auth)"]
-  C -- "Execute Workflow" --> E["admitad-sync-brl<br/>(continua inativo)"]
+  C -- "Execute Workflow" --> E["admitad-sync-brl<br/>(publicado; agenda desativada)"]
   C -- "Execute Workflow" --> F["vc-price-check<br/>(inativo)"]
   E -- "upsert (service_role)<br/>+ contadores do run" --> D
   F -- "evidência de preço" --> C
@@ -38,15 +38,15 @@ A fonte oficial conectada é o **feed Admitad "hot products"** (CSV, BRL, só it
 - Nada é raspado do AliExpress, e nenhum valor antigo do banco é usado como "confirmação".
 - A verificação de **todos** os ativos não foi implementada, porque aguarda autorização.
 
-## Contrato com o n8n (a configurar, com autorização)
+## Contrato com o n8n
 
-### 1. Workflow novo `vc-admin-gatilho` (o único ativo; não tem agendamento)
+### 1. Workflow `vc-admin-gatilho` (publicado; não tem agendamento)
 - **Webhook**: método POST, caminho aleatório, *Authentication: Header Auth* com a credencial `VC Admin Secret` (header `X-VC-Admin-Secret`). *Respond: Using "Respond to Webhook" node*.
 - **Switch** em `{{$json.body.mode}}`:
   - `sync`:
     1. **Respond to Webhook** imediatamente com `{"accepted": true, "run_id": "<body.run_id>"}`.
     2. **Execute Workflow** → `admitad-sync-brl` (aguardar conclusão).
-    3. **Supabase: Update** em `admin_job_runs` (`id = run_id`): `status='completed'`, `finished_at=now`, `found`, `rejected`, `approved`, `saved`.
+    3. **Supabase: Update** em `admin_job_runs` (`id = run_id`), usando a credencial de serviço: `status='completed'`, `finished_at=now`, `found`, `rejected`, `approved`, `saved`.
     4. Em caso de erro: `status='failed'`, `error_code='n8n_error'`.
   - `price_check`:
     1. **Execute Workflow** → `vc-price-check` com `external_id`.
@@ -54,9 +54,9 @@ A fonte oficial conectada é o **feed Admitad "hot products"** (CSV, BRL, só it
        - se encontrou: `{"run_id", "external_id", "found": true, "price", "old_price", "currency": "BRL", "source": "admitad_feed", "observed_at": "<ISO>"}`;
        - se não encontrou: `{"run_id", "external_id", "found": false}`.
 
-### 2. Ajustes no `admitad-sync-brl` (continua `active=false`, Schedule Trigger desligado)
-- Adicionar o nó **Execute Workflow Trigger** como entrada alternativa. Confirme na sua versão do n8n que sub-workflows inativos podem ser chamados por outro workflow.
-- Devolver no fim os 4 contadores: `found`, `rejected`, `approved`, `saved`.
+### 2. Ajustes no `admitad-sync-brl` (publicado, com o Schedule Trigger desligado)
+- O nó **Execute Workflow Trigger** é a entrada usada pelo `vc-admin-gatilho`.
+- O nó final devolve `run_id` e os 4 contadores: `found`, `rejected`, `approved`, `saved`.
 - O upsert não precisa mais cuidar de `active`, `display_title` e `category`, porque o trigger do banco já protege esses campos. Mesmo assim, recomenda-se removê-los do mapeamento de atualização.
 
 ### 3. Workflow `vc-price-check` (inativo)
@@ -84,10 +84,18 @@ Lê o mesmo feed (a URL do feed fica numa credencial ou variável do n8n, nunca 
    - `supabase/migrations/20260924121000_admin_panel_security.sql`.
    A segunda migração remove os privilégios amplos encontrados na auditoria de RLS,
    consolida as policies duplicadas e limita o painel às colunas autorizadas.
-2. Configurar o n8n (itens 1–3 acima), deixando `vc-admin-gatilho` **inativo** até o teste.
+2. Configurar e publicar o n8n (itens 1–3 acima), mantendo o Schedule Trigger do `admitad-sync-brl` desativado.
 3. Definir os segredos e publicar a função: `supabase functions deploy vc-admin-jobs` (mantendo a verificação de JWT padrão).
 4. Mesclar o PR do painel.
-5. **Um** teste controlado, com autorização: ativar `vc-admin-gatilho`, clicar uma vez em "Pesquisar novas ofertas", conferir o resumo e se os produtos novos ficaram "Em revisão", e desativar o gatilho de novo, se desejado.
+5. **Um** teste controlado, com autorização: clicar uma vez em "Pesquisar novas ofertas" e conferir o resumo e se os produtos novos ficaram "Em revisão".
+
+## Evidência do teste controlado de 24/09/2026
+
+- Execução `vc-admin-gatilho` #29 e subworkflow #30 concluíram com sucesso.
+- Contadores observados: `found=6`, `rejected=5`, `approved=1`, `saved=1`.
+- O catálogo passou de 26 para 27 produtos; permaneceu com 2 ativos e passou a 25 inativos.
+- A oferta criada ficou inativa, com estado **Em revisão**.
+- A ausência da etapa final deixou o run original em `running`; a correção posterior adicionou a devolução dos contadores e o `PATCH` final de `admin_job_runs`. Ela foi validada por inspeção da configuração, sem executar nova sincronização real.
 
 ## Reversão
 - Painel: reverter o PR, ou fazer "Promote" do deploy anterior na Vercel.
