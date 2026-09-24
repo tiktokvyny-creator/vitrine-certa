@@ -1,5 +1,5 @@
-// Testes locais da Edge Function admin-sync (sem rede, sem banco real, sem n8n real).
-// Rodar: deno test supabase/functions/admin-sync/handler.test.ts
+// Testes locais da Edge Function vc-admin-jobs (sem rede, sem banco real, sem n8n real).
+// Rodar: deno test supabase/functions/vc-admin-jobs/handler.test.ts
 function assert(cond: unknown, msg = "assert falhou"): asserts cond { if (!cond) throw new Error(msg); }
 function assertEquals(a: unknown, b: unknown, msg = "") {
   const A = JSON.stringify(a), B = JSON.stringify(b);
@@ -68,7 +68,7 @@ function makeDeps(repo: Repo, n8n: N8nMode = "ack", envOver: Record<string, stri
   }) as unknown as typeof fetch;
   const deps: Deps = {
     repo, fetch: fakeFetch, now: () => clock.t,
-    env: { N8N_ADMIN_WEBHOOK_URL: HOOK, N8N_ADMIN_WEBHOOK_SECRET: SECRET, ALLOWED_ORIGINS: `https://vitrinecertaa.com.br,${ORIGIN}`,
+    env: { VC_ADMIN_N8N_WEBHOOK_URL: HOOK, VC_ADMIN_N8N_SECRET: SECRET, ALLOWED_ORIGINS: `https://vitrinecertaa.com.br,${ORIGIN}`,
       ACK_TIMEOUT_MS: "50", PRICE_TIMEOUT_MS: "50", ...envOver },
     log: (e, d) => logs.push(JSON.stringify({ e, ...d })),
   };
@@ -78,7 +78,7 @@ function req(body: unknown, { jwt = JWT_ADMIN, origin = ORIGIN, method = "POST" 
   const h: Record<string, string> = { "content-type": "application/json" };
   if (jwt) h.authorization = `Bearer ${jwt}`;
   if (origin) h.origin = origin;
-  return new Request("https://x.supabase.co/functions/v1/admin-sync", { method, headers: h, body: method === "POST" ? JSON.stringify(body) : undefined });
+  return new Request("https://x.supabase.co/functions/v1/vc-admin-jobs", { method, headers: h, body: method === "POST" ? JSON.stringify(body) : undefined });
 }
 async function call(deps: Deps, body: unknown, o = {}) {
   const res = await handle(req(body, o), deps);
@@ -119,7 +119,7 @@ Deno.test("usuário autenticado que não é admin: 403", async () => {
   assertEquals(r.status, 403); assertEquals(fetchCalls.length, 0); assertEquals(m.runs.length, 0);
 });
 Deno.test("função sem segredos configurados: 500 not_configured", async () => {
-  const { deps } = makeDeps(makeRepo().repo, "ack", { N8N_ADMIN_WEBHOOK_SECRET: "" });
+  const { deps } = makeDeps(makeRepo().repo, "ack", { VC_ADMIN_N8N_SECRET: "" });
   const r = await call(deps, { action: "start_sync" });
   assertEquals(r.status, 500); assertEquals(r.json.code, "not_configured");
 });

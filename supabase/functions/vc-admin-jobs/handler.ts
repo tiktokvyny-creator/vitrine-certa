@@ -1,4 +1,4 @@
-// Vitrine Certa · Edge Function "admin-sync" — lógica pura (sem I/O direto).
+// Vitrine Certa · Edge Function "vc-admin-jobs" — lógica pura (sem I/O direto).
 // Ações: start_sync (dispara 1 execução do admitad-sync-brl via n8n),
 //        status (situação da busca), check_price (verifica o preço de UMA oferta).
 // Segredos (URL do webhook e segredo do header) só existem aqui, via variáveis de ambiente.
@@ -33,7 +33,7 @@ export interface PricePatch {
   price_checked_at: string; price_check_status: "confirmed" | "unconfirmed";
 }
 export interface Env {
-  N8N_ADMIN_WEBHOOK_URL: string; N8N_ADMIN_WEBHOOK_SECRET: string; ALLOWED_ORIGINS: string;
+  VC_ADMIN_N8N_WEBHOOK_URL: string; VC_ADMIN_N8N_SECRET: string; ALLOWED_ORIGINS: string;
   SYNC_COOLDOWN_MIN?: string; RUN_TIMEOUT_MIN?: string; ACK_TIMEOUT_MS?: string; PRICE_TIMEOUT_MS?: string;
   PRICE_CHECKS_PER_HOUR?: string; PRICE_CHECK_PRODUCT_COOLDOWN_S?: string;
 }
@@ -83,9 +83,9 @@ async function callN8n(deps: Deps, payload: Record<string, unknown>, timeoutMs: 
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), timeoutMs);
   try {
-    const res = await deps.fetch(deps.env.N8N_ADMIN_WEBHOOK_URL, {
+    const res = await deps.fetch(deps.env.VC_ADMIN_N8N_WEBHOOK_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json", "X-VC-Admin-Secret": deps.env.N8N_ADMIN_WEBHOOK_SECRET },
+      headers: { "Content-Type": "application/json", "X-VC-Admin-Secret": deps.env.VC_ADMIN_N8N_SECRET },
       body: JSON.stringify(payload),
       signal: ctrl.signal,
       redirect: "error",
@@ -130,7 +130,7 @@ export async function handle(req: Request, deps: Deps): Promise<Response> {
   if (req.method === "OPTIONS") return cors ? new Response(null, { status: 204, headers: cors }) : new Response(null, { status: 403 });
   if (!cors) { log("rejected", { code: "origin_not_allowed" }); return fail(403, "origin_not_allowed", "Origem não permitida.", null); }
   if (req.method !== "POST") return fail(405, "method_not_allowed", "Método não permitido.", cors);
-  if (!env.N8N_ADMIN_WEBHOOK_URL || !env.N8N_ADMIN_WEBHOOK_SECRET) {
+  if (!env.VC_ADMIN_N8N_WEBHOOK_URL || !env.VC_ADMIN_N8N_SECRET) {
     log("misconfigured", { code: "missing_secrets" });
     return fail(500, "not_configured", "Função não configurada.", cors);
   }

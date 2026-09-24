@@ -1233,7 +1233,7 @@ function historyHtml(o){
 
 // ---------- busca de novas ofertas e verificação de preço (via Edge Function) ----------
 // O navegador só conhece o NOME da função. Webhook, segredo e service_role ficam no backend.
-const ADMIN_FN = 'admin-sync';
+const ADMIN_FN = 'vc-admin-jobs';
 const TERMINAL = ['completed', 'failed', 'timeout'];
 const SYNC_POLL_MS = 4000;
 const SYNC_POLL_MAX_MS = 20 * 60 * 1000;

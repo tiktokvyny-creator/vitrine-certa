@@ -1,7 +1,7 @@
-// Vitrine Certa · Edge Function "admin-sync" (Deno / Supabase)
-// Deploy: supabase functions deploy admin-sync
+// Vitrine Certa · Edge Function "vc-admin-jobs" (Deno / Supabase)
+// Deploy: supabase functions deploy vc-admin-jobs
 // Segredos necessários (definidos via `supabase secrets set`, nunca no repositório):
-//   N8N_ADMIN_WEBHOOK_URL, N8N_ADMIN_WEBHOOK_SECRET, ALLOWED_ORIGINS
+//   VC_ADMIN_N8N_WEBHOOK_URL, VC_ADMIN_N8N_SECRET, ALLOWED_ORIGINS
 // SUPABASE_URL, SUPABASE_ANON_KEY e SUPABASE_SERVICE_ROLE_KEY são fornecidos pelo próprio Supabase.
 import { createClient } from "npm:@supabase/supabase-js@2.117.1";
 import { handle, type Repo, type Run } from "./handler.ts";
@@ -69,15 +69,15 @@ const log = (event: string, data: Record<string, unknown> = {}) => {
   for (const [k, v] of Object.entries(data)) {
     if (["run_id", "code", "result", "action", "status"].includes(k) && typeof v === "string" && /^[\w-]{1,64}$/.test(v)) safe[k] = v;
   }
-  console.log(JSON.stringify({ fn: "admin-sync", event, ...safe }));
+  console.log(JSON.stringify({ fn: "vc-admin-jobs", event, ...safe }));
 };
 
 Deno.serve((req) =>
   handle(req, {
     repo,
     env: {
-      N8N_ADMIN_WEBHOOK_URL: Deno.env.get("N8N_ADMIN_WEBHOOK_URL") ?? "",
-      N8N_ADMIN_WEBHOOK_SECRET: Deno.env.get("N8N_ADMIN_WEBHOOK_SECRET") ?? "",
+      VC_ADMIN_N8N_WEBHOOK_URL: Deno.env.get("VC_ADMIN_N8N_WEBHOOK_URL") ?? "",
+      VC_ADMIN_N8N_SECRET: Deno.env.get("VC_ADMIN_N8N_SECRET") ?? "",
       ALLOWED_ORIGINS: Deno.env.get("ALLOWED_ORIGINS") ?? "https://vitrinecertaa.com.br,https://www.vitrinecertaa.com.br",
       SYNC_COOLDOWN_MIN: Deno.env.get("SYNC_COOLDOWN_MIN"),
       RUN_TIMEOUT_MIN: Deno.env.get("RUN_TIMEOUT_MIN"),

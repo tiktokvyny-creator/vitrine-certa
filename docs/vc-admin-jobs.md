@@ -4,7 +4,7 @@
 
 ```mermaid
 flowchart LR
-  A["painel.html<br/>(navegador)<br/>só chave anon + sessão"] -- "POST {action}<br/>Authorization: sessão do admin" --> B["Edge Function<br/>admin-sync"]
+  A["painel.html<br/>(navegador)<br/>só chave anon + sessão"] -- "POST {action}<br/>Authorization: sessão do admin" --> B["Edge Function<br/>vc-admin-jobs"]
   B -- "valida sessão + tabela admins<br/>CORS, rate limit, trava" --> D[("Supabase<br/>admin_job_runs<br/>affiliate_products")]
   B -- "POST + X-VC-Admin-Secret<br/>(segredo só no backend)<br/>timeout" --> C["n8n · vc-admin-gatilho<br/>(Webhook com Header Auth)"]
   C -- "Execute Workflow" --> E["admitad-sync-brl<br/>(continua inativo)"]
@@ -14,7 +14,7 @@ flowchart LR
   A -. "polling de status (a cada 4 s)" .-> B
 ```
 
-- O navegador conhece **apenas** o nome da função (`admin-sync`). URL do webhook, segredo do header, URL do feed e `service_role` ficam no backend.
+- O navegador conhece **apenas** o nome da função (`vc-admin-jobs`). URL do webhook, segredo do header, URL do feed e `service_role` ficam no backend.
 - `admin_job_runs` registra cada solicitação. O índice único parcial garante **no máximo uma busca pendente ou em andamento**, mesmo com cliques simultâneos.
 - O trigger `protect_admin_decisions` garante, no banco, que gravações da automação (`service_role`):
   - criem produtos novos com `active=false`;
@@ -70,8 +70,8 @@ Lê o mesmo feed (a URL do feed fica numa credencial ou variável do n8n, nunca 
    - Value: o segredo gerado.
 3. No Supabase (*Edge Functions → Secrets*), ou pela CLI:
    ```
-   supabase secrets set N8N_ADMIN_WEBHOOK_URL=<URL de produção do webhook do vc-admin-gatilho>
-   supabase secrets set N8N_ADMIN_WEBHOOK_SECRET=<o mesmo segredo do passo 2>
+   supabase secrets set VC_ADMIN_N8N_WEBHOOK_URL=<URL de produção do webhook do vc-admin-gatilho>
+   supabase secrets set VC_ADMIN_N8N_SECRET=<o mesmo segredo do passo 2>
    supabase secrets set ALLOWED_ORIGINS=https://vitrinecertaa.com.br,https://www.vitrinecertaa.com.br
    ```
    Opcionais: `SYNC_COOLDOWN_MIN` (10), `RUN_TIMEOUT_MIN` (15), `ACK_TIMEOUT_MS` (10000), `PRICE_TIMEOUT_MS` (25000), `PRICE_CHECKS_PER_HOUR` (20), `PRICE_CHECK_PRODUCT_COOLDOWN_S` (60).
@@ -85,17 +85,17 @@ Lê o mesmo feed (a URL do feed fica numa credencial ou variável do n8n, nunca 
    A segunda migração remove os privilégios amplos encontrados na auditoria de RLS,
    consolida as policies duplicadas e limita o painel às colunas autorizadas.
 2. Configurar o n8n (itens 1–3 acima), deixando `vc-admin-gatilho` **inativo** até o teste.
-3. Definir os segredos e publicar a função: `supabase functions deploy admin-sync` (mantendo a verificação de JWT padrão).
+3. Definir os segredos e publicar a função: `supabase functions deploy vc-admin-jobs` (mantendo a verificação de JWT padrão).
 4. Mesclar o PR do painel.
 5. **Um** teste controlado, com autorização: ativar `vc-admin-gatilho`, clicar uma vez em "Pesquisar novas ofertas", conferir o resumo e se os produtos novos ficaram "Em revisão", e desativar o gatilho de novo, se desejado.
 
 ## Reversão
 - Painel: reverter o PR, ou fazer "Promote" do deploy anterior na Vercel.
-- Função: `supabase functions delete admin-sync`, ou remover `N8N_ADMIN_WEBHOOK_URL` (ela passa a responder `not_configured`).
+- Função: `supabase functions delete vc-admin-jobs`, ou remover `VC_ADMIN_N8N_WEBHOOK_URL` (ela passa a responder `not_configured`).
 - n8n: desativar `vc-admin-gatilho`.
 - Banco: bloco "ROLLBACK" no fim da migração.
 
 ## Testes locais
-- `deno test --allow-read supabase/functions/admin-sync/handler.test.ts`: 24 testes da função (auth, CORS, clique duplo, timeout, erro e resposta inválida do n8n, evidência de preço, rate limit, vazamento de segredos).
+- `deno test --allow-read supabase/functions/vc-admin-jobs/handler.test.ts`: 24 testes da função (auth, CORS, clique duplo, timeout, erro e resposta inválida do n8n, evidência de preço, rate limit, vazamento de segredos).
 - `supabase/tests/admin_jobs_test.sql`: 17 testes da migração num Postgres descartável (produto novo inativo, ativo continua ativo, `display_title` preservado, trava única, RLS).
 - `supabase/tests/admin_panel_security_test.sql`: privilégios mínimos, colunas editáveis, policies canônicas, constraints e compatibilidade do cadastro manual. Executar somente em Postgres local/descartável.
