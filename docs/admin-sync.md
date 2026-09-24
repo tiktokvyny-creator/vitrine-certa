@@ -79,7 +79,11 @@ Lê o mesmo feed (a URL do feed fica numa credencial ou variável do n8n, nunca 
 4. Para testar num preview da Vercel, adicione a URL do preview em `ALLOWED_ORIGINS` só durante o teste.
 
 ## Ordem de implantação
-1. Aprovar e aplicar `supabase/migrations/20260924120000_admin_jobs.sql`, com backup antes.
+1. Revisar e aplicar, nesta ordem e com backup antes:
+   - `supabase/migrations/20260924120000_admin_jobs.sql`;
+   - `supabase/migrations/20260924121000_admin_panel_security.sql`.
+   A segunda migração remove os privilégios amplos encontrados na auditoria de RLS,
+   consolida as policies duplicadas e limita o painel às colunas autorizadas.
 2. Configurar o n8n (itens 1–3 acima), deixando `vc-admin-gatilho` **inativo** até o teste.
 3. Definir os segredos e publicar a função: `supabase functions deploy admin-sync` (mantendo a verificação de JWT padrão).
 4. Mesclar o PR do painel.
@@ -94,3 +98,4 @@ Lê o mesmo feed (a URL do feed fica numa credencial ou variável do n8n, nunca 
 ## Testes locais
 - `deno test --allow-read supabase/functions/admin-sync/handler.test.ts`: 24 testes da função (auth, CORS, clique duplo, timeout, erro e resposta inválida do n8n, evidência de preço, rate limit, vazamento de segredos).
 - `supabase/tests/admin_jobs_test.sql`: 17 testes da migração num Postgres descartável (produto novo inativo, ativo continua ativo, `display_title` preservado, trava única, RLS).
+- `supabase/tests/admin_panel_security_test.sql`: privilégios mínimos, colunas editáveis, policies canônicas, constraints e compatibilidade do cadastro manual. Executar somente em Postgres local/descartável.
