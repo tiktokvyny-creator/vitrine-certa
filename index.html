@@ -318,7 +318,7 @@ function renderGrid(){
         <div class="offer-title">${escapeHtml(displayTitle)}</div>
         ${o.price != null ? `<div class="offer-price"><span class="n">R$</span> ${formatPrice(o.price)}</div>` : ''}
         <div class="offer-meta">
-          <p class="offer-disclaimer">Preço e frete podem mudar. Confira o valor final no site da loja.</p>
+          <p class="offer-disclaimer">Preço, impostos e frete podem mudar. Confira o valor final no site da loja.</p>
           ${updatedLabel ? `<p class="offer-updated">${escapeHtml(updatedLabel)}</p>` : ''}
         </div>
         <a class="offer-btn" href="${safeUrl(o.affiliate_url)}" target="_blank" rel="sponsored noopener noreferrer">
