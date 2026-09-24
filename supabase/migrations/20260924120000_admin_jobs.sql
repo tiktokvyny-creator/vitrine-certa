@@ -31,6 +31,7 @@ create index if not exists admin_job_runs_product
 alter table public.admin_job_runs enable row level security;
 revoke all on public.admin_job_runs from anon, authenticated;
 grant select on public.admin_job_runs to authenticated;
+grant all on public.admin_job_runs to service_role;
 drop policy if exists admin_job_runs_admin_read on public.admin_job_runs;
 create policy admin_job_runs_admin_read on public.admin_job_runs
   for select to authenticated
