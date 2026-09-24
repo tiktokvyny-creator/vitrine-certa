@@ -150,6 +150,132 @@
   @media (max-width:480px){
     .offers-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;}
   }
+
+  /* Nova experiência Vitrine Certa */
+  body{background:#f7f8f8;color:#172733;}
+  header{height:74px;padding:0 max(24px,calc((100vw - 1320px)/2));border-bottom:1px solid #eadfd4;box-shadow:0 3px 18px rgba(61,34,20,.04);}
+  .brand{font-size:24px;color:#35180f;}
+  .brand-mark{width:38px;height:38px;background:linear-gradient(145deg,#f47a3c,#db4f25);}
+  .brand-mark::after{background:#fff7ee;}
+  .brand-mark::before{display:none;}
+  .header-nav{gap:30px;}
+  .header-nav a{margin:0;font-size:14px;color:#4f4a46;}
+  .header-nav a:first-child{color:#d9542c;font-weight:700;}
+
+  .hero{padding:0;text-align:left;background:#fff8ef;overflow:hidden;}
+  .hero-inner{max-width:1320px;margin:auto;display:grid;grid-template-columns:1.06fr .94fr;min-height:430px;align-items:center;gap:28px;padding:44px 24px;}
+  .eyebrow{font-size:12px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#aa5c37;margin-bottom:14px;}
+  .hero h1{max-width:720px;font-size:clamp(38px,4.5vw,66px);line-height:1.02;letter-spacing:-.035em;color:#25130e;margin-bottom:18px;}
+  .hero h1 span{color:#e5562d;}
+  .hero p{margin:0 0 24px;max-width:640px;font-size:17px;line-height:1.55;color:#5f666a;}
+  .hero-actions{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:24px;}
+  .hero-cta{display:inline-flex;align-items:center;gap:10px;padding:14px 22px;background:#e5572f;color:#fff;border-radius:14px;font-weight:700;box-shadow:0 9px 24px rgba(229,87,47,.22);}
+  .hero-cta:hover{background:#cf4722;transform:translateY(-1px);}
+  .trust-row{display:flex;gap:24px;flex-wrap:wrap;color:#42535a;font-size:13px;font-weight:600;}
+  .trust-item{display:flex;align-items:center;gap:8px;}
+  .trust-icon{display:grid;place-items:center;width:30px;height:30px;border-radius:9px;background:#e1f5ee;color:#0f8066;font-size:16px;}
+  .hero-visual{position:relative;min-height:330px;border-radius:32px;background:linear-gradient(145deg,#ffe3cf,#f8b990);overflow:hidden;box-shadow:inset 0 0 0 1px rgba(152,75,34,.08);}
+  .hero-visual::before,.hero-visual::after{content:'';position:absolute;border-radius:50%;background:rgba(255,255,255,.36);}
+  .hero-visual::before{width:260px;height:260px;right:-60px;top:-70px;}
+  .hero-visual::after{width:190px;height:190px;left:-60px;bottom:-70px;}
+  .visual-copy{position:absolute;z-index:2;left:42px;top:40px;max-width:270px;}
+  .visual-copy strong{display:block;font-family:'Fredoka';font-size:29px;line-height:1.05;color:#472315;margin-bottom:10px;}
+  .visual-copy span{font-size:14px;line-height:1.45;color:#71472f;}
+  .visual-shapes{position:absolute;inset:0;}
+  .shape{position:absolute;display:grid;place-items:center;background:#fff;border-radius:24px;box-shadow:0 18px 40px rgba(92,46,23,.14);font-size:66px;}
+  .shape.one{width:150px;height:150px;right:46px;bottom:38px;transform:rotate(5deg);}
+  .shape.two{width:105px;height:105px;right:178px;bottom:26px;transform:rotate(-8deg);font-size:48px;}
+
+  .discovery{background:#fff;border-bottom:1px solid #ebe4dd;}
+  .discovery-inner{max-width:1320px;margin:auto;padding:20px 24px 24px;}
+  .search-wrap{max-width:760px;margin:-36px auto 18px;z-index:3;}
+  .search-wrap input{padding:17px 22px 17px 50px;border:1px solid #dfd6cf;border-radius:16px;box-shadow:0 12px 32px rgba(54,35,24,.09);font-size:15px;}
+  .cat-pills{max-width:none;flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;padding:2px 0 6px;scrollbar-width:none;}
+  .cat-pill{padding:10px 17px;border:1px solid #e7ded5;border-radius:13px;font-weight:600;background:#fff;color:#485158;}
+  .cat-pill.active{background:#e5572f;border-color:#e5572f;color:#fff;}
+
+  main{max-width:1320px;padding:42px 24px 20px;}
+  .section-head{display:flex;align-items:end;justify-content:space-between;gap:18px;margin-bottom:22px;}
+  .section-title{display:block;font-size:31px;margin:0;color:#172733;letter-spacing:-.02em;}
+  .section-subtitle{margin:5px 0 0;color:#6b7479;font-size:14px;}
+  .offers-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;margin-bottom:36px;}
+  .offer-card{border:1px solid #e6e1dc;border-radius:20px;box-shadow:0 8px 28px rgba(34,42,45,.055);}
+  .offer-card:hover{transform:translateY(-5px);box-shadow:0 16px 36px rgba(44,24,16,.11);}
+  .offer-thumb{aspect-ratio:1.12/1;background:#faf6f0;}
+  .offer-thumb img{padding:16px;transition:transform .25s ease;}
+  .offer-card:hover .offer-thumb img{transform:scale(1.035);}
+  .offer-cat-badge{top:12px;left:12px;border:0;border-radius:999px;padding:6px 10px;font-size:10px;text-transform:uppercase;letter-spacing:.035em;}
+  .discount-badge{position:absolute;top:12px;right:12px;background:#e5572f;color:#fff;border-radius:999px;padding:6px 9px;font-size:11px;font-weight:800;}
+  .offer-body{padding:16px;gap:9px;}
+  .offer-title{font-size:15px;font-weight:650;line-height:1.4;min-height:2.8em;color:#172733;}
+  .old-price{font-size:12px;color:#8a9296;text-decoration:line-through;margin-bottom:-7px;min-height:17px;}
+  .offer-price{font-size:24px;color:#0d775f;}
+  .offer-price .n{font-size:12px;}
+  .offer-disclaimer{font-size:10px;}
+  .offer-btn{margin-top:3px;padding:12px;border-radius:12px;background:#e5572f;}
+  .offer-btn:hover{background:#cc4723;}
+
+  .why-section{max-width:1320px;margin:16px auto 42px;padding:0 24px;}
+  .why-card{background:linear-gradient(125deg,#e8f8f4,#f3fbf9);border:1px solid #d7eee8;border-radius:24px;padding:28px;display:grid;grid-template-columns:.75fr 1.25fr;gap:30px;align-items:center;}
+  .why-card h2{font-size:29px;margin:0 0 8px;color:#17312d;}
+  .why-card>div>p{margin:0;color:#5d716d;font-size:14px;line-height:1.5;}
+  .why-list{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+  .why-item{background:rgba(255,255,255,.72);border-radius:16px;padding:17px;}
+  .why-item b{display:block;margin:8px 0 5px;font-size:14px;}
+  .why-item span{font-size:12px;line-height:1.4;color:#657470;}
+  .why-emoji{font-size:24px;}
+
+  .steps{max-width:1320px;margin:0 auto 28px;padding:0 24px;}
+  .steps-inner{background:#fff3e8;border:1px solid #f1dfd0;border-radius:22px;padding:24px;display:grid;grid-template-columns:.75fr repeat(3,1fr);gap:12px;align-items:center;}
+  .steps h2{font-size:25px;margin:0;color:#402117;}
+  .step{display:flex;gap:11px;align-items:flex-start;padding:8px 14px;border-left:1px solid #e6cdbb;}
+  .step-num{display:grid;place-items:center;flex:0 0 32px;height:32px;border-radius:50%;background:#e5572f;color:white;font-weight:800;}
+  .step b{display:block;font-size:13px;margin:1px 0 4px;}
+  .step span{font-size:11px;color:#79665b;line-height:1.35;}
+
+  footer{margin-top:0;padding:28px 24px;border-top:1px solid #e5ded8;}
+
+  @media(max-width:1000px){
+    .hero-inner{grid-template-columns:1fr;min-height:auto;}
+    .hero-visual{display:none;}
+    .offers-grid{grid-template-columns:repeat(3,minmax(0,1fr));}
+    .why-card{grid-template-columns:1fr;}
+    .steps-inner{grid-template-columns:1fr 1fr;}
+    .steps-inner>div:first-child{grid-column:1/-1;}
+  }
+  @media(max-width:720px){
+    header{height:68px;padding:0 18px;}
+    .brand{font-size:21px;}
+    .brand-mark{width:34px;height:34px;}
+    .header-nav{gap:10px;}
+    .hero-inner{padding:36px 20px 54px;}
+    .eyebrow{font-size:10px;}
+    .hero h1{font-size:40px;}
+    .hero p{font-size:15px;}
+    .trust-row{gap:12px;font-size:11px;}
+    .trust-item{gap:5px;}
+    .trust-icon{width:26px;height:26px;}
+    .discovery-inner{padding:0 16px 17px;}
+    .search-wrap{margin:-27px auto 14px;}
+    main{padding:30px 16px 12px;}
+    .section-title{font-size:26px;}
+    .offers-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
+    .offer-body{padding:12px;}
+    .offer-title{font-size:13px;}
+    .offer-price{font-size:20px;}
+    .offer-btn{font-size:12px;padding:11px 7px;}
+    .why-section,.steps{padding:0 16px;}
+    .why-card{padding:20px;}
+    .why-list{grid-template-columns:1fr;}
+    .steps-inner{grid-template-columns:1fr;}
+    .steps-inner>div:first-child{grid-column:auto;}
+    .step{border-left:0;border-top:1px solid #e6cdbb;padding:14px 0 5px;}
+  }
+  @media(max-width:390px){
+    .hero h1{font-size:35px;}
+    .offers-grid{grid-template-columns:1fr 1fr;}
+    .offer-thumb{aspect-ratio:1/1;}
+  }
 </style>
 </head>
 <body>
@@ -160,6 +286,9 @@
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
   </button>
   <nav class="header-nav" id="headerNav">
+    <a href="#ofertas">Ofertas</a>
+    <a href="#categorias">Categorias</a>
+    <a href="#como-funciona">Como funciona</a>
     <a href="sobre.html">Sobre</a>
     <a href="faq.html">Dúvidas</a>
     <a href="https://www.instagram.com/vitrinecertaaofc/" target="_blank" rel="noopener">Instagram</a>
@@ -167,17 +296,47 @@
 </header>
 
 <section class="hero">
-  <h1>As melhores ofertas, direto pro link de compra</h1>
-  <p>Selecionamos ofertas de várias lojas online e atualizamos com frequência. Sem cadastro, sem enrolação: você clica e vai direto pra loja.</p>
-  <div class="search-wrap">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-    <input type="text" id="searchInput" placeholder="Buscar uma oferta...">
+  <div class="hero-inner">
+    <div>
+      <div class="eyebrow">Boas escolhas para o seu dia a dia</div>
+      <h1>Achados escolhidos com <span>cuidado, para você comprar melhor</span></h1>
+      <p>Selecionamos boas ofertas de lojas online e atualizamos com frequência. Você escolhe e compra direto na loja.</p>
+      <div class="hero-actions">
+        <a class="hero-cta" href="#ofertas">Ver ofertas de hoje <span aria-hidden="true">→</span></a>
+      </div>
+      <div class="trust-row" aria-label="Diferenciais da Vitrine Certa">
+        <div class="trust-item"><span class="trust-icon">✓</span>Ofertas revisadas</div>
+        <div class="trust-item"><span class="trust-icon">↗</span>Links seguros</div>
+        <div class="trust-item"><span class="trust-icon">↻</span>Atualização frequente</div>
+      </div>
+    </div>
+    <div class="hero-visual" aria-hidden="true">
+      <div class="visual-copy"><strong>Boas escolhas, todos os dias.</strong><span>Produtos úteis, preços conferidos e acesso direto à loja.</span></div>
+      <div class="visual-shapes">
+        <div class="shape one">🛍️</div>
+        <div class="shape two">🏠</div>
+      </div>
+    </div>
   </div>
-  <div class="cat-pills" id="catPills"></div>
 </section>
 
-<main>
-  <div class="section-title">Ofertas <span class="count-tag" id="offerCount"></span></div>
+<section class="discovery" id="categorias">
+  <div class="discovery-inner">
+    <div class="search-wrap">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="searchInput" placeholder="Buscar ofertas, produtos ou categorias..." aria-label="Buscar ofertas">
+    </div>
+    <div class="cat-pills" id="catPills"></div>
+  </div>
+</section>
+
+<main id="ofertas">
+  <div class="section-head">
+    <div>
+      <div class="section-title">Ofertas selecionadas para você <span class="count-tag" id="offerCount"></span></div>
+      <p class="section-subtitle">Produtos revisados, preços conferidos e compra direto na loja.</p>
+    </div>
+  </div>
   <div class="offers-grid" id="offersGrid"></div>
   <div class="empty-state" id="emptyState" style="display:none;">
     <div class="em">🔍</div>
@@ -185,6 +344,29 @@
     <p id="emptyText">Tenta buscar outro termo ou ver outra categoria.</p>
   </div>
 </main>
+
+<section class="why-section">
+  <div class="why-card">
+    <div>
+      <h2>Por que confiar na Vitrine Certa?</h2>
+      <p>A gente pesquisa e organiza os achados para deixar sua decisão mais simples.</p>
+    </div>
+    <div class="why-list">
+      <div class="why-item"><span class="why-emoji">👥</span><b>Curadoria manual</b><span>Selecionamos ofertas que realmente fazem sentido.</span></div>
+      <div class="why-item"><span class="why-emoji">🛡️</span><b>Produtos revisados</b><span>Conferimos as informações antes de publicar.</span></div>
+      <div class="why-item"><span class="why-emoji">🔗</span><b>Compra direto na loja</b><span>Você é direcionado para o site oficial do vendedor.</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="steps" id="como-funciona">
+  <div class="steps-inner">
+    <div><h2>Comprar bem é mais simples aqui</h2></div>
+    <div class="step"><span class="step-num">1</span><div><b>Nós pesquisamos</b><span>Selecionamos boas oportunidades em lojas online.</span></div></div>
+    <div class="step"><span class="step-num">2</span><div><b>Você escolhe</b><span>Compare os achados e encontre o que combina com você.</span></div></div>
+    <div class="step"><span class="step-num">3</span><div><b>Vai direto para a loja</b><span>Finalize a compra com segurança no site do vendedor.</span></div></div>
+  </div>
+</section>
 
 <div class="ad-slot">
   <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-2768171974814317" data-ad-format="auto" data-full-width-responsive="true"></ins>
@@ -266,7 +448,7 @@ function formatUpdated(value){
 async function loadOffers(){
   const { data, error } = await sb
     .from('affiliate_products')
-    .select('title, display_title, price, image_url, affiliate_url, category, last_synced_at')
+    .select('title, display_title, price, old_price, discount_percent, image_url, affiliate_url, category, merchant, last_synced_at')
     .eq('active', true)
     .order('sort_order');
   if(error){ console.error('Erro ao carregar ofertas:', error); OFFERS = []; return; }
@@ -296,7 +478,8 @@ function renderGrid(){
   const term = searchTerm.trim().toLowerCase();
   const filtered = OFFERS.filter(o => {
     const matchCat = activeCat === 'Todos' || o.category === activeCat;
-    const matchTerm = !term || (o.title || '').toLowerCase().includes(term);
+    const searchable = `${o.display_title || ''} ${o.title || ''} ${o.category || ''} ${o.merchant || ''}`.toLowerCase();
+    const matchTerm = !term || searchable.includes(term);
     return matchCat && matchTerm;
   });
 
@@ -308,14 +491,18 @@ function renderGrid(){
     // por produto; title (original, em inglês) é sempre preservado no banco para auditoria
     // e continua sendo usado na busca. Quando display_title não existir, cai no title original.
     const displayTitle = o.display_title || o.title || 'Oferta';
+    const discount = Number(o.discount_percent);
+    const showDiscount = Number.isFinite(discount) && discount > 0;
     return `
     <div class="offer-card">
       <div class="offer-thumb">
         ${o.image_url ? `<img src="${safeUrl(o.image_url, '')}" alt="${escapeHtml(displayTitle)}" loading="lazy" referrerpolicy="no-referrer">` : `<span class="noimg">sem foto</span>`}
         ${o.category ? `<span class="offer-cat-badge" style="background:${catColor(o.category)};border-color:transparent;">${escapeHtml(o.category)}</span>` : ''}
+        ${showDiscount ? `<span class="discount-badge">-${Math.round(discount)}%</span>` : ''}
       </div>
       <div class="offer-body">
         <div class="offer-title">${escapeHtml(displayTitle)}</div>
+        <div class="old-price">${o.old_price != null && Number(o.old_price) > Number(o.price) ? `R$ ${formatPrice(o.old_price)}` : ''}</div>
         ${o.price != null ? `<div class="offer-price"><span class="n">R$</span> ${formatPrice(o.price)}</div>` : ''}
         <div class="offer-meta">
           <p class="offer-disclaimer">Preço, impostos e frete podem mudar. Confira o valor final no site da loja.</p>
