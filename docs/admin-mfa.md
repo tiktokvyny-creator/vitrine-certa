@@ -14,14 +14,22 @@ dispositivo ou aplicativo diferente do fator principal.
 
 ## Ordem segura para uma implantação futura
 
-1. Publicar o painel com o fluxo TOTP.
-2. Cadastrar e verificar os dois fatores do administrador.
-3. Implantar a nova versão da Edge Function `vc-admin-jobs`.
-4. Aplicar `20260925120000_admin_mfa_aal2.sql`.
-5. Validar login, leitura e uma operação administrativa controlada.
+1. Disponibilizar e validar o preview do PR, sem promover para produção.
+2. No preview, cadastrar e verificar o TOTP principal e o TOTP de backup.
+3. Confirmar no preview que a sessão atingiu `aal2` e que o painel abriu.
+4. Implantar a Edge Function `vc-admin-jobs` que rejeita sessões em `aal1`.
+5. Aplicar `20260925120000_admin_mfa_aal2.sql` imediatamente depois da função.
+6. Promover o painel com MFA para produção.
+7. Validar login, leitura e uma operação administrativa controlada.
 
-Não aplicar a migração antes de o painel com MFA estar acessível e os fatores
-terem sido cadastrados, para evitar bloquear o administrador em `aal1`.
+Os passos 4, 5 e 6 devem ser executados na mesma janela de mudança. Entre a
+proteção do backend e a promoção do painel, o painel antigo pode deixar de
+funcionar; isso é preferível a manter uma janela em que chamadas administrativas
+diretas ainda aceitem `aal1`.
+
+Não aplicar a migração antes de os dois fatores terem sido verificados no
+preview. Se a promoção do painel falhar, reverter primeiro a migração conforme o
+bloco de reversão e só então restaurar a versão anterior da Edge Function.
 
 ## Testes locais
 
