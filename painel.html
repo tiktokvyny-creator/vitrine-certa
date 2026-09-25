@@ -1,0 +1,1671 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' https: data:; connect-src https://ppoelkclmuqojgjrzpkw.supabase.co wss://ppoelkclmuqojgjrzpkw.supabase.co; base-uri 'none'; form-action 'none'; object-src 'none'">
+<title>Painel · Vitrine Certa</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%23D85A30%22/><circle cx=%2250%22 cy=%2250%22 r=%2228%22 fill=%22%23E1F5EE%22/><circle cx=%2250%22 cy=%2250%22 r=%2216%22 fill=%22%230F6E56%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --coral:#D85A30; --coral-dark:#4A1B0C; --coral-light:#F5C4B3; --coral-pale:#FCEDE6;
+    --teal:#0F6E56; --teal-light:#9FE1CB; --teal-pale:#E1F5EE;
+    --amber:#EF9F27; --amber-dark:#633806; --amber-pale:#FAEEDA;
+    --red:#B3261E; --red-pale:#FBEAE8;
+    --cream:#FFF8F0; --paper:#FFFFFF; --bg:#F7F5F2; --ink:#2C1810; --ink-soft:#6B5B4F; --line:#EDE1D4;
+    --radius:14px; --shadow:0 6px 22px rgba(44,24,16,.06);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.45;}
+  h1,h2,h3,.brand{font-family:'Fredoka','Inter',sans-serif;}
+  button,input,select{font:inherit;color:inherit;}
+  button{cursor:pointer;}
+  :focus-visible{outline:3px solid var(--amber);outline-offset:2px;}
+  .sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;border:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;}
+  [hidden]{display:none !important;}
+
+  /* Marca */
+  .brand{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:600;color:var(--coral-dark);}
+  .brand-mark{width:32px;height:32px;border-radius:50%;background:var(--coral);position:relative;flex-shrink:0;}
+  .brand-mark::after{content:'';position:absolute;inset:7px;border-radius:50%;background:var(--teal-pale);}
+  .brand-mark::before{content:'';position:absolute;inset:11px;border-radius:50%;background:var(--teal);z-index:1;}
+  .brand small{display:block;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;color:var(--ink-soft);letter-spacing:.02em;}
+
+  /* Tela de verificação / login */
+  .center-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:linear-gradient(160deg,var(--cream),#fff 55%,var(--teal-pale));}
+  .login-box{background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:34px 30px;width:100%;max-width:390px;box-shadow:var(--shadow);}
+  .login-box .brand{justify-content:center;margin-bottom:6px;}
+  .login-box p.lead{text-align:center;color:var(--ink-soft);margin:0 0 22px;}
+  .field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
+  .field label{font-size:12.5px;font-weight:600;color:var(--ink-soft);}
+  .input{border:1px solid var(--line);background:#fff;border-radius:11px;padding:11px 12px;width:100%;}
+  .input:focus{border-color:var(--coral);outline:none;box-shadow:0 0 0 3px var(--coral-pale);}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid transparent;border-radius:11px;padding:10px 16px;font-weight:600;white-space:nowrap;}
+  .btn-primary{background:var(--coral);color:#fff;}
+  .btn-primary:hover{background:#c24e27;}
+  .btn-primary:disabled{opacity:.6;cursor:wait;}
+  .btn-ghost{background:#fff;border-color:var(--line);color:var(--ink);}
+  .btn-ghost:hover{border-color:var(--coral-light);}
+  .btn[aria-disabled="true"]{opacity:.55;cursor:not-allowed;}
+  .btn-block{width:100%;}
+  .soon{font-size:10.5px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;background:var(--amber-pale);color:var(--amber-dark);border-radius:999px;padding:2px 7px;}
+  .alert{border-radius:11px;padding:10px 12px;margin-bottom:14px;font-size:13px;}
+  .alert-error{background:var(--red-pale);color:var(--red);}
+  .alert-info{background:var(--teal-pale);color:var(--teal);}
+  .mfa-actions{display:flex;gap:8px;margin-top:14px;}
+  .mfa-actions .btn{flex:1;}
+  .mfa-qr{display:block;width:210px;height:210px;max-width:100%;margin:14px auto;border:1px solid var(--line);border-radius:12px;background:#fff;padding:8px;}
+  .mfa-secret{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;word-break:break-all;background:var(--bg);border-radius:9px;padding:9px;margin:8px 0 14px;user-select:all;}
+  .mfa-note{font-size:12px;color:var(--ink-soft);margin:10px 0 0;}
+  .spinner{width:26px;height:26px;border:3px solid var(--line);border-top-color:var(--coral);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  @media (prefers-reduced-motion: reduce){.spinner,.skeleton{animation:none !important;}}
+
+  /* Layout do app */
+  .app{display:grid;grid-template-columns:252px minmax(0,1fr);min-height:100vh;}
+  .sidebar{background:var(--paper);border-right:1px solid var(--line);padding:22px 16px;display:flex;flex-direction:column;gap:22px;position:sticky;top:0;height:100vh;}
+  .nav{display:flex;flex-direction:column;gap:4px;}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:11px;border:0;background:none;text-align:left;color:var(--ink-soft);font-weight:500;width:100%;}
+  .nav-item svg{flex-shrink:0;}
+  .nav-item[aria-current="page"]{background:var(--coral-pale);color:var(--coral-dark);font-weight:600;}
+  .nav-item[aria-disabled="true"]{opacity:.6;cursor:not-allowed;}
+  .nav-item .soon{margin-left:auto;}
+  .session{margin-top:auto;border:1px solid var(--line);border-radius:13px;padding:12px;background:var(--bg);}
+  .session .status{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:var(--teal);}
+  .dot{width:8px;height:8px;border-radius:50%;background:#1DA27A;box-shadow:0 0 0 3px var(--teal-pale);}
+  .session .email{font-size:12.5px;color:var(--ink);margin:6px 0 10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+  .main{padding:26px 28px 40px;min-width:0;}
+  .page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:20px;}
+  .page-head h1{margin:0;font-size:26px;color:var(--coral-dark);}
+  .page-head p{margin:4px 0 0;color:var(--ink-soft);}
+  .head-actions{display:flex;gap:8px;flex-wrap:wrap;}
+
+  .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px;}
+  .stat{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow);}
+  .stat .n{font-family:'Fredoka',sans-serif;font-size:28px;font-weight:600;line-height:1.1;}
+  .stat .l{font-size:12.5px;color:var(--ink-soft);margin-top:2px;}
+  .stat.total .n{color:var(--coral-dark);} .stat.on .n{color:var(--teal);} .stat.off .n{color:var(--ink-soft);} .stat.review .n{color:var(--amber-dark);}
+
+  .panel{background:var(--paper);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);}
+  .toolbar{display:grid;grid-template-columns:minmax(220px,2fr) repeat(5,minmax(0,1fr)) auto;gap:10px;padding:14px;border-bottom:1px solid var(--line);align-items:end;}
+  .toolbar .field{margin:0;}
+  .toolbar .field label{font-size:11.5px;}
+  .toolbar .input{padding:9px 10px;}
+  .search-wrap{position:relative;}
+  .search-wrap svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--ink-soft);pointer-events:none;}
+  .search-wrap .input{padding-left:34px;}
+  .result-bar{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 16px;font-size:12.5px;color:var(--ink-soft);border-bottom:1px solid var(--line);flex-wrap:wrap;}
+
+  .table-wrap{overflow-x:auto;position:relative;}
+  table{width:100%;border-collapse:collapse;}
+  th{font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-soft);font-weight:600;text-align:left;padding:10px 12px;background:#FCFAF7;border-bottom:1px solid var(--line);white-space:nowrap;}
+  td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:middle;}
+  tbody tr:hover{background:#FFFBF7;}
+  .thumb{width:52px;height:52px;border-radius:10px;border:1px solid var(--line);background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;}
+  .thumb img{width:100%;height:100%;object-fit:contain;}
+  .thumb .noimg{font-size:10px;color:var(--ink-soft);text-align:center;}
+  .t-title{font-weight:600;max-width:340px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .t-sub{font-size:11.5px;color:var(--ink-soft);margin-top:3px;}
+  .t-sub code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;}
+  .t-merchant{font-weight:600;color:var(--ink);}
+  td.c-sync{white-space:nowrap;font-size:12.5px;}
+  .old{font-size:11.5px;color:#8a9296;text-decoration:line-through;}
+  .price{font-weight:700;color:var(--teal);white-space:nowrap;}
+  .pill{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:3px 9px;font-size:11.5px;font-weight:600;white-space:nowrap;}
+  .pill-cat{background:var(--bg);color:var(--ink-soft);border:1px solid var(--line);}
+  .pill-src{background:#F1EFFB;color:#3C3489;}
+  .pill-src.manual{background:var(--bg);color:var(--ink-soft);}
+  .pill-disc{background:var(--coral);color:#fff;}
+  .st-active{background:var(--teal-pale);color:var(--teal);}
+  .st-paused{background:#EFEDEA;color:#5E5550;}
+  .st-review{background:var(--amber-pale);color:var(--amber-dark);}
+  .pill .d{width:6px;height:6px;border-radius:50%;background:currentColor;}
+  .muted{color:var(--ink-soft);}
+  .row-actions{display:flex;gap:6px;justify-content:flex-end;}
+  .btn-sm{padding:6px 10px;font-size:12.5px;border-radius:9px;}
+
+  .state{padding:48px 20px;text-align:center;color:var(--ink-soft);}
+  .state h3{margin:0 0 6px;color:var(--ink);font-size:18px;}
+  .state p{margin:0 0 14px;}
+  .skeleton{height:52px;border-radius:10px;background:linear-gradient(90deg,#f1ece6 25%,#f8f4ef 50%,#f1ece6 75%);background-size:200% 100%;animation:sk 1.2s infinite;margin:10px 16px;}
+  @keyframes sk{to{background-position:-200% 0;}}
+
+  .pager{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px;flex-wrap:wrap;}
+  .pager .pages{display:flex;gap:6px;align-items:center;}
+
+  /* Gaveta de detalhes */
+  .drawer-bg{position:fixed;inset:0;background:rgba(44,24,16,.35);z-index:40;}
+  .drawer{position:fixed;top:0;right:0;height:100%;width:min(460px,100%);background:var(--paper);z-index:41;box-shadow:-10px 0 30px rgba(0,0,0,.12);display:flex;flex-direction:column;}
+  .drawer-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--line);}
+  .drawer-head h2{margin:0;font-size:18px;}
+  .drawer-body{padding:18px;overflow-y:auto;flex:1;}
+  .drawer-img{aspect-ratio:1/1;max-height:260px;width:100%;border:1px solid var(--line);border-radius:14px;background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:14px;}
+  .drawer-img img{width:100%;height:100%;object-fit:contain;padding:10px;}
+  .kv{display:grid;grid-template-columns:130px 1fr;gap:8px 12px;font-size:13px;margin:0;}
+  .kv dt{color:var(--ink-soft);}
+  .kv dd{margin:0;word-break:break-word;}
+  .drawer-foot{padding:14px 18px;border-top:1px solid var(--line);display:flex;gap:8px;flex-wrap:wrap;}
+  .note{font-size:12px;color:var(--ink-soft);background:var(--bg);border-radius:10px;padding:10px 12px;margin-top:14px;}
+  .btn-danger{background:var(--red);color:#fff;}
+  .btn-danger:hover{background:#96201a;}
+  .btn-danger:disabled,.btn-primary:disabled,.btn-ghost:disabled{opacity:.55;cursor:not-allowed;}
+  .btn-ghost.danger-text{color:var(--red);border-color:#f0cfcb;}
+  .btn-ghost.danger-text:hover{border-color:var(--red);}
+  .btn-ok{background:var(--teal);color:#fff;}
+  .btn-ok:hover{background:#0b5a46;}
+  .modal-bg{position:fixed;inset:0;background:rgba(44,24,16,.42);z-index:60;display:flex;align-items:center;justify-content:center;padding:16px;}
+  .modal{background:var(--paper);border-radius:18px;width:min(640px,100%);max-height:calc(100vh - 32px);display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.2);}
+  .modal.sm{width:min(460px,100%);}
+  .modal-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 20px;border-bottom:1px solid var(--line);}
+  .modal-head h2{margin:0;font-size:19px;}
+  .modal-body{padding:18px 20px;overflow-y:auto;}
+  .modal-foot{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;padding:14px 20px;border-top:1px solid var(--line);}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 14px;}
+  .form-grid .full{grid-column:1 / -1;}
+  .field .hint{font-size:11.5px;color:var(--ink-soft);}
+  .field .err{font-size:12px;color:var(--red);font-weight:600;}
+  .input[aria-invalid="true"]{border-color:var(--red);box-shadow:0 0 0 3px var(--red-pale);}
+  .input[readonly]{background:var(--bg);color:var(--ink-soft);}
+  .ro-box{background:var(--bg);border-radius:12px;padding:10px 12px;margin-bottom:14px;font-size:12.5px;}
+  .ro-box dl{margin:0;display:grid;grid-template-columns:120px 1fr;gap:4px 10px;}
+  .ro-box dt{color:var(--ink-soft);} .ro-box dd{margin:0;word-break:break-word;}
+  .check-list{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:6px;}
+  .check-list li{display:flex;gap:8px;align-items:flex-start;font-size:13px;}
+  .check-list .ok{color:var(--teal);font-weight:700;} .check-list .no{color:var(--red);font-weight:700;}
+  .target-box{border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;gap:12px;align-items:center;margin:10px 0;}
+  .danger-box{background:var(--red-pale);color:var(--red);border-radius:12px;padding:10px 12px;font-size:13px;margin-top:10px;}
+  .toast-wrap{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:80;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none;width:min(420px,calc(100% - 24px));}
+  .toast{pointer-events:auto;background:var(--ink);color:#fff;border-radius:12px;padding:11px 14px;font-size:13.5px;box-shadow:0 10px 30px rgba(0,0,0,.2);width:100%;}
+  .toast.ok{background:#0d5f4a;} .toast.err{background:var(--red);}
+  .log-list{list-style:none;margin:8px 0 0;padding:0;font-size:12.5px;display:flex;flex-direction:column;gap:4px;}
+  @media (max-width:760px){ .form-grid{grid-template-columns:1fr;} .modal-bg{align-items:flex-end;padding:0;} .modal,.modal.sm{width:100%;max-height:92vh;border-radius:18px 18px 0 0;} .modal-foot .btn{flex:1;} .ro-box dl{grid-template-columns:100px 1fr;} }
+  .sync-panel{background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--amber);border-radius:var(--radius);padding:14px 16px;margin-bottom:14px;box-shadow:var(--shadow);}
+  .sync-panel.is-ok{border-left-color:var(--teal);} .sync-panel.is-err{border-left-color:var(--red);}
+  .sync-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;}
+  .sync-head h2{margin:0;font-size:16px;color:var(--coral-dark);}
+  .steps{list-style:none;display:flex;gap:6px;margin:0;padding:0;flex-wrap:wrap;}
+  .steps li{font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;background:var(--bg);color:var(--ink-soft);}
+  .steps li.now{background:var(--amber-pale);color:var(--amber-dark);} .steps li.done{background:var(--teal-pale);color:var(--teal);} .steps li.err{background:var(--red-pale);color:var(--red);}
+  .sync-nums{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0 6px;}
+  .sync-nums .n{font-family:'Fredoka',sans-serif;font-size:22px;font-weight:600;} .sync-nums .l{font-size:12px;color:var(--ink-soft);}
+  .sync-msg{margin:0;font-size:12.5px;color:var(--ink-soft);}
+  .price-check{border-radius:12px;padding:10px 12px;margin-top:14px;font-size:13px;background:var(--bg);}
+  .price-check.is-ok{background:var(--teal-pale);} .price-check.is-warn{background:var(--amber-pale);} .price-check.is-err{background:var(--red-pale);}
+  #syncBtn[disabled]{opacity:.7;cursor:progress;}
+  @media (max-width:760px){ .sync-nums{grid-template-columns:repeat(2,minmax(0,1fr));} }
+  .icon-btn{border:1px solid var(--line);background:#fff;border-radius:10px;width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;}
+
+  /* Responsivo */
+  @media (max-width:1180px){
+    .toolbar{grid-template-columns:repeat(3,minmax(0,1fr));}
+    .toolbar .search-field{grid-column:1 / -1;}
+  }
+  @media (max-width:1100px) and (min-width:761px){
+    .c-cat,.c-sync{display:none;}
+  }
+  @media (max-width:900px){
+    .app{grid-template-columns:1fr;}
+    .sidebar{position:sticky;top:0;z-index:30;height:auto;flex-direction:row;align-items:center;flex-wrap:wrap;gap:10px;padding:10px 14px;border-right:0;border-bottom:1px solid var(--line);}
+    .sidebar .brand small{display:none;}
+    .nav{flex-direction:row;order:3;width:100%;overflow-x:auto;gap:6px;scrollbar-width:none;}
+    .nav-item{width:auto;padding:7px 11px;font-size:13px;white-space:nowrap;}
+    .session{margin:0 0 0 auto;padding:6px 8px;display:flex;align-items:center;gap:8px;background:none;border:0;}
+    .session .email,.session .status span:not(.dot){display:none;}
+    .main{padding:18px 14px 32px;}
+    .stats{grid-template-columns:repeat(2,minmax(0,1fr));}
+  }
+  @media (max-width:760px){
+    .toolbar{grid-template-columns:1fr 1fr;}
+    .page-head h1{font-size:22px;}
+    .head-actions{width:100%;}
+    .head-actions{flex-wrap:nowrap;}
+    .head-actions .btn{flex:1 1 0;min-width:0;white-space:normal;font-size:12px;padding:8px;flex-direction:column;gap:3px;line-height:1.2;}
+    table,thead,tbody,tr,td{display:block;}
+    thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);}
+    tbody tr{display:grid;grid-template-columns:60px minmax(0,1fr);gap:4px 12px;padding:12px 14px;border-bottom:1px solid var(--line);}
+    td{border:0;padding:0;}
+    td.c-img{grid-row:span 4;}
+    td.c-title,td.c-price,td.c-meta,td.c-actions{grid-column:2;}
+    td.c-cat,td.c-src,td.c-status,td.c-sync{display:none;}
+    td.c-meta{display:flex;flex-wrap:wrap;gap:5px;}
+    td.c-price{display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;}
+    td.c-price .pill-disc{margin-top:0 !important;}
+    .row-actions{justify-content:flex-start;margin-top:6px;}
+    .t-title{max-width:none;}
+    .kv{grid-template-columns:110px 1fr;}
+  }
+  @media (min-width:761px){ td.c-meta{display:none;} }
+</style>
+</head>
+<body>
+
+<!-- Verificando sessão -->
+<div class="center-screen" id="bootScreen" role="status" aria-live="polite">
+  <div style="text-align:center;color:var(--ink-soft);">
+    <div class="spinner" aria-hidden="true"></div>
+    Verificando sessão…
+  </div>
+</div>
+
+<!-- Login -->
+<div class="center-screen" id="loginScreen" hidden>
+  <div class="login-box">
+    <div class="brand"><span class="brand-mark" aria-hidden="true"></span>Vitrine Certa</div>
+    <p class="lead">Painel de administração</p>
+    <div class="alert alert-error" id="loginError" role="alert" hidden></div>
+    <div class="field">
+      <label for="loginEmail">E-mail</label>
+      <input class="input" id="loginEmail" type="email" autocomplete="username" required>
+    </div>
+    <div class="field">
+      <label for="loginPass">Senha</label>
+      <input class="input" id="loginPass" type="password" autocomplete="current-password" required>
+    </div>
+    <button class="btn btn-primary btn-block" id="loginBtn" type="button">Entrar</button>
+  </div>
+</div>
+
+<!-- MFA: cadastro obrigatório -->
+<div class="center-screen" id="mfaEnrollScreen" hidden>
+  <div class="login-box">
+    <div class="brand"><span class="brand-mark" aria-hidden="true"></span>Vitrine Certa</div>
+    <h1 id="mfaEnrollTitle" style="font-size:21px;text-align:center;margin:12px 0 6px;">Proteja o acesso</h1>
+    <p class="lead" id="mfaEnrollLead">Configure o aplicativo autenticador para continuar.</p>
+    <div class="alert alert-error" id="mfaEnrollError" role="alert" hidden></div>
+    <div id="mfaEnrollIntro">
+      <div class="alert alert-info">O painel só será liberado depois da confirmação do autenticador.</div>
+      <button class="btn btn-primary btn-block" id="mfaStartEnrollBtn" type="button">Gerar QR code</button>
+    </div>
+    <div id="mfaEnrollForm" hidden>
+      <img class="mfa-qr" id="mfaQr" alt="QR code para cadastrar o autenticador">
+      <div class="field">
+        <label>Chave manual</label>
+        <div class="mfa-secret" id="mfaSecret"></div>
+      </div>
+      <div class="field">
+        <label for="mfaEnrollCode">Código de 6 dígitos</label>
+        <input class="input" id="mfaEnrollCode" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}">
+      </div>
+      <button class="btn btn-primary btn-block" id="mfaVerifyEnrollBtn" type="button">Confirmar autenticador</button>
+      <p class="mfa-note" id="mfaEnrollNote"></p>
+    </div>
+    <button class="btn btn-ghost btn-block" id="mfaEnrollLogoutBtn" type="button" style="margin-top:10px;">Sair</button>
+  </div>
+</div>
+
+<!-- MFA: desafio após senha -->
+<div class="center-screen" id="mfaChallengeScreen" hidden>
+  <div class="login-box">
+    <div class="brand"><span class="brand-mark" aria-hidden="true"></span>Vitrine Certa</div>
+    <h1 style="font-size:21px;text-align:center;margin:12px 0 6px;">Verificação em duas etapas</h1>
+    <p class="lead">Digite o código atual do seu aplicativo autenticador.</p>
+    <div class="alert alert-error" id="mfaChallengeError" role="alert" hidden></div>
+    <div class="field" id="mfaFactorField" hidden>
+      <label for="mfaFactor">Autenticador</label>
+      <select class="input" id="mfaFactor"></select>
+    </div>
+    <div class="field">
+      <label for="mfaChallengeCode">Código de 6 dígitos</label>
+      <input class="input" id="mfaChallengeCode" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}">
+    </div>
+    <button class="btn btn-primary btn-block" id="mfaVerifyChallengeBtn" type="button">Verificar e entrar</button>
+    <button class="btn btn-ghost btn-block" id="mfaChallengeLogoutBtn" type="button" style="margin-top:10px;">Sair</button>
+  </div>
+</div>
+
+<!-- App -->
+<div class="app" id="app" hidden>
+  <aside class="sidebar" aria-label="Navegação do painel">
+    <div class="brand"><span class="brand-mark" aria-hidden="true"></span><div>Vitrine Certa<small>Painel administrativo</small></div></div>
+    <nav class="nav">
+      <button class="nav-item" type="button" aria-current="page">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+        Ofertas
+      </button>
+      <button class="nav-item" type="button" aria-disabled="true" title="Disponível em uma próxima fase">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>
+        Sincronizações <span class="soon">Em breve</span>
+      </button>
+    </nav>
+    <div class="session" aria-live="polite">
+      <div class="status"><span class="dot" aria-hidden="true"></span><span>Sessão ativa</span></div>
+      <div class="email" id="sessionEmail"></div>
+      <button class="btn btn-ghost btn-sm" id="logoutBtn" type="button">Sair</button>
+    </div>
+  </aside>
+
+  <main class="main" id="main">
+    <div class="page-head">
+      <div>
+        <h1>Ofertas</h1>
+        <p>Gerencie o catálogo e busque novas ofertas. Nada é ativado sem a sua aprovação.</p>
+      </div>
+      <div class="head-actions">
+        <button class="btn btn-primary" type="button" id="syncBtn"><span class="lbl">Pesquisar novas ofertas</span></button>
+        <button class="btn btn-ghost" type="button" aria-disabled="true" title="Verificação em massa aguarda autorização. Para uma oferta, use “Verificar preço” nos detalhes.">Verificar todos os preços <span class="soon">Em breve</span></button>
+      </div>
+    </div>
+
+    <section class="sync-panel" id="syncPanel" aria-label="Busca de novas ofertas" aria-live="polite" hidden>
+      <div class="sync-head"><h2>Busca de novas ofertas</h2><ol class="steps" id="syncSteps"></ol></div>
+      <div class="sync-nums" id="syncNums"></div>
+      <p class="sync-msg" id="syncMsg"></p>
+    </section>
+
+    <section class="stats" aria-label="Resumo">
+      <div class="stat total"><div class="n" id="stTotal">–</div><div class="l">Total</div></div>
+      <div class="stat on"><div class="n" id="stActive">–</div><div class="l">Ativas</div></div>
+      <div class="stat off"><div class="n" id="stInactive">–</div><div class="l">Inativas</div></div>
+      <div class="stat review"><div class="n" id="stReview">–</div><div class="l">Aguardando revisão</div></div>
+    </section>
+
+    <section class="panel" aria-label="Lista de ofertas">
+      <div class="toolbar">
+        <div class="field search-field">
+          <label for="fSearch">Buscar</label>
+          <div class="search-wrap">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input class="input" id="fSearch" type="search" placeholder="Título, external_id ou loja">
+          </div>
+        </div>
+        <div class="field"><label for="fStatus">Status</label>
+          <select class="input" id="fStatus">
+            <option value="all">Todos</option><option value="active">Ativa</option><option value="paused">Pausada</option><option value="review">Em revisão</option>
+          </select></div>
+        <div class="field"><label for="fCat">Categoria</label><select class="input" id="fCat"><option value="all">Todas</option></select></div>
+        <div class="field"><label for="fSrc">Origem</label><select class="input" id="fSrc"><option value="all">Todas</option></select></div>
+        <div class="field"><label for="fDate">Sincronização</label>
+          <select class="input" id="fDate">
+            <option value="all">Qualquer</option><option value="1">Últimas 24 h</option><option value="7">Últimos 7 dias</option><option value="30">Últimos 30 dias</option><option value="older30">Há mais de 30 dias</option><option value="never">Nunca sincronizado</option>
+          </select></div>
+        <div class="field"><label for="fSort">Ordenar por</label>
+          <select class="input" id="fSort">
+            <option value="recent">Mais recente</option><option value="price_asc">Menor preço</option><option value="price_desc">Maior preço</option><option value="discount">Maior desconto</option>
+          </select></div>
+        <button class="btn btn-ghost" id="clearBtn" type="button">Limpar</button>
+      </div>
+
+      <div class="result-bar"><span id="resultInfo" aria-live="polite"></span><span id="loadedAt"></span></div>
+
+      <div id="listState"></div>
+      <div class="table-wrap" id="tableWrap" hidden>
+        <table>
+          <caption class="sr-only">Ofertas cadastradas</caption>
+          <thead><tr>
+            <th scope="col"><span class="sr-only">Imagem</span></th>
+            <th scope="col">Oferta</th><th scope="col" class="c-cat">Categoria</th>
+            <th scope="col">Preço</th><th scope="col">Origem</th><th scope="col">Status</th>
+            <th scope="col" class="c-sync">Sincronizado</th><th scope="col"><span class="sr-only">Ações</span></th>
+          </tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+      <nav class="pager" id="pager" aria-label="Paginação" hidden>
+        <span class="muted" id="pageInfo"></span>
+        <div class="pages">
+          <button class="btn btn-ghost btn-sm" id="prevBtn" type="button">← Anterior</button>
+          <button class="btn btn-ghost btn-sm" id="nextBtn" type="button">Próxima →</button>
+        </div>
+      </nav>
+    </section>
+  </main>
+</div>
+
+<!-- Detalhes -->
+<div class="drawer-bg" id="drawerBg" hidden></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" hidden>
+  <div class="drawer-head">
+    <h2 id="drawerTitle">Detalhes da oferta</h2>
+    <button class="icon-btn" id="drawerClose" type="button" aria-label="Fechar detalhes">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="drawer-body" id="drawerBody"></div>
+  <div class="drawer-foot" id="drawerFoot"></div>
+</aside>
+
+<!-- Editar oferta -->
+<div class="modal-bg" id="editBg" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="editTitle">
+    <div class="modal-head">
+      <h2 id="editTitle">Editar oferta</h2>
+      <button class="icon-btn" type="button" data-close-modal aria-label="Fechar edição">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="alert alert-error" id="editError" role="alert" hidden></div>
+      <div class="ro-box" id="editReadonly"></div>
+      <div class="form-grid" id="editForm">
+        <div class="field full"><label for="e_display_title">Título de exibição</label>
+          <input class="input" id="e_display_title" maxlength="200" autocomplete="off">
+          <span class="hint">Vazio = usa o título original.</span><span class="err" data-err="display_title"></span></div>
+        <div class="field"><label for="e_category">Categoria</label><select class="input" id="e_category"></select><span class="err" data-err="category"></span></div>
+        <div class="field"><label for="e_merchant">Loja</label><input class="input" id="e_merchant" maxlength="80" autocomplete="off"><span class="err" data-err="merchant"></span></div>
+        <div class="field"><label for="e_price">Preço (R$)</label><input class="input" id="e_price" inputmode="decimal" placeholder="89,90" autocomplete="off"><span class="err" data-err="price"></span></div>
+        <div class="field"><label for="e_old_price">Preço anterior (R$)</label><input class="input" id="e_old_price" inputmode="decimal" placeholder="opcional" autocomplete="off"><span class="err" data-err="old_price"></span></div>
+        <div class="field"><label for="e_discount">Desconto (%)</label><input class="input" id="e_discount" readonly tabindex="-1"><span class="hint">Calculado automaticamente a partir dos preços.</span></div>
+        <div class="field"><label for="e_sort_order">Ordem de exibição</label><input class="input" id="e_sort_order" inputmode="numeric" placeholder="opcional" autocomplete="off"><span class="err" data-err="sort_order"></span></div>
+        <div class="field full"><label for="e_image_url">URL da imagem</label><input class="input" id="e_image_url" type="url" placeholder="https://…" autocomplete="off"><span class="err" data-err="image_url"></span></div>
+        <div class="field full"><label for="e_affiliate_url">Link afiliado</label><input class="input" id="e_affiliate_url" type="url" placeholder="https://…" autocomplete="off" spellcheck="false">
+          <span class="hint">Obrigatório, começando com https://. Não é registrado no console.</span><span class="err" data-err="affiliate_url"></span></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" type="button" data-close-modal>Cancelar</button>
+      <button class="btn btn-primary" type="button" id="editSave">Salvar alterações</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirmação (ativar / pausar / excluir) -->
+<div class="modal-bg" id="confirmBg" hidden>
+  <div class="modal sm" role="alertdialog" aria-modal="true" aria-labelledby="confirmTitle" aria-describedby="confirmBody">
+    <div class="modal-head"><h2 id="confirmTitle"></h2></div>
+    <div class="modal-body" id="confirmBody"></div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" type="button" data-close-modal>Cancelar</button>
+      <button class="btn btn-primary" type="button" id="confirmOk"></button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toasts" role="status" aria-live="polite"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.1/dist/umd/supabase.js"></script>
+<script src="assets/admin-mfa.js"></script>
+<script>
+'use strict';
+// Chave pública (role "anon"). Nunca usar service_role ou segredos do n8n aqui.
+const SUPABASE_URL = "https://ppoelkclmuqojgjrzpkw.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwb2Vsa2NsbXVxb2pnanJ6cGt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkxNTk5OTEsImV4cCI6MjEwNDczNTk5MX0.t8b2FiDioq4YoIYV-8kAEo285IH2lSzjJEIFAzeis3k";
+
+// Somente os campos necessários para a listagem (sem affiliate_url e sem raw_payload).
+const LIST_COLUMNS = 'id, title, display_title, category, merchant, price, old_price, discount_percent, image_url, source, network, active, last_synced_at, external_id, sort_order';
+const PAGE_SIZE = 20;
+const FETCH_CHUNK = 1000;
+const FETCH_MAX = 10000;
+const CATEGORIES = ["Eletrônicos","Casa","Moda","Beleza","Bebês e Brinquedos","Esporte","Livros","Outros"];
+
+const $ = (id) => document.getElementById(id);
+let sb = null;
+let ROWS = [];
+let page = 1;
+let lastFocus = null;
+let mfaFactors = [];
+let mfaEnrollment = null;
+let mfaEnrollmentKind = 'primary';
+
+// ---------- utilitários de segurança ----------
+function escapeHtml(value){
+  return String(value ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'})[c]);
+}
+function safeUrl(value, fallback = ''){
+  if(!value) return fallback;
+  try {
+    const url = new URL(String(value), window.location.origin);
+    return ['http:', 'https:'].includes(url.protocol) ? url.href : fallback;
+  } catch { return fallback; }
+}
+function hostOnly(value){
+  const u = safeUrl(value);
+  if(!u) return null;
+  try { return new URL(u).hostname; } catch { return null; }
+}
+function logError(context, error){
+  // Registra só a mensagem, nunca objetos de sessão, headers ou chaves.
+  console.warn(`[painel] ${context}:`, error && error.message ? error.message : 'erro desconhecido');
+}
+
+// ---------- formatação ----------
+const brl = (v) => v == null || v === '' || !Number.isFinite(Number(v)) ? null
+  : 'R$ ' + Number(v).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+function formatDate(value, short = false){
+  if(!value) return null;
+  const d = new Date(value);
+  if(isNaN(d)) return null;
+  return d.toLocaleString('pt-BR', {timeZone:'America/Sao_Paulo', day:'2-digit', month:'2-digit', year: short ? '2-digit' : 'numeric', hour:'2-digit', minute:'2-digit'}).replace(',', '');
+}
+function titleOf(o){ return o.display_title || o.title || '(sem título)'; }
+function discountOf(o){
+  const d = Number(o.discount_percent);
+  if(o.discount_percent != null && Number.isFinite(d) && d > 0) return Math.round(d);
+  const p = Number(o.price), op = Number(o.old_price);
+  if(o.old_price != null && o.price != null && op > p && p >= 0) return Math.round((1 - p / op) * 100);
+  return 0;
+}
+function isManual(o){ return !o.source || o.source === 'manual'; }
+function originOf(o){ return isManual(o) ? 'Manual' : (o.network || o.source || 'API'); }
+// Status provisório até a coluna "status" existir (fase 2):
+// ativa → Ativa; inativa vinda de automação → Em revisão; inativa manual → Pausada.
+function statusOf(o){
+  if(o.active) return 'active';
+  return isManual(o) ? 'paused' : 'review';
+}
+const STATUS_LABEL = {active:'Ativa', paused:'Pausada', review:'Em revisão'};
+function statusPill(o){
+  const s = statusOf(o);
+  return `<span class="pill st-${s}"><span class="d" aria-hidden="true"></span>${STATUS_LABEL[s]}</span>`;
+}
+
+// ---------- telas ----------
+function show(screen){
+  $('bootScreen').hidden = screen !== 'boot';
+  $('loginScreen').hidden = screen !== 'login';
+  $('mfaEnrollScreen').hidden = screen !== 'mfa-enroll';
+  $('mfaChallengeScreen').hidden = screen !== 'mfa-challenge';
+  $('app').hidden = screen !== 'app';
+}
+function loginError(msg){
+  const el = $('loginError');
+  el.textContent = msg || '';
+  el.hidden = !msg;
+}
+function setMfaError(id, msg){
+  const el = $(id); el.textContent = msg || ''; el.hidden = !msg;
+}
+
+async function isAdmin(userId){
+  const { data, error } = await sb.from('admins').select('user_id').eq('user_id', userId).maybeSingle();
+  if(error){ logError('verificação de admin', error); return false; }
+  return !!data;
+}
+
+async function enterApp(session){
+  $('sessionEmail').textContent = session.user.email || '';
+  $('sessionEmail').title = session.user.email || '';
+  show('app');
+  await loadOffers();
+  restoreSync();
+}
+
+async function getMfaState(){
+  const [aal, listed] = await Promise.all([
+    sb.auth.mfa.getAuthenticatorAssuranceLevel(),
+    sb.auth.mfa.listFactors()
+  ]);
+  if(aal.error) throw aal.error;
+  if(listed.error) throw listed.error;
+  return {
+    currentLevel: aal.data && aal.data.currentLevel,
+    factors: window.AdminMfa.verifiedTotpFactors(listed)
+  };
+}
+
+function renderFactorOptions(){
+  const select = $('mfaFactor');
+  select.innerHTML = '';
+  mfaFactors.forEach((f, i) => {
+    const option = document.createElement('option');
+    option.value = f.id;
+    option.textContent = f.friendly_name || `Autenticador ${i + 1}`;
+    select.appendChild(option);
+  });
+  $('mfaFactorField').hidden = mfaFactors.length < 2;
+}
+
+function prepareEnrollment(kind){
+  mfaEnrollmentKind = kind;
+  mfaEnrollment = null;
+  $('mfaEnrollForm').hidden = true;
+  $('mfaEnrollIntro').hidden = false;
+  $('mfaEnrollCode').value = '';
+  $('mfaQr').removeAttribute('src');
+  $('mfaSecret').textContent = '';
+  setMfaError('mfaEnrollError', '');
+  const backup = kind === 'backup';
+  $('mfaEnrollTitle').textContent = backup ? 'Cadastre o autenticador de backup' : 'Proteja o acesso';
+  $('mfaEnrollLead').textContent = backup
+    ? 'Use outro dispositivo ou aplicativo para evitar perder o acesso.'
+    : 'Configure o aplicativo autenticador para continuar.';
+  $('mfaEnrollNote').textContent = backup
+    ? 'O segundo autenticador substitui códigos de recuperação, que não são suportados pelo Supabase.'
+    : 'Depois deste, você cadastrará um segundo autenticador de backup.';
+  show('mfa-enroll');
+}
+
+async function routeAuthenticatedSession(session){
+  if(!session || !(await isAdmin(session.user.id))){
+    if(session) await sb.auth.signOut();
+    show('login'); loginError('Esta conta não tem acesso ao painel.'); return;
+  }
+  const state = await getMfaState();
+  mfaFactors = state.factors;
+  const route = window.AdminMfa.decideRoute(state.currentLevel, mfaFactors);
+  if(route === 'app'){ await enterApp(session); return; }
+  if(route === 'challenge'){
+    renderFactorOptions();
+    $('mfaChallengeCode').value = '';
+    setMfaError('mfaChallengeError', '');
+    show('mfa-challenge');
+    return;
+  }
+  prepareEnrollment(route === 'enroll_backup' ? 'backup' : 'primary');
+}
+
+async function startMfaEnrollment(){
+  setMfaError('mfaEnrollError', '');
+  const btn = $('mfaStartEnrollBtn'); btn.disabled = true; btn.textContent = 'Preparando…';
+  try {
+    const friendlyName = mfaEnrollmentKind === 'backup' ? 'Vitrine Certa · Backup' : 'Vitrine Certa · Principal';
+    const { data, error } = await sb.auth.mfa.enroll({ factorType: 'totp', friendlyName });
+    if(error || !data || !data.totp) throw error || new Error('Resposta inválida');
+    mfaEnrollment = data;
+    $('mfaQr').src = data.totp.qr_code;
+    $('mfaSecret').textContent = data.totp.secret;
+    $('mfaEnrollIntro').hidden = true;
+    $('mfaEnrollForm').hidden = false;
+    $('mfaEnrollCode').focus();
+  } catch(e){ logError('cadastro MFA', e); setMfaError('mfaEnrollError', 'Não foi possível iniciar o cadastro. Tente novamente.'); }
+  finally { btn.disabled = false; btn.textContent = 'Gerar QR code'; }
+}
+
+async function verifyMfaEnrollment(){
+  const code = window.AdminMfa.normalizeTotpCode($('mfaEnrollCode').value);
+  if(code.length !== 6 || !mfaEnrollment){ setMfaError('mfaEnrollError', 'Informe o código de 6 dígitos.'); return; }
+  const btn = $('mfaVerifyEnrollBtn'); btn.disabled = true; btn.textContent = 'Confirmando…';
+  try {
+    const { error } = await sb.auth.mfa.challengeAndVerify({ factorId: mfaEnrollment.id, code });
+    if(error) throw error;
+    const { data } = await sb.auth.getSession();
+    await routeAuthenticatedSession(data && data.session);
+  } catch(e){ logError('confirmação MFA', e); setMfaError('mfaEnrollError', 'Código inválido ou expirado. Gere um novo código e tente novamente.'); }
+  finally { btn.disabled = false; btn.textContent = 'Confirmar autenticador'; }
+}
+
+async function verifyMfaChallenge(){
+  const code = window.AdminMfa.normalizeTotpCode($('mfaChallengeCode').value);
+  const factorId = $('mfaFactor').value || (mfaFactors[0] && mfaFactors[0].id);
+  if(code.length !== 6 || !factorId){ setMfaError('mfaChallengeError', 'Informe o código de 6 dígitos.'); return; }
+  const btn = $('mfaVerifyChallengeBtn'); btn.disabled = true; btn.textContent = 'Verificando…';
+  try {
+    const { error } = await sb.auth.mfa.challengeAndVerify({ factorId, code });
+    if(error) throw error;
+    const { data } = await sb.auth.getSession();
+    await routeAuthenticatedSession(data && data.session);
+  } catch(e){ logError('desafio MFA', e); setMfaError('mfaChallengeError', 'Código inválido ou expirado. Tente novamente.'); }
+  finally { btn.disabled = false; btn.textContent = 'Verificar e entrar'; }
+}
+
+async function boot(){
+  if(!window.supabase || !window.supabase.createClient){
+    show('login');
+    loginError('Não foi possível carregar o sistema de login. Verifique sua conexão e recarregue a página.');
+    $('loginBtn').disabled = true;
+    return;
+  }
+  sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  sb.auth.onAuthStateChange((event) => {
+    if(event === 'SIGNED_OUT'){ ROWS = []; show('login'); }
+  });
+  try {
+    const { data } = await sb.auth.getSession();
+    const session = data && data.session;
+    if(session){
+      await routeAuthenticatedSession(session);
+      return;
+    }
+  } catch(e){ logError('sessão', e); }
+  show('login');
+}
+
+async function doLogin(){
+  loginError('');
+  const email = $('loginEmail').value.trim();
+  const password = $('loginPass').value;
+  if(!email || !password){ loginError('Informe e-mail e senha.'); return; }
+  const btn = $('loginBtn');
+  btn.disabled = true; btn.textContent = 'Entrando…';
+  try {
+    const { data, error } = await sb.auth.signInWithPassword({ email, password });
+    if(error || !data || !data.session){ loginError('E-mail ou senha inválidos.'); return; }
+    $('loginPass').value = '';
+    await routeAuthenticatedSession(data.session);
+  } catch(e){
+    logError('login', e);
+    loginError('Não foi possível entrar agora. Tente novamente.');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Entrar';
+  }
+}
+
+async function doLogout(){
+  try { await sb.auth.signOut(); } catch(e){ logError('logout', e); }
+  stopSyncPoll(); syncRun = null; renderSync();
+  ROWS = [];
+  closeModal();
+  closeDrawer();
+  show('login');
+}
+
+// ---------- dados ----------
+function renderLoading(){
+  $('tableWrap').hidden = true; $('pager').hidden = true; $('rows').innerHTML = '';
+  $('resultInfo').textContent = 'Carregando ofertas…';
+  $('listState').innerHTML = '<div aria-hidden="true">' + '<div class="skeleton"></div>'.repeat(6) + '</div>';
+}
+function renderError(){
+  $('tableWrap').hidden = true; $('pager').hidden = true; $('rows').innerHTML = '';
+  $('resultInfo').textContent = '';
+  $('listState').innerHTML = `<div class="state" role="alert"><h3>Não foi possível carregar as ofertas</h3>
+    <p>Verifique a conexão ou se a sessão ainda é válida.</p>
+    <button class="btn btn-primary" type="button" id="retryBtn">Tentar novamente</button></div>`;
+  $('retryBtn').addEventListener('click', loadOffers);
+}
+
+async function loadOffers(){
+  renderLoading();
+  const all = [];
+  try {
+    for(let from = 0; from < FETCH_MAX; from += FETCH_CHUNK){
+      const { data, error } = await sb.from('affiliate_products')
+        .select(LIST_COLUMNS)
+        .order('id', { ascending: true })
+        .range(from, from + FETCH_CHUNK - 1);
+      if(error) throw error;
+      all.push(...(data || []));
+      if(!data || data.length < FETCH_CHUNK) break;
+    }
+  } catch(e){
+    logError('carregar ofertas', e);
+    renderError();
+    return;
+  }
+  ROWS = all;
+  $('loadedAt').textContent = 'Atualizado em ' + formatDate(new Date().toISOString());
+  fillFilterOptions();
+  renderStats();
+  page = 1;
+  render();
+}
+
+function renderStats(){
+  const total = ROWS.length;
+  const active = ROWS.filter(o => o.active).length;
+  const review = ROWS.filter(o => statusOf(o) === 'review').length;
+  $('stTotal').textContent = total;
+  $('stActive').textContent = active;
+  $('stInactive').textContent = total - active;
+  $('stReview').textContent = review;
+}
+
+function fillFilterOptions(){
+  const keep = (sel, values) => {
+    const current = sel.value;
+    const first = sel.options[0].outerHTML;
+    sel.innerHTML = first + values.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('');
+    sel.value = values.includes(current) ? current : 'all';
+  };
+  const cats = [...new Set([...CATEGORIES, ...ROWS.map(o => o.category).filter(Boolean)])];
+  keep($('fCat'), cats);
+  const origins = [...new Set(ROWS.map(originOf))].sort((a, b) => a === 'Manual' ? -1 : b === 'Manual' ? 1 : a.localeCompare(b));
+  keep($('fSrc'), origins);
+}
+
+// ---------- filtros, ordenação, paginação ----------
+function norm(s){ return String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); }
+
+function filtered(){
+  const term = norm($('fSearch').value.trim());
+  const st = $('fStatus').value, cat = $('fCat').value, src = $('fSrc').value, dt = $('fDate').value;
+  const now = Date.now(), DAY = 86400000;
+  const list = ROWS.filter(o => {
+    if(term){
+      const hay = norm(`${o.display_title || ''} ${o.title || ''} ${o.external_id || ''} ${o.merchant || ''}`);
+      if(!hay.includes(term)) return false;
+    }
+    if(st !== 'all' && statusOf(o) !== st) return false;
+    if(cat !== 'all' && o.category !== cat) return false;
+    if(src !== 'all' && originOf(o) !== src) return false;
+    if(dt !== 'all'){
+      const t = o.last_synced_at ? new Date(o.last_synced_at).getTime() : NaN;
+      if(dt === 'never') return isNaN(t);
+      if(isNaN(t)) return false;
+      if(dt === 'older30') return now - t > 30 * DAY;
+      if(now - t > Number(dt) * DAY) return false;
+    }
+    return true;
+  });
+  const sort = $('fSort').value;
+  const num = (v) => v == null || v === '' || !Number.isFinite(Number(v)) ? null : Number(v);
+  const nullsLast = (a, b, cmp) => a == null && b == null ? 0 : a == null ? 1 : b == null ? -1 : cmp(a, b);
+  list.sort((a, b) => {
+    if(sort === 'price_asc')  return nullsLast(num(a.price), num(b.price), (x, y) => x - y);
+    if(sort === 'price_desc') return nullsLast(num(a.price), num(b.price), (x, y) => y - x);
+    if(sort === 'discount')   return discountOf(b) - discountOf(a);
+    const ta = a.last_synced_at ? new Date(a.last_synced_at).getTime() : null;
+    const tb = b.last_synced_at ? new Date(b.last_synced_at).getTime() : null;
+    const r = nullsLast(ta, tb, (x, y) => y - x);
+    return r !== 0 ? r : String(b.id).localeCompare(String(a.id), undefined, {numeric:true});
+  });
+  return list;
+}
+
+function thumbHtml(o, alt){
+  const src = safeUrl(o.image_url);
+  return src
+    ? `<img src="${escapeHtml(src)}" alt="${escapeHtml(alt)}" loading="lazy" referrerpolicy="no-referrer">`
+    : `<span class="noimg">sem foto</span>`;
+}
+
+function render(){
+  const list = filtered();
+  const pages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
+  if(page > pages) page = pages;
+  const slice = list.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+  $('resultInfo').textContent = list.length === ROWS.length
+    ? `${ROWS.length} oferta${ROWS.length === 1 ? '' : 's'}`
+    : `${list.length} de ${ROWS.length} ofertas`;
+
+  if(!ROWS.length){
+    $('tableWrap').hidden = true; $('pager').hidden = true; $('rows').innerHTML = '';
+    $('listState').innerHTML = `<div class="state"><h3>Nenhuma oferta cadastrada</h3><p>Quando houver ofertas, elas aparecem aqui.</p></div>`;
+    return;
+  }
+  if(!list.length){
+    $('tableWrap').hidden = true; $('pager').hidden = true; $('rows').innerHTML = '';
+    $('listState').innerHTML = `<div class="state"><h3>Nenhuma oferta encontrada</h3><p>Ajuste a busca ou os filtros.</p>
+      <button class="btn btn-ghost" type="button" id="emptyClear">Limpar filtros</button></div>`;
+    $('emptyClear').addEventListener('click', clearFilters);
+    return;
+  }
+  $('listState').innerHTML = '';
+  $('tableWrap').hidden = false;
+
+  $('rows').innerHTML = slice.map(o => {
+    const t = titleOf(o);
+    const disc = discountOf(o);
+    const oldP = o.old_price != null && Number(o.old_price) > Number(o.price) ? brl(o.old_price) : null;
+    const priceHtml = `${oldP ? `<div class="old">${escapeHtml(oldP)}</div>` : ''}<div class="price">${escapeHtml(brl(o.price) || '—')}</div>`;
+    const src = originOf(o);
+    const synced = formatDate(o.last_synced_at);
+    const id = escapeHtml(String(o.id));
+    const sub = [o.merchant ? `<span class="t-merchant">${escapeHtml(o.merchant)}</span>` : '', o.external_id ? `<code>${escapeHtml(o.external_id)}</code>` : ''].filter(Boolean).join(' · ');
+    const syncedShort = formatDate(o.last_synced_at, true);
+    return `<tr>
+      <td class="c-img"><div class="thumb">${thumbHtml(o, t)}</div></td>
+      <td class="c-title"><div class="t-title">${escapeHtml(t)}</div>${sub ? `<div class="t-sub">${sub}</div>` : ''}</td>
+      <td class="c-cat">${o.category ? `<span class="pill pill-cat">${escapeHtml(o.category)}</span>` : '<span class="muted">—</span>'}</td>
+      <td class="c-price">${priceHtml}${disc ? `<span class="pill pill-disc" style="margin-top:4px;">-${disc}%</span>` : ''}</td>
+      <td class="c-meta">${statusPill(o)}<span class="pill pill-src ${isManual(o) ? 'manual' : ''}">${escapeHtml(src)}</span></td>
+      <td class="c-src"><span class="pill pill-src ${isManual(o) ? 'manual' : ''}">${escapeHtml(src)}</span></td>
+      <td class="c-status">${statusPill(o)}</td>
+      <td class="c-sync" title="${escapeHtml(synced || '')}">${syncedShort ? escapeHtml(syncedShort) : '<span class="muted">Nunca</span>'}</td>
+      <td class="c-actions"><div class="row-actions">
+        <button class="btn btn-ghost btn-sm" type="button" data-details="${id}">Detalhes</button>
+        <button class="btn btn-ghost btn-sm" type="button" data-edit="${id}">Editar</button>
+        <button class="btn btn-ghost btn-sm ${o.active ? '' : 'btn-activate'}" type="button" data-toggle="${id}">${o.active ? 'Pausar' : 'Ativar'}</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+
+  $('pager').hidden = pages <= 1;
+  $('pageInfo').textContent = `Página ${page} de ${pages}`;
+  $('prevBtn').disabled = page <= 1;
+  $('nextBtn').disabled = page >= pages;
+}
+
+function clearFilters(){
+  $('fSearch').value = '';
+  ['fStatus','fCat','fSrc','fDate'].forEach(id => $(id).value = 'all');
+  $('fSort').value = 'recent';
+  page = 1; render();
+}
+
+// ---------- detalhes ----------
+async function openDetails(id, keepFocus = false){
+  const o = ROWS.find(x => String(x.id) === String(id));
+  if(!o) return;
+  if(!keepFocus) lastFocus = document.activeElement;
+  const t = titleOf(o);
+  const disc = discountOf(o);
+  const row = (k, v) => `<dt>${k}</dt><dd>${v}</dd>`;
+  const dash = '<span class="muted">—</span>';
+  $('drawerBody').innerHTML = `
+    <div class="drawer-img">${thumbHtml(o, t)}</div>
+    <h3 style="margin:0 0 10px;font-size:17px;">${escapeHtml(t)}</h3>
+    <dl class="kv">
+      ${row('Status', statusPill(o))}
+      ${row('Título original', o.title ? escapeHtml(o.title) : dash)}
+      ${row('Título de exibição', o.display_title ? escapeHtml(o.display_title) : '<span class="muted">Usa o título original</span>')}
+      ${row('Categoria', o.category ? escapeHtml(o.category) : dash)}
+      ${row('Loja', o.merchant ? escapeHtml(o.merchant) : dash)}
+      ${row('Preço', escapeHtml(brl(o.price) || '—'))}
+      ${row('Preço anterior', escapeHtml(brl(o.old_price) || '—'))}
+      ${row('Desconto', disc ? `-${disc}%` : dash)}
+      ${row('Origem', escapeHtml(originOf(o)))}
+      ${row('external_id', o.external_id ? `<code>${escapeHtml(o.external_id)}</code>` : dash)}
+      ${row('Sincronizado', escapeHtml(formatDate(o.last_synced_at) || 'Nunca'))}
+      ${row('Ordem', o.sort_order != null ? escapeHtml(String(o.sort_order)) : dash)}
+      ${row('Link afiliado', '<span class="muted" id="linkHost">Carregando…</span>')}
+    </dl>
+    <p class="note">O link afiliado completo não é exibido aqui; aparece apenas o domínio. Ele pode ser visto e alterado em Editar.</p>
+    ${priceBoxHtml(o)}
+    ${historyHtml(o)}`;
+  $('drawer').dataset.id = String(o.id);
+  renderDrawerFoot(o);
+  $('drawerBg').hidden = false;
+  $('drawer').hidden = false;
+  if(!keepFocus) $('drawerClose').focus();
+
+  // Busca pontual só do link desta oferta, exibindo apenas o domínio.
+  try {
+    const { data, error } = await sb.from('affiliate_products').select('affiliate_url').eq('id', o.id).maybeSingle();
+    if(error) throw error;
+    const host = hostOnly(data && data.affiliate_url);
+    const el = $('linkHost');
+    if(el) el.textContent = host || 'Link ausente ou inválido';
+  } catch(e){
+    logError('link da oferta', e);
+    const el = $('linkHost');
+    if(el) el.textContent = 'Não foi possível carregar';
+  }
+}
+function closeDrawer(){
+  if($('drawer').hidden) return;
+  $('drawer').hidden = true;
+  $('drawerBg').hidden = true;
+  $('drawerBody').innerHTML = '';
+  $('drawerFoot').innerHTML = '';
+  delete $('drawer').dataset.id;
+  if(lastFocus && document.contains(lastFocus)) lastFocus.focus();
+}
+
+// ---------- ações administrativas ----------
+// Somente estes campos podem ser enviados numa edição. id, external_id, network, source,
+// raw_payload, created_at e campos de sincronização nunca entram no payload.
+const EDITABLE_FIELDS = ['display_title','category','price','old_price','discount_percent','image_url','affiliate_url','merchant','sort_order'];
+const SESSION_LOG = [];
+let busy = false;
+let modalCtx = null;
+
+function toast(message, kind = ''){
+  const el = document.createElement('div');
+  el.className = 'toast ' + kind;
+  el.textContent = message;
+  $('toasts').appendChild(el);
+  setTimeout(() => el.remove(), kind === 'err' ? 7000 : 4000);
+}
+function isSafeId(id){
+  return (typeof id === 'number' && Number.isInteger(id) && id > 0) ||
+         (typeof id === 'string' && /^[A-Za-z0-9-]{1,64}$/.test(id));
+}
+function httpsUrl(value){
+  if(!value) return null;
+  try { const u = new URL(String(value).trim()); return u.protocol === 'https:' && u.hostname ? u.href : null; }
+  catch { return null; }
+}
+// Aceita 1.999,90 · 89,90 · 1999.90 · 89. Retorna {value} ou {error}.
+function parseBRL(raw){
+  const s = String(raw ?? '').replace(/R\$|\s/g, '');
+  if(!s) return { value: null };
+  let n;
+  if(/^\d{1,3}(\.\d{3})+(,\d{1,2})?$/.test(s)) n = Number(s.replace(/\./g, '').replace(',', '.'));
+  else if(/^\d+(,\d{1,2})?$/.test(s)) n = Number(s.replace(',', '.'));
+  else if(/^\d+(\.\d{1,2})?$/.test(s)) n = Number(s);
+  else return { error: 'Use o formato 89,90 ou 1.999,90.' };
+  if(!Number.isFinite(n) || n <= 0) return { error: 'Informe um valor maior que zero.' };
+  if(n > 10000000) return { error: 'Valor muito alto.' };
+  return { value: Math.round(n * 100) / 100 };
+}
+function computeDiscount(price, oldPrice){
+  if(price == null || oldPrice == null || !(oldPrice > price)) return null;
+  return Math.round((1 - price / oldPrice) * 100);
+}
+const toBRLInput = (v) => v == null || v === '' ? '' : Number(v).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+const cleanText = (v) => String(v ?? '').replace(/[\u0000-\u001F\u007F]/g, ' ').replace(/\s+/g, ' ').trim();
+function allowedCategories(current){
+  return [...new Set([...CATEGORIES, ...(current ? [current] : [])])];
+}
+function isAuthError(error){
+  const msg = String(error && error.message || '');
+  return (error && (error.status === 401 || ['PGRST301','PGRST302','PGRST303'].includes(error.code))) || /jwt/i.test(msg);
+}
+function friendlyError(error){
+  if(!error) return 'Erro desconhecido.';
+  if(error.code === '42501') return 'Permissão negada pelo banco (RLS).';
+  if(error.code === '23514') return 'O banco recusou os valores (regra de validação).';
+  return 'O servidor recusou a operação. Tente novamente.';
+}
+async function requireSession(){
+  try {
+    const { data } = await sb.auth.getSession();
+    if(data && data.session) return data.session;
+  } catch(e){ logError('sessão', e); }
+  sessionLost();
+  return null;
+}
+function sessionLost(){
+  if(typeof stopSyncPoll === 'function'){ stopSyncPoll(); syncRun = null; }
+  closeModal(); closeDrawer();
+  ROWS = [];
+  show('login');
+  loginError('Sua sessão expirou. Entre novamente para continuar.');
+}
+function setBusy(on){
+  busy = on;
+  ['editSave','confirmOk'].forEach(id => { const b = $(id); if(b) b.dataset.busy = on ? '1' : ''; });
+  document.querySelectorAll('[data-edit],[data-toggle],[data-delete]').forEach(b => b.disabled = on);
+}
+function logAction(o, action){
+  SESSION_LOG.unshift({ id: String(o.id), title: titleOf(o), action, at: new Date().toISOString() });
+}
+function replaceRow(updated){
+  const i = ROWS.findIndex(x => String(x.id) === String(updated.id));
+  if(i >= 0) ROWS[i] = updated;
+  fillFilterOptions(); renderStats(); render();
+  if(!$('drawer').hidden && $('drawer').dataset.id === String(updated.id)) openDetails(updated.id, true);
+}
+// Garante que só campos permitidos e realmente alterados sejam enviados.
+function buildUpdatePayload(values, original){
+  const payload = {};
+  for(const key of EDITABLE_FIELDS){
+    if(!(key in values)) continue;
+    const a = values[key], b = original[key] ?? null;
+    if(String(a ?? '') !== String(b ?? '')) payload[key] = a;
+  }
+  return payload;
+}
+
+// ----- modais -----
+function openModal(id){
+  lastFocus = lastFocus && document.contains(lastFocus) ? lastFocus : document.activeElement;
+  $(id).hidden = false;
+}
+function closeModal(){
+  const wasOpen = !$('editBg').hidden || !$('confirmBg').hidden;
+  $('editBg').hidden = true; $('confirmBg').hidden = true;
+  modalCtx = null;
+  if(wasOpen && lastFocus && document.contains(lastFocus)) lastFocus.focus();
+}
+
+// ----- editar -----
+function fieldError(name, msg){
+  const el = document.querySelector(`[data-err="${name}"]`);
+  const input = $('e_' + name);
+  if(el) el.textContent = msg || '';
+  if(input) input.setAttribute('aria-invalid', msg ? 'true' : 'false');
+}
+function updateDiscountPreview(){
+  const p = parseBRL($('e_price').value).value ?? null;
+  const op = parseBRL($('e_old_price').value).value ?? null;
+  const d = computeDiscount(p, op);
+  $('e_discount').value = d ? `${d}%` : '—';
+}
+async function openEdit(id){
+  const o = ROWS.find(x => String(x.id) === String(id));
+  if(!o || busy) return;
+  lastFocus = document.activeElement;
+  modalCtx = { type: 'edit', id: o.id, original: null };
+  $('editError').hidden = true;
+  EDITABLE_FIELDS.forEach(f => fieldError(f, ''));
+  const row = (k, v) => `<dt>${k}</dt><dd>${v}</dd>`;
+  $('editReadonly').innerHTML = `<dl>
+    ${row('Título original', escapeHtml(o.title || '—'))}
+    ${row('external_id', o.external_id ? `<code>${escapeHtml(o.external_id)}</code>` : '—')}
+    ${row('Origem', escapeHtml(originOf(o)))}
+    ${row('Sincronizado', escapeHtml(formatDate(o.last_synced_at) || 'Nunca'))}
+  </dl>`;
+  $('e_category').innerHTML = allowedCategories(o.category).map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+  $('e_display_title').value = o.display_title || '';
+  $('e_category').value = o.category || CATEGORIES[CATEGORIES.length - 1];
+  $('e_merchant').value = o.merchant || '';
+  $('e_price').value = toBRLInput(o.price);
+  $('e_old_price').value = toBRLInput(o.old_price);
+  $('e_sort_order').value = o.sort_order ?? '';
+  $('e_image_url').value = o.image_url || '';
+  $('e_affiliate_url').value = '';
+  $('e_affiliate_url').placeholder = 'Carregando…';
+  $('editSave').disabled = true;
+  updateDiscountPreview();
+  openModal('editBg');
+  $('e_display_title').focus();
+
+  // O link afiliado só é buscado para a oferta em edição.
+  try {
+    const { data, error } = await sb.from('affiliate_products').select('affiliate_url').eq('id', o.id).maybeSingle();
+    if(error) throw error;
+    if(!modalCtx || modalCtx.id !== o.id) return;
+    $('e_affiliate_url').value = (data && data.affiliate_url) || '';
+    $('e_affiliate_url').placeholder = 'https://…';
+    modalCtx.original = { ...o, affiliate_url: (data && data.affiliate_url) || null };
+    $('editSave').disabled = false;
+  } catch(e){
+    logError('carregar link para edição', e);
+    if(isAuthError(e)){ sessionLost(); return; }
+    $('editError').textContent = 'Não foi possível carregar o link afiliado. A edição foi bloqueada para evitar perda de dados.';
+    $('editError').hidden = false;
+  }
+}
+function validateEdit(original){
+  const errors = {}, v = {};
+  const dt = cleanText($('e_display_title').value);
+  if(dt.length > 200) errors.display_title = 'Máximo de 200 caracteres.';
+  v.display_title = dt || null;
+
+  const cat = $('e_category').value;
+  if(!allowedCategories(original.category).includes(cat)) errors.category = 'Categoria inválida.';
+  v.category = cat;
+
+  const merchant = cleanText($('e_merchant').value);
+  if(merchant.length > 80) errors.merchant = 'Máximo de 80 caracteres.';
+  v.merchant = merchant || null;
+
+  const p = parseBRL($('e_price').value);
+  if(p.error) errors.price = p.error;
+  v.price = p.value ?? null;
+
+  const op = parseBRL($('e_old_price').value);
+  if(op.error) errors.old_price = op.error;
+  else if(op.value != null && (v.price == null || op.value <= v.price)) errors.old_price = 'Deve ser maior que o preço atual.';
+  v.old_price = op.value ?? null;
+  v.discount_percent = errors.price || errors.old_price ? null : computeDiscount(v.price, v.old_price);
+
+  const img = $('e_image_url').value.trim();
+  if(img && !httpsUrl(img)) errors.image_url = 'Use um link completo começando com https://.';
+  v.image_url = img ? httpsUrl(img) : null;
+
+  const aff = $('e_affiliate_url').value.trim();
+  if(!aff) errors.affiliate_url = 'O link afiliado é obrigatório.';
+  else if(!httpsUrl(aff)) errors.affiliate_url = 'Use um link completo começando com https://.';
+  // Preserva exatamente o texto do link informado (sem normalizar parâmetros).
+  v.affiliate_url = aff || null;
+
+  const so = $('e_sort_order').value.trim();
+  if(so && !/^\d{1,7}$/.test(so)) errors.sort_order = 'Use um número inteiro (0 a 9999999).';
+  v.sort_order = so && !errors.sort_order ? Number(so) : null;
+  return { values: v, errors };
+}
+async function saveEdit(){
+  if(busy || !modalCtx || modalCtx.type !== 'edit' || !modalCtx.original) return;
+  const original = modalCtx.original;
+  $('editError').hidden = true;
+  const { values, errors } = validateEdit(original);
+  EDITABLE_FIELDS.forEach(f => fieldError(f, errors[f]));
+  if(Object.keys(errors).length){
+    const first = document.querySelector('#editForm [aria-invalid="true"]');
+    if(first) first.focus();
+    return;
+  }
+  const payload = buildUpdatePayload(values, original);
+  if(!Object.keys(payload).length){ toast('Nenhuma alteração para salvar.'); closeModal(); return; }
+  if(!isSafeId(original.id)){ toast('Identificador inválido. Operação cancelada.', 'err'); return; }
+  if(!(await requireSession())) return;
+
+  setBusy(true);
+  $('editSave').textContent = 'Salvando…';
+  try {
+    const { data, error } = await sb.from('affiliate_products').update(payload).eq('id', original.id).select(LIST_COLUMNS);
+    if(error){
+      logError('salvar edição', error);
+      if(isAuthError(error)){ sessionLost(); return; }
+      $('editError').textContent = friendlyError(error); $('editError').hidden = false; return;
+    }
+    if(!Array.isArray(data) || data.length !== 1){
+      $('editError').textContent = data && data.length > 1
+        ? 'O servidor indicou mais de uma linha alterada. Recarregue e verifique.'
+        : 'Nenhuma linha foi alterada. Verifique se esta conta é administradora (RLS) ou se a oferta ainda existe.';
+      $('editError').hidden = false; return;
+    }
+    logAction(original, 'Editada (' + Object.keys(payload).join(', ') + ')');
+    closeModal();
+    replaceRow(data[0]);
+    toast('Oferta atualizada.', 'ok');
+  } catch(e){
+    logError('salvar edição', e);
+    $('editError').textContent = 'Falha de conexão. Nada foi confirmado; recarregue antes de tentar de novo.'; $('editError').hidden = false;
+  } finally {
+    setBusy(false);
+    $('editSave').textContent = 'Salvar alterações';
+  }
+}
+
+// ----- confirmação genérica -----
+function showConfirm({ title, bodyHtml, okText, okClass = 'btn-primary', okDisabled = false, onOk }){
+  lastFocus = document.activeElement;
+  $('confirmTitle').textContent = title;
+  $('confirmBody').innerHTML = bodyHtml;
+  const ok = $('confirmOk');
+  ok.className = 'btn ' + okClass;
+  ok.textContent = okText;
+  ok.disabled = okDisabled;
+  modalCtx = { type: 'confirm', onOk };
+  openModal('confirmBg');
+  (okDisabled ? $('confirmBg').querySelector('[data-close-modal]') : ok).focus();
+}
+function targetHtml(o){
+  return `<div class="target-box"><div class="thumb">${thumbHtml(o, titleOf(o))}</div>
+    <div><div class="t-title">${escapeHtml(titleOf(o))}</div>
+    <div class="t-sub">external_id: ${o.external_id ? `<code>${escapeHtml(o.external_id)}</code>` : '<span class="muted">nenhum (oferta manual)</span>'} · id <code>${escapeHtml(String(o.id))}</code></div></div></div>`;
+}
+
+// ----- ativar / pausar -----
+async function openToggle(id){
+  const o = ROWS.find(x => String(x.id) === String(id));
+  if(!o || busy) return;
+  if(o.active){
+    showConfirm({
+      title: 'Pausar oferta?',
+      bodyHtml: targetHtml(o) + '<p style="margin:0">A oferta sai do site imediatamente. Nada é excluído e você pode reativar depois.</p>',
+      okText: 'Pausar oferta',
+      onOk: () => doToggle(o, false)
+    });
+    return;
+  }
+  // Ativação: valida os dados antes de liberar a confirmação.
+  let aff = null, affFailed = false;
+  try {
+    const { data, error } = await sb.from('affiliate_products').select('affiliate_url').eq('id', o.id).maybeSingle();
+    if(error) throw error;
+    aff = data && data.affiliate_url;
+  } catch(e){
+    logError('verificar link antes de ativar', e);
+    if(isAuthError(e)){ sessionLost(); return; }
+    affFailed = true;
+  }
+  const checks = [
+    ['Título preenchido', !!cleanText(o.display_title || o.title)],
+    ['Categoria válida', !!o.category && CATEGORIES.includes(o.category)],
+    ['Preço maior que zero', Number(o.price) > 0],
+    ['Imagem com link HTTPS', !!httpsUrl(o.image_url)],
+    ['Link afiliado com HTTPS', !affFailed && !!httpsUrl(aff)]
+  ];
+  const allOk = checks.every(c => c[1]);
+  const list = '<ul class="check-list">' + checks.map(([label, ok]) =>
+    `<li><span class="${ok ? 'ok' : 'no'}" aria-hidden="true">${ok ? '✓' : '✕'}</span><span>${label}${ok ? '' : ' <span class="sr-only">(pendente)</span>'}</span></li>`).join('') + '</ul>';
+  showConfirm({
+    title: allOk ? 'Ativar oferta?' : 'Oferta ainda não pode ser ativada',
+    bodyHtml: targetHtml(o) + (allOk
+      ? '<p style="margin:0">A oferta passa a aparecer no site. Somente o status será alterado.</p>'
+      : '<p style="margin:0">Corrija os itens abaixo pela edição e tente novamente.</p>') + list,
+    okText: allOk ? 'Ativar oferta' : 'Editar oferta',
+    okClass: allOk ? 'btn-ok' : 'btn-primary',
+    onOk: allOk ? () => doToggle(o, true) : () => { closeModal(); openEdit(o.id); }
+  });
+}
+async function doToggle(o, next){
+  if(busy || !isSafeId(o.id)) return;
+  if(!(await requireSession())) return;
+  setBusy(true);
+  $('confirmOk').textContent = next ? 'Ativando…' : 'Pausando…';
+  try {
+    const { data, error } = await sb.from('affiliate_products').update({ active: next }).eq('id', o.id).select(LIST_COLUMNS);
+    if(error){
+      logError(next ? 'ativar' : 'pausar', error);
+      if(isAuthError(error)){ sessionLost(); return; }
+      toast(friendlyError(error), 'err'); return;
+    }
+    if(!Array.isArray(data) || data.length !== 1 || data[0].active !== next){
+      toast('Nenhuma linha foi alterada. Verifique a permissão de administrador (RLS).', 'err'); return;
+    }
+    logAction(o, next ? 'Ativada' : 'Pausada');
+    closeModal();
+    replaceRow(data[0]);
+    toast(next ? 'Oferta ativada.' : 'Oferta pausada.', 'ok');
+  } catch(e){
+    logError(next ? 'ativar' : 'pausar', e);
+    toast('Falha de conexão. Recarregue para confirmar o estado.', 'err');
+  } finally { setBusy(false); }
+}
+
+// ----- excluir (duas etapas) -----
+function openDelete(id){
+  const o = ROWS.find(x => String(x.id) === String(id));
+  if(!o || busy) return;
+  const apiWarn = isManual(o) ? '' :
+    '<div class="danger-box">Esta oferta veio da automação. Se ela continuar no feed, a próxima sincronização pode recriá-la. Para só tirar do site, prefira <strong>Pausar</strong>.</div>';
+  showConfirm({
+    title: 'Excluir oferta? (etapa 1 de 2)',
+    bodyHtml: targetHtml(o) + '<p style="margin:0">A exclusão é definitiva e afeta somente esta oferta.</p>' + apiWarn,
+    okText: 'Continuar',
+    okClass: 'btn-danger',
+    onOk: () => deleteStep2(o)
+  });
+}
+function deleteStep2(o){
+  showConfirm({
+    title: 'Confirmar exclusão (etapa 2 de 2)',
+    bodyHtml: targetHtml(o) + `<div class="field" style="margin:12px 0 0;"><label for="delConfirm">Digite <strong>EXCLUIR</strong> para confirmar</label>
+      <input class="input" id="delConfirm" autocomplete="off" spellcheck="false"></div>`,
+    okText: 'Excluir definitivamente',
+    okClass: 'btn-danger',
+    okDisabled: true,
+    onOk: () => doDelete(o)
+  });
+  const input = $('delConfirm');
+  input.addEventListener('input', () => { $('confirmOk').disabled = input.value.trim() !== 'EXCLUIR'; });
+  input.focus();
+}
+async function doDelete(o){
+  if(busy) return;
+  const input = $('delConfirm');
+  if(!input || input.value.trim() !== 'EXCLUIR') return;
+  if(!isSafeId(o.id)){ toast('Identificador inválido. Exclusão cancelada.', 'err'); return; }
+  if(!(await requireSession())) return;
+  setBusy(true);
+  $('confirmOk').textContent = 'Excluindo…';
+  try {
+    // Alvo único pela chave primária; o retorno mostra exatamente quais linhas saíram.
+    const { data, error } = await sb.from('affiliate_products').delete().eq('id', o.id).select('id');
+    if(error){
+      logError('excluir', error);
+      if(isAuthError(error)){ sessionLost(); return; }
+      toast(friendlyError(error), 'err'); return;
+    }
+    const n = Array.isArray(data) ? data.length : 0;
+    if(n === 0){ toast('Nenhuma linha foi removida (sem permissão ou já excluída).', 'err'); return; }
+    if(n > 1 || String(data[0].id) !== String(o.id)){
+      toast(`ATENÇÃO: o servidor informou ${n} linha(s) removida(s). Recarregue e verifique o banco.`, 'err');
+      await loadOffers(); return;
+    }
+    logAction(o, 'Excluída');
+    closeModal();
+    if(!$('drawer').hidden && $('drawer').dataset.id === String(o.id)) closeDrawer();
+    ROWS = ROWS.filter(x => String(x.id) !== String(o.id));
+    fillFilterOptions(); renderStats(); render();
+    toast('Oferta excluída (1 linha removida).', 'ok');
+  } catch(e){
+    logError('excluir', e);
+    toast('Falha de conexão. Recarregue para confirmar se a oferta foi removida.', 'err');
+  } finally { setBusy(false); }
+}
+
+function renderDrawerFoot(o){
+  $('drawerFoot').innerHTML = `
+    <button class="btn btn-primary" type="button" data-edit="${escapeHtml(String(o.id))}">Editar</button>
+    <button class="btn ${o.active ? 'btn-ghost' : 'btn-ok'}" type="button" data-toggle="${escapeHtml(String(o.id))}">${o.active ? 'Pausar' : 'Ativar'}</button>
+    ${isManual(o) || !o.external_id
+      ? '<button class="btn btn-ghost" type="button" aria-disabled="true" title="Oferta manual: sem fonte automática de preço">Verificar preço</button>'
+      : `<button class="btn btn-ghost" type="button" data-price="${escapeHtml(String(o.id))}"${priceBusy.has(String(o.id)) ? ' disabled' : ''}>${priceBusy.has(String(o.id)) ? 'Verificando…' : 'Verificar preço'}</button>`}
+    <button class="btn btn-ghost danger-text" type="button" data-delete="${escapeHtml(String(o.id))}" style="margin-left:auto;">Excluir</button>`;
+}
+function historyHtml(o){
+  const mine = SESSION_LOG.filter(l => l.id === String(o.id));
+  return `<h4 style="margin:18px 0 4px;font-size:14px;">Histórico</h4>
+    <p class="muted" style="margin:0;font-size:12.5px;">Última sincronização: ${escapeHtml(formatDate(o.last_synced_at) || 'nunca')}.
+    O banco ainda não registra alterações feitas pelo administrador.</p>
+    ${mine.length ? `<p style="margin:10px 0 0;font-size:12.5px;font-weight:600;">Nesta sessão</p><ul class="log-list">${mine.map(l =>
+      `<li>${escapeHtml(formatDate(l.at))} · ${escapeHtml(l.action)}</li>`).join('')}</ul>` : ''}`;
+}
+
+// ---------- busca de novas ofertas e verificação de preço (via Edge Function) ----------
+// O navegador só conhece o NOME da função. Webhook, segredo e service_role ficam no backend.
+const ADMIN_FN = 'vc-admin-jobs';
+const TERMINAL = ['completed', 'failed', 'timeout'];
+const SYNC_POLL_MS = 4000;
+const SYNC_POLL_MAX_MS = 20 * 60 * 1000;
+let syncRun = null, syncTimer = null, syncPollStarted = 0, syncBusy = false;
+const priceBusy = new Set();
+const priceResults = new Map(); // id -> {cls, html} do último resultado nesta sessão
+
+const CODE_MSG = {
+  unauthenticated: 'Sessão expirada. Entre novamente.',
+  mfa_required: 'Confirme o código do autenticador para continuar.',
+  forbidden: 'Esta conta não tem acesso a esta ação.',
+  already_running: 'Já existe uma busca em andamento.',
+  cooldown: 'Aguarde alguns minutos antes de uma nova busca.',
+  rate_limited: 'Muitas verificações seguidas. Aguarde um pouco.',
+  n8n_timeout: 'A automação não respondeu a tempo.',
+  n8n_error: 'A automação retornou um erro.',
+  invalid_response: 'A automação respondeu de forma inválida.',
+  not_configured: 'A função ainda não foi configurada no servidor.',
+  client_timeout: 'Sem resposta do servidor. Verifique a conexão.',
+  network_error: 'Não foi possível falar com o servidor.',
+  timeout: 'A busca passou do tempo limite.',
+  not_found: 'Oferta não encontrada.'
+};
+const safeInt = (v) => Number.isInteger(v) && v >= 0 && v < 1e6 ? v : null;
+const safeCode = (v) => typeof v === 'string' && /^[a-z0-9_]{1,40}$/.test(v) ? v : null;
+// Aceita só os campos esperados da resposta; nada além disso chega à tela.
+function cleanRun(r){
+  if(!r || typeof r !== 'object') return null;
+  const status = ['requested','running','completed','failed','timeout','unconfirmed'].includes(r.status) ? r.status : null;
+  if(!status || typeof r.id !== 'string' || !/^[A-Za-z0-9-]{1,64}$/.test(r.id)) return null;
+  const d = (v) => typeof v === 'string' && !isNaN(Date.parse(v)) ? v : null;
+  return { id: r.id, status, created_at: d(r.created_at), started_at: d(r.started_at), finished_at: d(r.finished_at),
+    found: safeInt(r.found), rejected: safeInt(r.rejected), approved: safeInt(r.approved), saved: safeInt(r.saved), error_code: safeCode(r.error_code) };
+}
+async function callAdminFn(body, timeout = 35000){
+  if(!(await requireSession())) return { ok: false, code: 'unauthenticated', status: 401 };
+  try {
+    const { data, error } = await sb.functions.invoke(ADMIN_FN, { body, timeout });
+    if(!error) return (data && typeof data === 'object') ? { ...data, status: 200 } : { ok: false, code: 'invalid_response' };
+    let payload = null;
+    const resp = error.context;
+    if(resp && typeof resp.json === 'function'){ try { payload = await resp.json(); } catch {} }
+    if(payload && typeof payload === 'object') return { ...payload, ok: false, status: resp.status };
+    if(error.name === 'SyntaxError') return { ok: false, code: 'invalid_response' };
+    return { ok: false, code: /abort|timeout/i.test(String(error.name) + String(error.message)) ? 'client_timeout' : 'network_error' };
+  } catch(e){
+    logError('função administrativa', e);
+    return { ok: false, code: 'network_error' };
+  }
+}
+function fnMessage(res, fallback){
+  const code = safeCode(res && res.code);
+  if(code === 'cooldown' && Number.isInteger(res.retry_after_s)) return `Aguarde ${Math.max(1, Math.ceil(res.retry_after_s / 60))} min para uma nova busca.`;
+  return (code && CODE_MSG[code]) || fallback;
+}
+async function handleAdminAuthFailure(res){
+  if(res.code === 'unauthenticated' && res.status === 401){ sessionLost(); return true; }
+  if(res.code === 'mfa_required'){
+    const { data } = await sb.auth.getSession();
+    await routeAuthenticatedSession(data && data.session);
+    return true;
+  }
+  return false;
+}
+
+// ----- busca de novas ofertas -----
+function setSyncButton(){
+  const b = $('syncBtn');
+  const active = syncBusy || (syncRun && !TERMINAL.includes(syncRun.status));
+  b.disabled = !!active;
+  b.setAttribute('aria-busy', active ? 'true' : 'false');
+  b.querySelector('.lbl').textContent = active ? 'Busca em andamento…' : 'Pesquisar novas ofertas';
+}
+function renderSync(extraMsg){
+  const p = $('syncPanel');
+  if(!syncRun){ p.hidden = true; setSyncButton(); return; }
+  p.hidden = false;
+  const st = syncRun.status;
+  const step = st === 'requested' ? 1 : st === 'running' ? 2 : 3;
+  const failed = ['failed','timeout'].includes(st);
+  const steps = [['Solicitado', 1], ['Processando', 2], [failed ? (st === 'timeout' ? 'Tempo esgotado' : 'Erro') : 'Concluído', 3]];
+  $('syncSteps').innerHTML = steps.map(([label, n]) => {
+    const cls = n < step ? 'done' : n === step ? (failed ? 'err' : st === 'completed' ? 'done' : 'now') : '';
+    return `<li class="${cls}"${n === step ? ' aria-current="step"' : ''}>${escapeHtml(label)}</li>`;
+  }).join('');
+  const nums = [['Encontrados', syncRun.found], ['Rejeitados', syncRun.rejected], ['Aprovados', syncRun.approved], ['Gravados', syncRun.saved]];
+  $('syncNums').innerHTML = nums.map(([l, v]) => `<div><div class="n">${v == null ? '–' : v}</div><div class="l">${l}</div></div>`).join('');
+  const when = formatDate(syncRun.finished_at || syncRun.started_at || syncRun.created_at);
+  let msg = st === 'requested' ? 'Solicitação enviada.' : st === 'running' ? 'A automação está lendo o feed. Isso pode levar alguns minutos.'
+    : st === 'completed' ? 'Busca concluída. Produtos novos entram como “Em revisão” (inativos) e só vão ao site depois da sua aprovação.'
+    : (CODE_MSG[syncRun.error_code] || 'A busca não foi concluída.') + ' Nenhum produto foi ativado.';
+  if(extraMsg) msg = extraMsg;
+  $('syncMsg').textContent = msg + (when ? ` · ${when}` : '');
+  $('syncPanel').className = 'sync-panel ' + (failed ? 'is-err' : st === 'completed' ? 'is-ok' : 'is-run');
+  setSyncButton();
+}
+function stopSyncPoll(){ if(syncTimer){ clearTimeout(syncTimer); syncTimer = null; } }
+function scheduleSyncPoll(){
+  stopSyncPoll();
+  if(!syncRun || TERMINAL.includes(syncRun.status)) return;
+  if(Date.now() - syncPollStarted > SYNC_POLL_MAX_MS){ renderSync('Sem atualização há muito tempo. Recarregue a página para consultar o status.'); return; }
+  syncTimer = setTimeout(pollSync, SYNC_POLL_MS);
+}
+async function pollSync(){
+  if(!syncRun || $('app').hidden) return;
+  const prev = syncRun.status;
+  const res = await callAdminFn({ action: 'status', run_id: syncRun.id }, 15000);
+  if(await handleAdminAuthFailure(res)) return;
+  const run = res.ok ? cleanRun(res.run) : null;
+  if(run) syncRun = run;
+  renderSync();
+  if(run && run.status === 'completed' && prev !== 'completed'){
+    toast(`Busca concluída: ${run.saved ?? 0} gravado(s), todos aguardando revisão.`, 'ok');
+    await loadOffers();
+  } else if(run && ['failed','timeout'].includes(run.status) && prev !== run.status){
+    toast('A busca de ofertas não foi concluída.', 'err');
+  }
+  scheduleSyncPoll();
+}
+async function restoreSync(){
+  const res = await callAdminFn({ action: 'status' }, 15000);
+  const run = res.ok ? cleanRun(res.run) : null;
+  if(!run) return;
+  const age = Date.now() - Date.parse(run.created_at || 0);
+  if(!TERMINAL.includes(run.status) || age < 24 * 3600 * 1000){ syncRun = run; syncPollStarted = Date.now(); renderSync(); scheduleSyncPoll(); }
+}
+function openSyncConfirm(){
+  if(syncBusy || (syncRun && !TERMINAL.includes(syncRun.status))) return;
+  showConfirm({
+    title: 'Pesquisar novas ofertas?',
+    bodyHtml: `<p style="margin:0 0 8px">Executa <strong>uma</strong> leitura do feed da Admitad (AliExpress, BRL).</p>
+      <ul class="check-list"><li><span class="ok" aria-hidden="true">✓</span><span>Produtos novos entram como <strong>Em revisão</strong> (inativos).</span></li>
+      <li><span class="ok" aria-hidden="true">✓</span><span>Nenhuma oferta é ativada ou pausada automaticamente.</span></li>
+      <li><span class="ok" aria-hidden="true">✓</span><span>Títulos, categorias e decisões manuais são preservados.</span></li></ul>`,
+    okText: 'Iniciar busca',
+    onOk: () => { closeModal(); startSync(); }
+  });
+}
+async function startSync(){
+  if(syncBusy || (syncRun && !TERMINAL.includes(syncRun.status))) return;
+  syncBusy = true;
+  syncRun = { id: 'pendente', status: 'requested', created_at: new Date().toISOString(), started_at: null, finished_at: null,
+    found: null, rejected: null, approved: null, saved: null, error_code: null };
+  renderSync();
+  try {
+    const res = await callAdminFn({ action: 'start_sync' }, 20000);
+    if(await handleAdminAuthFailure(res)){ syncRun = null; return; }
+    const run = cleanRun(res.run);
+    if(res.ok && run){ syncRun = run; syncPollStarted = Date.now(); renderSync(); scheduleSyncPoll(); toast('Busca iniciada.', 'ok'); return; }
+    if(res.code === 'already_running' && run){ syncRun = run; syncPollStarted = Date.now(); renderSync(); scheduleSyncPoll(); toast(CODE_MSG.already_running); return; }
+    const msg = fnMessage(res, 'Não foi possível iniciar a busca.');
+    if(run){ syncRun = run; renderSync(msg); } else { syncRun = { ...syncRun, status: 'failed', error_code: safeCode(res.code) }; renderSync(msg); }
+    if(res.code === 'cooldown' && run) renderSync(msg);
+    toast(msg, 'err');
+  } finally {
+    syncBusy = false;
+    setSyncButton();
+  }
+}
+
+// ----- verificação de preço de UMA oferta -----
+function revealInDrawer(el, again = true){
+  const body = document.querySelector('.drawer-body');
+  if(!el || !body) return;
+  // Repete após o layout assentar (a imagem da gaveta pode carregar depois).
+  if(again) requestAnimationFrame(() => setTimeout(() => revealInDrawer(document.getElementById(el.id) || el, false), 250));
+  const b = el.getBoundingClientRect(), r = body.getBoundingClientRect();
+  if(b.bottom > r.bottom) body.scrollTop += (b.bottom - r.bottom) + 12;
+  else if(b.top < r.top) body.scrollTop -= (r.top - b.top) + 12;
+}
+function priceBoxHtml(o){
+  const r = priceResults.get(String(o.id));
+  return r ? `<div class="price-check ${r.cls}" id="priceCheckBox" aria-live="polite">${r.html}</div>`
+           : '<div class="price-check" id="priceCheckBox" hidden aria-live="polite"></div>';
+}
+async function checkPrice(id){
+  const o = ROWS.find(x => String(x.id) === String(id));
+  if(!o || priceBusy.has(String(o.id))) return;
+  if(isManual(o) || !o.external_id){ return; }
+  priceBusy.add(String(o.id));
+  const btn = document.querySelector(`[data-price="${CSS.escape(String(o.id))}"]`);
+  if(btn){ btn.disabled = true; btn.textContent = 'Verificando…'; }
+  const showBox = (cls, html) => {
+    priceResults.set(String(o.id), { cls, html });
+    const box = $('priceCheckBox');
+    if(box && $('drawer').dataset.id === String(o.id)){
+      box.className = 'price-check ' + cls; box.innerHTML = html; box.hidden = false;
+      revealInDrawer(box);
+    }
+  };
+  showBox('is-run', 'Consultando a fonte…'); priceResults.delete(String(o.id));
+  try {
+    const res = await callAdminFn({ action: 'check_price', product_id: String(o.id) }, 40000);
+    if(await handleAdminAuthFailure(res)) return;
+    const when = formatDate(res.checked_at) || formatDate(new Date().toISOString());
+    if(res.ok && res.result === 'confirmed' && Number(res.price) > 0){
+      const prev = Number(res.previous_price);
+      const changed = Number.isFinite(prev) && Math.abs(prev - Number(res.price)) >= 0.005;
+      showBox('is-ok', `<strong>Preço confirmado pela fonte:</strong> ${escapeHtml(brl(res.price))}` +
+        (res.old_price ? ` <span class="muted">(de ${escapeHtml(brl(res.old_price))})</span>` : '') +
+        `<br><span class="muted">${changed ? `Antes: ${escapeHtml(brl(prev))}. ` : 'Sem mudança de preço. '}Verificado em ${escapeHtml(when)}.</span>`);
+      logAction(o, `Preço verificado: ${brl(res.price)}${changed ? ' (atualizado)' : ''}`);
+      const { data, error } = await sb.from('affiliate_products').select(LIST_COLUMNS).eq('id', o.id).maybeSingle();
+      if(!error && data){
+        const i = ROWS.findIndex(x => String(x.id) === String(o.id));
+        if(i >= 0){ ROWS[i] = data; renderStats(); render(); }
+        if($('drawer').dataset.id === String(o.id)){ await openDetails(o.id, true); revealInDrawer($('priceCheckBox')); }
+      }
+      toast('Preço confirmado.', 'ok');
+    } else if(res.ok && res.result === 'unconfirmed'){
+      const reason = res.reason === 'not_in_feed' ? 'A oferta não está no feed atual da fonte.' : res.reason === 'no_source' ? 'Esta oferta não tem fonte automática de preço.' : '';
+      showBox('is-warn', `<strong>Não foi possível confirmar o preço.</strong> ${escapeHtml(reason)}<br><span class="muted">O preço atual foi mantido. Verificado em ${escapeHtml(when)}.</span>`);
+      logAction(o, 'Preço não confirmado');
+    } else {
+      showBox('is-err', `<strong>Não foi possível confirmar o preço.</strong> ${escapeHtml(fnMessage(res, ''))}<br><span class="muted">Nenhum valor foi alterado.</span>`);
+    }
+  } finally {
+    priceBusy.delete(String(o.id));
+    const b2 = document.querySelector(`[data-price="${CSS.escape(String(o.id))}"]`);
+    if(b2){ b2.disabled = false; b2.textContent = 'Verificar preço'; }
+  }
+}
+
+// ---------- eventos ----------
+$('syncBtn').addEventListener('click', openSyncConfirm);
+$('loginBtn').addEventListener('click', doLogin);
+['loginEmail','loginPass'].forEach(id => $(id).addEventListener('keydown', e => { if(e.key === 'Enter') doLogin(); }));
+$('mfaStartEnrollBtn').addEventListener('click', startMfaEnrollment);
+$('mfaVerifyEnrollBtn').addEventListener('click', verifyMfaEnrollment);
+$('mfaVerifyChallengeBtn').addEventListener('click', verifyMfaChallenge);
+['mfaEnrollLogoutBtn','mfaChallengeLogoutBtn'].forEach(id => $(id).addEventListener('click', doLogout));
+$('mfaEnrollCode').addEventListener('input', e => { e.target.value = window.AdminMfa.normalizeTotpCode(e.target.value); });
+$('mfaChallengeCode').addEventListener('input', e => { e.target.value = window.AdminMfa.normalizeTotpCode(e.target.value); });
+$('mfaEnrollCode').addEventListener('keydown', e => { if(e.key === 'Enter') verifyMfaEnrollment(); });
+$('mfaChallengeCode').addEventListener('keydown', e => { if(e.key === 'Enter') verifyMfaChallenge(); });
+$('logoutBtn').addEventListener('click', doLogout);
+$('fSearch').addEventListener('input', () => { page = 1; render(); });
+['fStatus','fCat','fSrc','fDate','fSort'].forEach(id => $(id).addEventListener('change', () => { page = 1; render(); }));
+$('clearBtn').addEventListener('click', clearFilters);
+$('prevBtn').addEventListener('click', () => { if(page > 1){ page--; render(); $('main').scrollIntoView({block:'start'}); } });
+$('nextBtn').addEventListener('click', () => { page++; render(); $('main').scrollIntoView({block:'start'}); });
+function actionClick(e){
+  const d = e.target.closest('[data-details]'); if(d) return openDetails(d.dataset.details);
+  const ed = e.target.closest('[data-edit]'); if(ed) return openEdit(ed.dataset.edit);
+  const t = e.target.closest('[data-toggle]'); if(t) return openToggle(t.dataset.toggle);
+  const del = e.target.closest('[data-delete]'); if(del) return openDelete(del.dataset.delete);
+  const pr = e.target.closest('[data-price]'); if(pr) return checkPrice(pr.dataset.price);
+}
+$('rows').addEventListener('click', actionClick);
+$('drawerFoot').addEventListener('click', actionClick);
+document.querySelectorAll('[data-close-modal]').forEach(b => b.addEventListener('click', () => { if(!busy) closeModal(); }));
+['editBg','confirmBg'].forEach(id => $(id).addEventListener('click', e => { if(e.target.id === id && !busy) closeModal(); }));
+$('editSave').addEventListener('click', saveEdit);
+$('confirmOk').addEventListener('click', () => { if(!busy && modalCtx && modalCtx.type === 'confirm' && modalCtx.onOk) modalCtx.onOk(); });
+['e_price','e_old_price'].forEach(id => $(id).addEventListener('input', updateDiscountPreview));
+EDITABLE_FIELDS.forEach(f => { const el = $('e_' + f); if(el) el.addEventListener(el.tagName === 'SELECT' ? 'change' : 'input', () => fieldError(f, '')); });
+$('drawerClose').addEventListener('click', closeDrawer);
+$('drawerBg').addEventListener('click', closeDrawer);
+document.addEventListener('keydown', e => {
+  if(e.key !== 'Escape' || busy) return;
+  if(!$('confirmBg').hidden || !$('editBg').hidden) closeModal(); else closeDrawer();
+});
+document.addEventListener('click', e => {
+  const b = e.target.closest('[aria-disabled="true"]');
+  if(b){ e.preventDefault(); e.stopPropagation(); }
+}, true);
+
+boot();
+</script>
+</body>
+</html>
